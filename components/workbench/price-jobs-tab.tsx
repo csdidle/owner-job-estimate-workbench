@@ -5,7 +5,9 @@ import {
   AlertTriangle,
   ArrowDown,
   ArrowUp,
+  Check,
   CheckCircle2,
+  ChevronsUpDown,
   CircleDollarSign,
   Clock3,
   Loader2,
@@ -21,7 +23,16 @@ import { getPricingResult, savePricingJob } from "@/app/actions";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
 import { Input } from "@/components/ui/input";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Separator } from "@/components/ui/separator";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
@@ -121,6 +132,7 @@ function newCustomLine(index: number): DraftLine {
 export function PriceJobsTab({ data, onRefresh }: { data: WorkbenchData; onRefresh: () => Promise<void> }) {
   const [name, setName] = useState("");
   const [contactId, setContactId] = useState("");
+  const [contactPickerOpen, setContactPickerOpen] = useState(false);
   const [lines, setLines] = useState<DraftLine[]>(() => data.services[0] ? [newLine(data.services[0], 0)] : []);
   const [requiresEstimate, setRequiresEstimate] = useState(false);
   const [crewIds, setCrewIds] = useState<string[]>([]);
@@ -136,6 +148,10 @@ export function PriceJobsTab({ data, onRefresh }: { data: WorkbenchData; onRefre
   const [polling, setPolling] = useState(false);
 
   const serviceMap = useMemo(() => new Map(data.services.map((service) => [service.id, service])), [data.services]);
+  const selectedContact = useMemo(
+    () => data.contacts.find((contact) => contact.id === contactId) || null,
+    [contactId, data.contacts]
+  );
   const totals = useMemo(() => {
     const linePrice = lines.reduce((sum, line) => sum + line.quantity * line.unitPrice, 0);
     const bookCost = lines.reduce((sum, line) => sum + line.quantity * line.cost, 0);
@@ -301,10 +317,54 @@ export function PriceJobsTab({ data, onRefresh }: { data: WorkbenchData; onRefre
               <Input value={name} onChange={(event) => setName(event.target.value)} className="h-8 text-xs" placeholder="Property and scope" />
             </Field>
             <Field label="Contact" required>
-              <NativeSelect value={contactId} onChange={(event) => setContactId(event.target.value)}>
-                <option value="">Select contact</option>
-                {data.contacts.map((contact) => <option key={contact.id} value={contact.id}>{contact.name}{contact.company && contact.company !== contact.name ? ` - ${contact.company}` : ""}</option>)}
-              </NativeSelect>
+              <Popover open={contactPickerOpen} onOpenChange={setContactPickerOpen}>
+                <PopoverTrigger asChild>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    role="combobox"
+                    aria-expanded={contactPickerOpen}
+                    className="h-8 w-full justify-between px-2 text-xs font-normal"
+                    disabled={data.contacts.length === 0}
+                  >
+                    <span className="truncate">
+                      {selectedContact
+                        ? `${selectedContact.name}${selectedContact.company && selectedContact.company !== selectedContact.name ? ` - ${selectedContact.company}` : ""}`
+                        : "Select contact"}
+                    </span>
+                    <ChevronsUpDown className="size-3.5 shrink-0 text-muted-foreground" />
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent align="start" className="w-[var(--radix-popover-trigger-width)] p-0">
+                  <Command>
+                    <CommandInput placeholder="Search contacts..." className="text-xs" />
+                    <CommandList>
+                      <CommandEmpty>No contacts found.</CommandEmpty>
+                      <CommandGroup>
+                        {data.contacts.map((contact) => (
+                          <CommandItem
+                            key={contact.id}
+                            value={[contact.id, contact.name, contact.company, contact.email, contact.phone].filter(Boolean).join(" ")}
+                            onSelect={() => {
+                              setContactId(contact.id);
+                              setContactPickerOpen(false);
+                            }}
+                            className="text-xs"
+                          >
+                            <Check className={contact.id === contactId ? "opacity-100" : "opacity-0"} />
+                            <span className="min-w-0 flex-1">
+                              <span className="block truncate">{contact.name}</span>
+                              {contact.company && contact.company !== contact.name ? (
+                                <span className="block truncate text-[10px] text-muted-foreground">{contact.company}</span>
+                              ) : null}
+                            </span>
+                          </CommandItem>
+                        ))}
+                      </CommandGroup>
+                    </CommandList>
+                  </Command>
+                </PopoverContent>
+              </Popover>
             </Field>
           </div>
 
