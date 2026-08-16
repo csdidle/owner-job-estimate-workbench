@@ -8,8 +8,8 @@ import {
   CheckCircle2,
   CircleDollarSign,
   Clock3,
-  ListPlus,
   Loader2,
+  PencilLine,
   Plus,
   RefreshCw,
   Route,
@@ -104,6 +104,20 @@ function newLine(service: ServiceOption, index: number): DraftLine {
   };
 }
 
+function newCustomLine(index: number): DraftLine {
+  return {
+    clientId: `custom-${Date.now()}-${index}`,
+    serviceId: null,
+    name: "",
+    description: "",
+    quantity: 1,
+    unitPrice: 0,
+    lineOrder: (index + 1) * 10,
+    cost: 0,
+    unit: null,
+  };
+}
+
 export function PriceJobsTab({ data, onRefresh }: { data: WorkbenchData; onRefresh: () => Promise<void> }) {
   const [name, setName] = useState("");
   const [contactId, setContactId] = useState("");
@@ -146,6 +160,17 @@ export function PriceJobsTab({ data, onRefresh }: { data: WorkbenchData; onRefre
   }
 
   function selectService(clientId: string, serviceId: string) {
+    if (serviceId === "__custom__") {
+      updateLine(clientId, {
+        serviceId: null,
+        name: "",
+        description: "",
+        unitPrice: 0,
+        cost: 0,
+        unit: null,
+      });
+      return;
+    }
     const service = serviceMap.get(serviceId);
     if (!service) return;
     updateLine(clientId, {
@@ -173,7 +198,7 @@ export function PriceJobsTab({ data, onRefresh }: { data: WorkbenchData; onRefre
     if (name.trim().length < 2) issues.push("Job / estimate name is required");
     if (!contactId) issues.push("Select a contact");
     if (lines.length === 0) issues.push("Add at least one service line");
-    if (lines.some((line) => !line.serviceId || line.quantity <= 0 || line.unitPrice < 0)) issues.push("Each service needs a positive quantity and valid unit price");
+    if (lines.some((line) => !line.name.trim() || line.quantity <= 0 || line.unitPrice < 0)) issues.push("Each service needs a name, positive quantity, and valid unit price");
     if (inputs.targetMargin != null && (inputs.targetMargin < 0 || inputs.targetMargin >= 100)) issues.push("Target margin must be between 0 and 99.99%");
     return issues;
   }
@@ -263,10 +288,6 @@ export function PriceJobsTab({ data, onRefresh }: { data: WorkbenchData; onRefre
     }
   }
 
-  if (data.services.length === 0 && !data.errors.services) {
-    return <EmptyState icon={<ListPlus className="size-8" />} title="No active Price Book services" detail="Activate a service in the shared Price Book before pricing a job." />;
-  }
-
   return (
     <div className="space-y-4">
       {data.errors.contacts ? <SectionError title="Contacts unavailable" message={data.errors.contacts} /> : null}
@@ -292,14 +313,25 @@ export function PriceJobsTab({ data, onRefresh }: { data: WorkbenchData; onRefre
               <h2 className="text-sm font-semibold">Service lines</h2>
               <p className="text-[11px] text-muted-foreground">{lines.length} line{lines.length === 1 ? "" : "s"}</p>
             </div>
-            <Button
-              size="sm"
-              variant="outline"
-              className="h-7 text-xs"
-              onClick={() => data.services[0] && setLines((current) => [...current, newLine(data.services[0], current.length)])}
-            >
-              <Plus className="size-3.5" /> Add service
-            </Button>
+            <div className="flex items-center gap-2">
+              <Button
+                size="sm"
+                variant="outline"
+                className="h-7 text-xs"
+                disabled={!data.services[0]}
+                onClick={() => data.services[0] && setLines((current) => [...current, newLine(data.services[0], current.length)])}
+              >
+                <Plus className="size-3.5" /> Price Book
+              </Button>
+              <Button
+                size="sm"
+                variant="outline"
+                className="h-7 text-xs"
+                onClick={() => setLines((current) => [...current, newCustomLine(current.length)])}
+              >
+                <PencilLine className="size-3.5" /> Custom service
+              </Button>
+            </div>
           </div>
 
           <div className="overflow-x-auto">
@@ -314,10 +346,15 @@ export function PriceJobsTab({ data, onRefresh }: { data: WorkbenchData; onRefre
                     <IconButton label="Move down" disabled={index === lines.length - 1} onClick={() => moveLine(index, 1)}><ArrowDown className="size-3.5" /></IconButton>
                   </div>
                   <div className="grid gap-1">
-                    <NativeSelect value={line.serviceId} onChange={(event) => selectService(line.clientId, event.target.value)}>
+                    <NativeSelect value={line.serviceId || "__custom__"} onChange={(event) => selectService(line.clientId, event.target.value)}>
+                      <option value="__custom__">Custom service</option>
                       {data.services.map((service) => <option key={service.id} value={service.id}>{service.name}</option>)}
                     </NativeSelect>
-                    <span className="truncate text-[10px] text-muted-foreground">{serviceMap.get(line.serviceId)?.category || "Other"} / {line.unit || "Unit not set"} / cost {money(line.cost)}</span>
+                    {line.serviceId ? (
+                      <span className="truncate text-[10px] text-muted-foreground">{serviceMap.get(line.serviceId)?.category || "Other"} / {line.unit || "Unit not set"} / cost {money(line.cost)}</span>
+                    ) : (
+                      <Input value={line.name} onChange={(event) => updateLine(line.clientId, { name: event.target.value })} className="h-7 text-xs" placeholder="Custom service name" />
+                    )}
                   </div>
                   <NumericInput value={line.quantity} min={0.01} onChange={(value) => updateLine(line.clientId, { quantity: value || 0 })} />
                   <NumericInput value={line.unitPrice} onChange={(value) => updateLine(line.clientId, { unitPrice: value || 0 })} />

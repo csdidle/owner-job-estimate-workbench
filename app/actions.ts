@@ -135,7 +135,7 @@ const pricingInputSchema = z.object({
   name: z.string().trim().min(2).max(200),
   contactId: recordIdSchema,
   lines: z.array(z.object({
-    serviceId: recordIdSchema,
+    serviceId: recordIdSchema.nullable(),
     name: z.string().trim().min(1).max(200),
     description: z.string().max(4000),
     quantity: z.number().finite().positive(),
@@ -498,7 +498,7 @@ export async function getWorkbenchData(): Promise<WorkbenchData> {
 }
 
 async function validatePricingReferences(input: PricingJobInput) {
-  const serviceIds = [...new Set(input.lines.map((line) => line.serviceId))];
+  const serviceIds = [...new Set(input.lines.flatMap((line) => line.serviceId ? [line.serviceId] : []))];
   const checks = await Promise.all([
     sqlQuery(BASE_ID, `
       SELECT "__id"
@@ -506,12 +506,14 @@ async function validatePricingReferences(input: PricingJobInput) {
       WHERE "__id" = '${sqlString(input.contactId)}' AND "Status" = 'Active'
       LIMIT 1
     `),
-    sqlQuery(BASE_ID, `
-      SELECT "__id", "Category"
-      FROM ${TABLES.services}
-      WHERE "__id" IN (${sqlIdList(serviceIds)}) AND "Active" = true
-      LIMIT 100
-    `),
+    serviceIds.length > 0
+      ? sqlQuery(BASE_ID, `
+          SELECT "__id", "Category"
+          FROM ${TABLES.services}
+          WHERE "__id" IN (${sqlIdList(serviceIds)}) AND "Active" = true
+          LIMIT 100
+        `)
+      : Promise.resolve({ rows: [] as Record<string, unknown>[] }),
     input.assignedCrewIds.length > 0
       ? sqlQuery(BASE_ID, `
           SELECT "__id"
@@ -525,7 +527,7 @@ async function validatePricingReferences(input: PricingJobInput) {
   if (checks[0].rows.length !== 1) throw new Error("Select an active contact");
   if (checks[1].rows.length !== serviceIds.length) throw new Error("One or more services are no longer active");
   if (checks[2].rows.length !== input.assignedCrewIds.length) throw new Error("One or more crew members are no longer active");
-  return stringValue(checks[1].rows[0]?.Category);
+  return stringValue(checks[1].rows[0]?.Category) || "Other";
 }
 
 export async function savePricingJob(rawInput: PricingJobInput) {
@@ -543,11 +545,12 @@ export async function savePricingJob(rawInput: PricingJobInput) {
     return { ok: false, kind: "validation" as const, message: errorMessage(error) };
   }
 
+  const firstServiceId = input.lines.find((line) => line.serviceId)?.serviceId || null;
   const headerFields: RecordFields = {
     [FIELDS.pricing.name]: input.name,
     [FIELDS.pricing.status]: "In Progress",
     [FIELDS.pricing.contact]: [input.contactId],
-    [FIELDS.pricing.service]: [input.lines[0].serviceId],
+    [FIELDS.pricing.service]: firstServiceId ? [firstServiceId] : null,
     [FIELDS.pricing.requiresEstimate]: input.requiresEstimate,
     [FIELDS.pricing.crew]: input.assignedCrewIds,
     [FIELDS.pricing.scheduledDate]: nullableDate(input.scheduledDate),
@@ -587,7 +590,7 @@ export async function savePricingJob(rawInput: PricingJobInput) {
       fields: {
         [FIELDS.pricingLine.name]: line.name,
         [FIELDS.pricingLine.pricing]: [pricingId],
-        [FIELDS.pricingLine.service]: [line.serviceId],
+        [FIELDS.pricingLine.service]: line.serviceId ? [line.serviceId] : null,
         [FIELDS.pricingLine.quantity]: line.quantity,
         [FIELDS.pricingLine.unitPrice]: line.unitPrice,
         [FIELDS.pricingLine.description]: line.description || null,

@@ -7,6 +7,7 @@ import {
   ArrowUp,
   FileText,
   Loader2,
+  PencilLine,
   Plus,
   ReceiptText,
   Save,
@@ -71,6 +72,19 @@ function serviceLine(service: ServiceOption, index: number): EstimateLine {
   };
 }
 
+function customLine(index: number): EstimateLine {
+  return {
+    id: `custom-${Date.now()}-${index}`,
+    serviceId: null,
+    name: "",
+    description: "",
+    quantity: 1,
+    unitPrice: 0,
+    total: 0,
+    lineOrder: (index + 1) * 10,
+  };
+}
+
 export function EstimateBuilderTab({ data, onRefresh }: { data: WorkbenchData; onRefresh: () => Promise<void> }) {
   const waitingEstimateIds = useMemo(
     () => new Set(data.jobs.filter((job) => job.status === "Waiting for Estimate" && job.estimateId).map((job) => job.estimateId as string)),
@@ -118,6 +132,15 @@ export function EstimateBuilderTab({ data, onRefresh }: { data: WorkbenchData; o
   }
 
   function selectService(id: string, serviceId: string) {
+    if (!serviceId) {
+      updateLine(id, {
+        serviceId: null,
+        name: "",
+        description: "",
+        unitPrice: 0,
+      });
+      return;
+    }
     const service = data.services.find((item) => item.id === serviceId);
     if (!service) return;
     updateLine(id, {
@@ -251,9 +274,12 @@ export function EstimateBuilderTab({ data, onRefresh }: { data: WorkbenchData; o
 
         <div className="grid gap-4 2xl:grid-cols-[minmax(0,1fr)_330px]">
           <section className="min-w-0 border-y bg-background">
-            <div className="flex items-center justify-between border-b px-3 py-2">
+            <div className="flex flex-wrap items-center justify-between gap-2 border-b px-3 py-2">
               <div><h2 className="text-sm font-semibold">Line editor</h2><p className="text-[11px] text-muted-foreground">Stable order: 10, 20, 30</p></div>
-              <Button size="sm" variant="outline" className="h-7 text-xs" disabled={!data.services[0]} onClick={() => data.services[0] && patchDraft({ lines: [...draft.lines, serviceLine(data.services[0], draft.lines.length)] })}><Plus className="size-3.5" /> Add line</Button>
+              <div className="flex items-center gap-2">
+                <Button size="sm" variant="outline" className="h-7 text-xs" disabled={!data.services[0]} onClick={() => data.services[0] && patchDraft({ lines: [...draft.lines, serviceLine(data.services[0], draft.lines.length)] })}><Plus className="size-3.5" /> Price Book</Button>
+                <Button size="sm" variant="outline" className="h-7 text-xs" onClick={() => patchDraft({ lines: [...draft.lines, customLine(draft.lines.length)] })}><PencilLine className="size-3.5" /> Custom service</Button>
+              </div>
             </div>
             <div className="overflow-x-auto">
               <div className="min-w-[800px]">

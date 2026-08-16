@@ -145,7 +145,7 @@ export type WorkbenchData = {
 };
 
 export type PricingLineInput = {
-  serviceId: string;
+  serviceId: string | null;
   name: string;
   description: string;
   quantity: number;
