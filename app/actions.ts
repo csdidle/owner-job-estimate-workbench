@@ -1,5 +1,6 @@
 "use server";
 
+import { unstable_cache, updateTag } from "next/cache";
 import { z } from "zod";
 import { requireAuth } from "@/lib/auth";
 import {
@@ -36,6 +37,7 @@ import {
 } from "@/lib/workbench-contract";
 
 const BASE_ID = "bse7bbdbrcd6YfA8YpU";
+const WORKBENCH_DATA_TAG = "owner-workbench-data";
 
 const TABLES = {
   contacts: '"bse7bbdbrcd6YfA8YpU"."tbldDs2u3Nj0KR8mZ0c"',
@@ -390,17 +392,23 @@ function mapEstimate(row: Record<string, unknown>, lines: EstimateLine[] = []): 
   };
 }
 
-async function requireOwner() {
-  const user = await requireAuth();
-  if (!recordIdSchema.safeParse(user.id).success) throw new Error("Owner authentication is required");
-  const { rows } = await sqlQuery(BASE_ID, `
+const getCachedOwnerRecord = unstable_cache(
+  async (userId: string) => sqlQuery(BASE_ID, `
     SELECT "__id", "Name", "Email", "Role", "Status"
     FROM ${TABLES.owners}
-    WHERE "__id" = '${sqlString(user.id)}'
+    WHERE "__id" = '${sqlString(userId)}'
       AND "Status" = 'Active'
       AND "Role" = 'Admin'
     LIMIT 1
-  `);
+  `),
+  ["owner-workbench-access", BASE_ID],
+  { revalidate: 30 }
+);
+
+async function requireOwner() {
+  const user = await requireAuth();
+  if (!recordIdSchema.safeParse(user.id).success) throw new Error("Owner authentication is required");
+  const { rows } = await getCachedOwnerRecord(user.id);
   if (!rows[0]) throw new Error("This workbench is restricted to active owners");
   return {
     id: user.id,
@@ -413,9 +421,7 @@ export async function requireWorkbenchOwner() {
   return requireOwner();
 }
 
-export async function getWorkbenchData(): Promise<WorkbenchData> {
-  await requireOwner();
-
+async function loadWorkbenchData(): Promise<WorkbenchData> {
   const settled = await Promise.allSettled([
     sqlQuery(BASE_ID, `
       SELECT "__id", "First_Name", "First_Name1773607325102", "Last_Name", "Company",
@@ -532,6 +538,23 @@ export async function getWorkbenchData(): Promise<WorkbenchData> {
     errors,
     loadedAt: new Date().toISOString(),
   };
+}
+
+const getCachedWorkbenchData = unstable_cache(
+  loadWorkbenchData,
+  [WORKBENCH_DATA_TAG, BASE_ID],
+  { revalidate: 10, tags: [WORKBENCH_DATA_TAG] }
+);
+
+export async function getWorkbenchData(): Promise<WorkbenchData> {
+  await requireOwner();
+  return getCachedWorkbenchData();
+}
+
+export async function refreshWorkbenchData(): Promise<WorkbenchData> {
+  await requireOwner();
+  updateTag(WORKBENCH_DATA_TAG);
+  return getCachedWorkbenchData();
 }
 
 async function validatePricingReferences(input: PricingJobInput) {

@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Calculator, ClipboardCheck, FilePenLine, Loader2, RefreshCw } from "lucide-react";
 import { toast } from "sonner";
-import { getWorkbenchData } from "@/app/actions";
+import { refreshWorkbenchData } from "@/app/actions";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
@@ -37,7 +37,7 @@ export function Workbench({ initialData }: { initialData: WorkbenchData }) {
   async function refresh() {
     setRefreshing(true);
     try {
-      setData(await getWorkbenchData());
+      setData(await refreshWorkbenchData());
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "The latest data could not be loaded");
     } finally {
