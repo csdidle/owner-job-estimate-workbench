@@ -592,7 +592,7 @@ export async function savePricingJob(rawInput: PricingJobInput) {
     const header = await createRecord(TABLE_IDS.pricing, headerFields);
     pricingId = header.id;
   } catch (error) {
-    return { ok: false, kind: "error" as const, message: `Pricing header was not saved: ${errorMessage(error)}` };
+    return { ok: false, kind: "error" as const, message: `The pricing request could not be saved: ${errorMessage(error)}` };
   }
 
   try {
@@ -612,7 +612,7 @@ export async function savePricingJob(rawInput: PricingJobInput) {
       ok: false,
       kind: "partial" as const,
       pricingId,
-      message: `Pricing header ${pricingId} is saved as Draft, but line items failed: ${errorMessage(error)}`,
+      message: `The pricing request was saved, but its services could not be saved: ${errorMessage(error)}`,
     };
   }
 
@@ -625,7 +625,7 @@ export async function savePricingJob(rawInput: PricingJobInput) {
       ok: false,
       kind: "partial" as const,
       pricingId,
-      message: `Pricing and line items are saved, but routing was not queued: ${errorMessage(error)}`,
+      message: `Pricing and services were saved, but the job creation step could not start: ${errorMessage(error)}`,
     };
   }
 
@@ -633,7 +633,9 @@ export async function savePricingJob(rawInput: PricingJobInput) {
     ok: true,
     pricingId,
     routingStatus: "Ready to Route" as const,
-    message: "Pricing saved and queued for shared routing",
+    message: input.requiresEstimate
+      ? "Pricing saved. Creating the estimate and job."
+      : "Pricing saved. Creating the job.",
   };
 }
 
@@ -742,10 +744,10 @@ export async function saveEstimate(rawInput: unknown): Promise<ActionResult> {
   ]);
 
   if (!current[0].rows[0] || current[0].rows[0].Status !== "Draft") {
-    return { ok: false, kind: "validation", message: "Only Draft estimates can be edited or queued" };
+    return { ok: false, kind: "validation", message: "Only draft estimates can be edited or marked for QuickBooks" };
   }
   if (!current[1].rows[0]) {
-    return { ok: false, kind: "validation", message: "This Draft estimate is not linked to a waiting job" };
+    return { ok: false, kind: "validation", message: "This draft estimate is no longer connected to a job awaiting approval" };
   }
 
   const existingIds = new Set(current[2].rows.map((row) => String(row.__id)));
@@ -795,7 +797,7 @@ export async function saveEstimate(rawInput: unknown): Promise<ActionResult> {
     return {
       ok: false,
       kind: "partial",
-      message: `Some line changes may have saved. Header totals were not changed: ${upsertErrors.join("; ")}`,
+      message: `Some service changes may have saved, but the estimate total was not updated: ${upsertErrors.join("; ")}`,
     };
   }
 
@@ -807,7 +809,7 @@ export async function saveEstimate(rawInput: unknown): Promise<ActionResult> {
       return {
         ok: false,
         kind: "partial",
-        message: `Line changes saved, but removed lines could not be deleted. Header totals were not changed: ${errorMessage(error)}`,
+        message: `Service changes were saved, but removed services could not be deleted and the estimate total was not updated: ${errorMessage(error)}`,
       };
     }
   }
@@ -835,14 +837,14 @@ export async function saveEstimate(rawInput: unknown): Promise<ActionResult> {
     return {
       ok: false,
       kind: "partial",
-      message: `Line items saved, but estimate totals${input.queueQboDraft ? " and QBO queue" : ""} did not: ${errorMessage(error)}`,
+      message: `Services were saved, but the estimate totals${input.queueQboDraft ? " and QuickBooks request" : ""} could not be saved: ${errorMessage(error)}`,
     };
   }
 
   return {
     ok: true,
     message: input.queueQboDraft
-      ? "Estimate saved and queued for a future QBO draft"
+      ? "Estimate saved and marked for QuickBooks"
       : "Draft estimate saved",
   };
 }
@@ -870,7 +872,7 @@ export async function changeDraftEstimateStatus(rawInput: unknown): Promise<Acti
   ]);
   const estimate = estimateResult.rows[0];
   if (!estimate || estimate.Status !== "Draft") {
-    return { ok: false, kind: "validation", message: "Only Draft estimates can be changed from this queue" };
+    return { ok: false, kind: "validation", message: "Only draft estimates in Estimates to finish can be changed here" };
   }
 
   try {
@@ -889,7 +891,7 @@ export async function changeDraftEstimateStatus(rawInput: unknown): Promise<Acti
       return {
         ok: false,
         kind: "partial",
-        message: `Estimate marked ${status}, but the linked job could not be moved On Hold: ${errorMessage(error)}`,
+        message: `Estimate marked ${status}, but the job could not be put on hold: ${errorMessage(error)}`,
       };
     }
   }
@@ -930,7 +932,7 @@ export async function deleteDraftEstimate(estimateId: string): Promise<ActionRes
   ]);
   const estimate = estimateResult.rows[0];
   if (!estimate || estimate.Status !== "Draft") {
-    return { ok: false, kind: "validation", message: "Only Draft estimates can be deleted from this queue" };
+    return { ok: false, kind: "validation", message: "Only draft estimates in Estimates to finish can be deleted here" };
   }
 
   const lineIds = linesResult.rows.map((line) => String(line.__id));
@@ -974,7 +976,7 @@ export async function deleteDraftEstimate(estimateId: string): Promise<ActionRes
     return {
       ok: false,
       kind: "partial",
-      message: `Estimate #${numberValue(estimate.Estimate)} was deleted, but linked records need review: ${cleanupErrors.join("; ")}`,
+      message: `Estimate #${numberValue(estimate.Estimate)} was deleted, but its related job information could not be fully updated: ${cleanupErrors.join("; ")}`,
     };
   }
 
@@ -994,14 +996,14 @@ export async function releaseJob(jobId: string): Promise<ActionResult> {
   `);
   const job = rows[0];
   if (!job || job.Status !== "Waiting for Estimate" || !job.__fk_fldZvoJFTUWqDWH3pzM) {
-    return { ok: false, kind: "validation", message: "Job is no longer waiting on a linked estimate" };
+    return { ok: false, kind: "validation", message: "This job is no longer waiting for estimate approval" };
   }
 
   try {
     await updateRecord(TABLE_IDS.jobs, jobId, { [FIELDS.job.release]: true });
-    return { ok: true, message: "Release command sent to the shared manager workflow" };
+    return { ok: true, message: "Approval submitted. The job is being prepared." };
   } catch (error) {
-    return { ok: false, kind: "error", message: `Release command failed: ${errorMessage(error)}` };
+    return { ok: false, kind: "error", message: `Approval could not be submitted: ${errorMessage(error)}` };
   }
 }
 

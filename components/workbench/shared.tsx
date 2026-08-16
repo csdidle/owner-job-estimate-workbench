@@ -135,13 +135,28 @@ const statusTone: Record<string, string> = {
   Accepted: "border-emerald-200 bg-emerald-50 text-emerald-700",
   "Queued for Draft": "border-blue-200 bg-blue-50 text-blue-700",
   "Pending in QBO": "border-amber-200 bg-amber-50 text-amber-800",
+  "Submitted to QBO": "border-blue-200 bg-blue-50 text-blue-700",
   "Not Synced": "border-slate-200 bg-slate-50 text-slate-700",
 };
 
+const statusLabel: Record<string, string> = {
+  "Ready to Route": "Waiting to be created",
+  Routing: "Creating records",
+  "Job Active": "Job ready",
+  "Waiting for Estimate": "Estimate needed",
+  Error: "Needs attention",
+  Accepted: "Approved",
+  "Queued for Draft": "Waiting for QuickBooks",
+  "Pending in QBO": "In QuickBooks",
+  "Submitted to QBO": "Sent to QuickBooks",
+  "Not Synced": "Not in QuickBooks",
+};
+
 export function StatusBadge({ status, pulse = false }: { status: string | null; pulse?: boolean }) {
-  const label = status || "Not set";
+  const value = status || "Not set";
+  const label = statusLabel[value] || value;
   return (
-    <Badge variant="outline" className={cn("h-5 rounded px-1.5 text-[10px] font-medium", statusTone[label], pulse && "animate-pulse")}>
+    <Badge variant="outline" className={cn("h-5 rounded px-1.5 text-[10px] font-medium", statusTone[value], pulse && "animate-pulse")}>
       {label}
     </Badge>
   );

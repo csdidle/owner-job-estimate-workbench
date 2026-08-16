@@ -275,7 +275,7 @@ export function EstimateBuilderTab({ data, onRefresh }: { data: WorkbenchData; o
   }
 
   if (eligible.length === 0) {
-    return <EmptyState icon={<FileText className="size-8" />} title="No Draft estimates for waiting jobs" detail="The shared router will place estimate-gated work here after it creates and links the Draft estimate." />;
+    return <EmptyState icon={<FileText className="size-8" />} title="No estimates ready to edit" detail="Jobs that need an estimate will appear here automatically." />;
   }
 
   if (!draft) return null;
@@ -284,8 +284,8 @@ export function EstimateBuilderTab({ data, onRefresh }: { data: WorkbenchData; o
     <div className="grid min-h-[680px] gap-4 xl:grid-cols-[260px_minmax(0,1fr)]">
       <aside className="border-y bg-background">
         <div className="border-b bg-muted/30 px-3 py-2">
-          <h2 className="text-sm font-semibold">Draft queue</h2>
-          <p className="text-[11px] text-muted-foreground">{eligible.length} waiting estimate{eligible.length === 1 ? "" : "s"}</p>
+          <h2 className="text-sm font-semibold">Estimates to finish</h2>
+          <p className="text-[11px] text-muted-foreground">{eligible.length} estimate{eligible.length === 1 ? "" : "s"}</p>
         </div>
         <div className="divide-y">
           {eligible.map((estimate) => {
@@ -319,7 +319,7 @@ export function EstimateBuilderTab({ data, onRefresh }: { data: WorkbenchData; o
               <StatusBadge status={draft.status} />
             </div>
             <div className="flex items-center gap-2">
-              <span className="text-[11px] text-muted-foreground">Linked job #{linkedJob?.number || "-"}</span>
+              <span className="text-[11px] text-muted-foreground">Job #{linkedJob?.number || "-"}</span>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="outline" size="sm" className="h-7 text-xs" disabled={actionPending !== null}>
@@ -327,7 +327,7 @@ export function EstimateBuilderTab({ data, onRefresh }: { data: WorkbenchData; o
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
-                  <DropdownMenuLabel className="text-xs">Move Draft to</DropdownMenuLabel>
+                  <DropdownMenuLabel className="text-xs">Change estimate to</DropdownMenuLabel>
                   {ESTIMATE_QUEUE_STATUSES.map((status) => (
                     <DropdownMenuItem key={status} className="text-xs" onSelect={() => setPendingStatus(status)}>
                       {status}
@@ -352,7 +352,7 @@ export function EstimateBuilderTab({ data, onRefresh }: { data: WorkbenchData; o
                   <AlertDialogHeader>
                     <AlertDialogTitle>Delete estimate #{draft.number || "-"}?</AlertDialogTitle>
                     <AlertDialogDescription>
-                      This permanently deletes the estimate and its {draft.lines.length} line{draft.lines.length === 1 ? "" : "s"}. Linked job #{linkedJob?.number || "-"} will be moved On Hold and detached. This does not delete an estimate from QuickBooks.
+                      This permanently deletes the estimate and its {draft.lines.length} service{draft.lines.length === 1 ? "" : "s"}. Job #{linkedJob?.number || "-"} will be put on hold and disconnected from this estimate. This does not delete an estimate from QuickBooks.
                     </AlertDialogDescription>
                   </AlertDialogHeader>
                   <AlertDialogFooter>
@@ -372,8 +372,8 @@ export function EstimateBuilderTab({ data, onRefresh }: { data: WorkbenchData; o
                 <AlertDialogTitle>Mark estimate #{draft.number || "-"} {pendingStatus}?</AlertDialogTitle>
                 <AlertDialogDescription>
                   {pendingStatus === "Declined" || pendingStatus === "Expired"
-                    ? `The estimate will leave the Draft queue and linked job #${linkedJob?.number || "-"} will be moved On Hold.`
-                    : "The estimate will leave the Draft queue. Its linked job will remain waiting for estimate approval."}
+                    ? `The estimate will leave Estimates to finish, and Job #${linkedJob?.number || "-"} will be put on hold.`
+                    : "The estimate will leave Estimates to finish. The job will continue waiting for approval."}
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>
@@ -397,7 +397,7 @@ export function EstimateBuilderTab({ data, onRefresh }: { data: WorkbenchData; o
         <div className="grid gap-4 2xl:grid-cols-[minmax(0,1fr)_330px]">
           <section className="min-w-0 border-y bg-background">
             <div className="flex flex-wrap items-center justify-between gap-2 border-b px-3 py-2">
-              <div><h2 className="text-sm font-semibold">Line editor</h2><p className="text-[11px] text-muted-foreground">Stable order: 10, 20, 30</p></div>
+              <div><h2 className="text-sm font-semibold">Services and pricing</h2><p className="text-[11px] text-muted-foreground">{draft.lines.length} service{draft.lines.length === 1 ? "" : "s"}</p></div>
               <div className="flex items-center gap-2">
                 <Button size="sm" variant="outline" className="h-7 text-xs" disabled={!data.services[0]} onClick={() => data.services[0] && patchDraft({ lines: [...draft.lines, serviceLine(data.services[0], draft.lines.length)] })}><Plus className="size-3.5" /> Price Book</Button>
                 <Button size="sm" variant="outline" className="h-7 text-xs" onClick={() => patchDraft({ lines: [...draft.lines, customLine(draft.lines.length)] })}><PencilLine className="size-3.5" /> Custom service</Button>
@@ -454,30 +454,28 @@ export function EstimateBuilderTab({ data, onRefresh }: { data: WorkbenchData; o
           </section>
 
           <section className="border-y bg-background">
-            <div className="flex items-center justify-between border-b bg-muted/30 px-3 py-2"><h2 className="text-sm font-semibold">QBO operations</h2><StatusBadge status={draft.qboSyncStatus || "Not Synced"} /></div>
+            <div className="flex items-center justify-between border-b bg-muted/30 px-3 py-2"><h2 className="text-sm font-semibold">QuickBooks</h2><StatusBadge status={draft.qboSyncStatus || "Not Synced"} /></div>
             <div className="space-y-2 p-3 text-xs">
-              <div className="flex justify-between gap-3"><span className="text-muted-foreground">Create QBO Draft</span><span>{draft.createQboDraft ? "Queued" : "No"}</span></div>
-              <div className="flex justify-between gap-3"><span className="text-muted-foreground">Estimate ID</span><span className="truncate font-mono text-[10px]">{draft.qboEstimateId || "Not assigned"}</span></div>
-              <div className="flex justify-between gap-3"><span className="text-muted-foreground">Doc number</span><span>{draft.qboDocNumber || "Not assigned"}</span></div>
-              <div className="flex justify-between gap-3"><span className="text-muted-foreground">Sync token</span><span className="truncate font-mono text-[10px]">{draft.qboSyncToken || "Not assigned"}</span></div>
-              <div className="flex justify-between gap-3"><span className="text-muted-foreground">Last synced</span><span>{draft.qboLastSynced ? new Date(draft.qboLastSynced).toLocaleString() : "Never"}</span></div>
-              {draft.qboSyncError ? <div className="rounded border border-red-200 bg-red-50 p-2 text-red-800">{draft.qboSyncError}</div> : null}
-              <p className="border-t pt-2 text-[10px] text-muted-foreground">Queue state only. QBO credentials are not configured.</p>
+              <div className="flex justify-between gap-3"><span className="text-muted-foreground">Send to QuickBooks</span><span>{draft.createQboDraft ? "Requested" : "Not requested"}</span></div>
+              <div className="flex justify-between gap-3"><span className="text-muted-foreground">QuickBooks estimate</span><span>{draft.qboDocNumber || "Not created"}</span></div>
+              <div className="flex justify-between gap-3"><span className="text-muted-foreground">Last updated</span><span>{draft.qboLastSynced ? new Date(draft.qboLastSynced).toLocaleString() : "Never"}</span></div>
+              {draft.qboSyncError ? <div className="rounded border border-red-200 bg-red-50 p-2 text-red-800">QuickBooks needs attention. Try again or contact support.</div> : null}
+              <p className="border-t pt-2 text-[10px] text-muted-foreground">This request will wait until the QuickBooks connection is turned on.</p>
             </div>
           </section>
         </div>
 
         {validation.length > 0 ? <Alert variant="destructive"><AlertTriangle className="size-4" /><AlertTitle>Check estimate</AlertTitle><AlertDescription>{validation.join(". ")}</AlertDescription></Alert> : null}
-        {result && !result.ok ? <Alert variant="destructive"><AlertTriangle className="size-4" /><AlertTitle>{result.kind === "partial" ? "Partial save" : result.kind === "validation" ? "Validation" : "Save failed"}</AlertTitle><AlertDescription>{result.message}</AlertDescription></Alert> : null}
+        {result && !result.ok ? <Alert variant="destructive"><AlertTriangle className="size-4" /><AlertTitle>{result.kind === "partial" ? "Some changes were saved" : result.kind === "validation" ? "Check required information" : "Could not save"}</AlertTitle><AlertDescription>{result.message}</AlertDescription></Alert> : null}
 
         <div className="sticky bottom-0 flex flex-wrap items-center justify-end gap-2 border-y bg-background/95 px-3 py-2 backdrop-blur">
           <span className="mr-auto text-xs text-muted-foreground">Draft only / {draft.lines.length} lines / {money(totals.total)}</span>
           <Button variant="outline" className="h-8" disabled={saving || actionPending !== null} onClick={() => void save(false)}>{saving ? <Loader2 className="size-4 animate-spin" /> : <Save className="size-4" />} Save draft</Button>
           <AlertDialog>
-            <AlertDialogTrigger asChild><Button className="h-8" disabled={saving || actionPending !== null || draft.qboSyncStatus === "Queued for Draft"}><SendToBack className="size-4" /> Save and queue QBO</Button></AlertDialogTrigger>
+            <AlertDialogTrigger asChild><Button className="h-8" disabled={saving || actionPending !== null || draft.qboSyncStatus === "Queued for Draft"}><SendToBack className="size-4" /> Save for QuickBooks</Button></AlertDialogTrigger>
             <AlertDialogContent>
-              <AlertDialogHeader><AlertDialogTitle>Queue QBO draft?</AlertDialogTitle><AlertDialogDescription>This saves the Draft estimate and sets Create QBO Draft to true with QBO Sync Status set to Queued for Draft. It does not create anything in QuickBooks.</AlertDialogDescription></AlertDialogHeader>
-              <AlertDialogFooter><AlertDialogCancel>Cancel</AlertDialogCancel><AlertDialogAction onClick={() => void save(true)}>Confirm queue</AlertDialogAction></AlertDialogFooter>
+              <AlertDialogHeader><AlertDialogTitle>Save this estimate for QuickBooks?</AlertDialogTitle><AlertDialogDescription>This saves the estimate and marks it to be created in QuickBooks when the connection is available. Nothing is sent now.</AlertDialogDescription></AlertDialogHeader>
+              <AlertDialogFooter><AlertDialogCancel>Cancel</AlertDialogCancel><AlertDialogAction onClick={() => void save(true)}>Save for QuickBooks</AlertDialogAction></AlertDialogFooter>
             </AlertDialogContent>
           </AlertDialog>
         </div>

@@ -17,7 +17,7 @@ export default async function HomePage() {
           </div>
           <div className="min-w-0">
             <h1 className="truncate text-sm font-semibold">Owner Job &amp; Estimate Workbench</h1>
-            <p className="text-[10px] text-muted-foreground">Owner operations</p>
+            <p className="text-[10px] text-muted-foreground">Create, approve, and schedule work</p>
           </div>
           <div className="ml-auto"><UserMenu /></div>
         </div>
