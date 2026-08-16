@@ -1,0 +1,186 @@
+{
+  "id": "tblqenaZqUnfKbVHkZk",
+  "name": "Sales Tracker",
+  "description": null,
+  "dbTableName": "\"bse7bbdbrcd6YfA8YpU\".\"tblqenaZqUnfKbVHkZk\"",
+  "fields": [
+    {
+      "id": "fldk8uEeZmJf0ZRDXig",
+      "name": "Month",
+      "dbFieldName": "Month",
+      "type": "singleLineText",
+      "description": null,
+      "options": {},
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fld5OmH1EP03cghOgQq",
+      "name": "Estimates Won",
+      "dbFieldName": "Estimates_Won",
+      "type": "number",
+      "description": null,
+      "options": {
+        "formatting": {
+          "type": "decimal",
+          "precision": 2
+        }
+      },
+      "cellValueType": "number",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldHc7E2CEkqoQHVrj4",
+      "name": "Variance",
+      "dbFieldName": "Variance",
+      "type": "number",
+      "description": null,
+      "options": {
+        "formatting": {
+          "type": "decimal",
+          "precision": 2
+        }
+      },
+      "cellValueType": "number",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldikjQRoo34rsUdqNa",
+      "name": "Goal",
+      "dbFieldName": "Goal",
+      "type": "number",
+      "description": null,
+      "options": {
+        "formatting": {
+          "type": "decimal",
+          "precision": 2
+        }
+      },
+      "cellValueType": "number",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldrvhl1pdf4UVsl5lC",
+      "name": "Created",
+      "dbFieldName": "Created",
+      "type": "createdTime",
+      "description": null,
+      "options": {
+        "expression": "CREATED_TIME()",
+        "formatting": {
+          "date": "YYYY-MM-DD",
+          "time": "None",
+          "timeZone": "America/Chicago"
+        }
+      },
+      "cellValueType": "dateTime",
+      "isLookup": null,
+      "isComputed": true,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldCjh1lpkqNs6Ivftr",
+      "name": "Notes",
+      "dbFieldName": "Notes",
+      "type": "longText",
+      "description": null,
+      "options": {},
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldw4k9uCueGS7sc1oz",
+      "name": "Revenue",
+      "dbFieldName": "Revenue",
+      "type": "number",
+      "description": null,
+      "options": {
+        "formatting": {
+          "type": "decimal",
+          "precision": 2
+        }
+      },
+      "cellValueType": "number",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fld4XdSd1WiFInMQfgh",
+      "name": "Employee",
+      "dbFieldName": "Employee",
+      "type": "link",
+      "description": null,
+      "options": {
+        "relationship": "manyOne",
+        "foreignTableId": "tbl1gyEIJuVKcV6pKR1",
+        "lookupFieldId": "fldGDdtQpC6cTjtyR7U",
+        "isOneWay": false,
+        "fkHostTableName": "bse7bbdbrcd6YfA8YpU.tblqenaZqUnfKbVHkZk",
+        "selfKeyName": "__id",
+        "foreignKeyName": "__fk_fld4XdSd1WiFInMQfgh",
+        "symmetricFieldId": "fldqHHexSg93RabxY2D"
+      },
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldYLPqMkzSR6IJOTuO",
+      "name": "Sales Rep",
+      "dbFieldName": "Sales_Rep",
+      "type": "singleLineText",
+      "description": null,
+      "options": {},
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldVPn6NH5rsYoIH45E",
+      "name": "Win Rate %",
+      "dbFieldName": "Win_Rate",
+      "type": "number",
+      "description": null,
+      "options": {
+        "formatting": {
+          "type": "decimal",
+          "precision": 2
+        }
+      },
+      "cellValueType": "number",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldUKPYiQwgzXwXFvL4",
+      "name": "Estimates Sent",
+      "dbFieldName": "Estimates_Sent",
+      "type": "number",
+      "description": null,
+      "options": {
+        "formatting": {
+          "type": "decimal",
+          "precision": 2
+        }
+      },
+      "cellValueType": "number",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    }
+  ]
+}

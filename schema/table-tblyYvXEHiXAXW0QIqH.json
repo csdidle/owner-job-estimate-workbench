@@ -1,0 +1,401 @@
+{
+  "id": "tblyYvXEHiXAXW0QIqH",
+  "name": "Chemical Usage Log",
+  "description": null,
+  "dbTableName": "\"bse7bbdbrcd6YfA8YpU\".\"tblyYvXEHiXAXW0QIqH\"",
+  "fields": [
+    {
+      "id": "fld6Ob0FSctWNtrRqW3",
+      "name": "Unit",
+      "dbFieldName": "Unit",
+      "type": "singleSelect",
+      "description": null,
+      "options": [
+        "Ounces",
+        "Pounds",
+        "Gallons",
+        "Liters",
+        "Bags",
+        "Applications"
+      ],
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldphpzdGVDDBaweQXy",
+      "name": "Application Method",
+      "dbFieldName": "Application_Method",
+      "type": "singleSelect",
+      "description": null,
+      "options": [
+        "Spray",
+        "Granular",
+        "Injection",
+        "Drench",
+        "Other"
+      ],
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldKiYnJbZfUuBCCjDN",
+      "name": "Product Name",
+      "dbFieldName": "Product_Name",
+      "type": "singleLineText",
+      "description": null,
+      "options": {},
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fld4ChcANc4kH19Hgov",
+      "name": "Target Areas",
+      "dbFieldName": "Target_Areas",
+      "type": "singleLineText",
+      "description": null,
+      "options": {},
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldrGOF7EKd857qCqpq",
+      "name": "Active Ingredient",
+      "dbFieldName": "Active_Ingredient",
+      "type": "singleLineText",
+      "description": null,
+      "options": {},
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fld5H8UDt3jBHjF7stl",
+      "name": "Applicator",
+      "dbFieldName": "Applicator",
+      "type": "singleLineText",
+      "description": null,
+      "options": {},
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldQBHY1ZzyAduh5mui",
+      "name": "Application Rate",
+      "dbFieldName": "Application_Rate",
+      "type": "singleLineText",
+      "description": null,
+      "options": {},
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldNztNoMk4ePzKafRA",
+      "name": "Application Date",
+      "dbFieldName": "Application_Date",
+      "type": "date",
+      "description": null,
+      "options": {
+        "formatting": {
+          "date": "YYYY-MM-DD",
+          "time": "None",
+          "timeZone": "America/Chicago"
+        }
+      },
+      "cellValueType": "dateTime",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fld8ZSW5cHUtpyNp1Of",
+      "name": "Address",
+      "dbFieldName": "Address",
+      "type": "singleLineText",
+      "description": null,
+      "options": {},
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldgBTIP6noQuhVeYdi",
+      "name": "Area Treated",
+      "dbFieldName": "Area_Treated",
+      "type": "singleLineText",
+      "description": null,
+      "options": {},
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldCvw6lujRvSHlYIfE",
+      "name": "EPA Reg Number",
+      "dbFieldName": "EPA_Reg_Number",
+      "type": "singleLineText",
+      "description": null,
+      "options": {},
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldW6aDKKZvbP719bSA",
+      "name": "Customer/Property",
+      "dbFieldName": "Customer_Property",
+      "type": "link",
+      "description": null,
+      "options": {
+        "relationship": "manyOne",
+        "foreignTableId": "tbldDs2u3Nj0KR8mZ0c",
+        "lookupFieldId": "fldn4iywC3eN0Wj9znm",
+        "isOneWay": false,
+        "fkHostTableName": "bse7bbdbrcd6YfA8YpU.tblyYvXEHiXAXW0QIqH",
+        "selfKeyName": "__id",
+        "foreignKeyName": "__fk_fldW6aDKKZvbP719bSA",
+        "symmetricFieldId": "fldAtW6Grkb6J1UecoK"
+      },
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldKKWP9lQeOQw9Wy5X",
+      "name": "Notes",
+      "dbFieldName": "Notes",
+      "type": "longText",
+      "description": null,
+      "options": {},
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldb8mk5VpAVtkvWDON",
+      "name": "Created",
+      "dbFieldName": "Created",
+      "type": "createdTime",
+      "description": null,
+      "options": {
+        "expression": "CREATED_TIME()",
+        "formatting": {
+          "date": "YYYY-MM-DD",
+          "time": "None",
+          "timeZone": "America/Chicago"
+        }
+      },
+      "cellValueType": "dateTime",
+      "isLookup": null,
+      "isComputed": true,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldZfxOY4fbBkUgcQYh",
+      "name": "Quantity Used",
+      "dbFieldName": "Quantity_Used",
+      "type": "number",
+      "description": null,
+      "options": {
+        "formatting": {
+          "type": "decimal",
+          "precision": 2
+        }
+      },
+      "cellValueType": "number",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldjDonJZB2Z6MDTpvz",
+      "name": "Job",
+      "dbFieldName": "Job",
+      "type": "link",
+      "description": null,
+      "options": {
+        "relationship": "manyOne",
+        "foreignTableId": "tblYoERyR6AmuNXt9fK",
+        "lookupFieldId": "fld9Np9fGRGpothuMNU",
+        "isOneWay": false,
+        "fkHostTableName": "bse7bbdbrcd6YfA8YpU.tblyYvXEHiXAXW0QIqH",
+        "selfKeyName": "__id",
+        "foreignKeyName": "__fk_fldjDonJZB2Z6MDTpvz",
+        "symmetricFieldId": "fldvfPdfcpFx3uOzbvR"
+      },
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fld8I7r4oWPwGJJmHzJ",
+      "name": "Category",
+      "dbFieldName": "Category",
+      "type": "singleSelect",
+      "description": null,
+      "options": [
+        "Fertilizer",
+        "Herbicide",
+        "Pesticide",
+        "Fungicide",
+        "Insecticide",
+        "Growth Regulator",
+        "Soil Amendment",
+        "Other"
+      ],
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldWOUjSyW9hIIQcIY4",
+      "name": "Application Targets",
+      "dbFieldName": "Application_Targets",
+      "type": "longText",
+      "description": null,
+      "options": {},
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fld2YhZzZMo0PTSrYwF",
+      "name": "Entry #",
+      "dbFieldName": "Entry",
+      "type": "autoNumber",
+      "description": null,
+      "options": {
+        "expression": "AUTO_NUMBER()"
+      },
+      "cellValueType": "number",
+      "isLookup": null,
+      "isComputed": true,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldTzJR67MHcrYp7Q6N",
+      "name": "End Time",
+      "dbFieldName": "End_Time",
+      "type": "singleLineText",
+      "description": null,
+      "options": {},
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fld6YLpZs9YD9ihipjO",
+      "name": "Inventory Item",
+      "dbFieldName": "Inventory_Item",
+      "type": "link",
+      "description": null,
+      "options": {
+        "relationship": "manyOne",
+        "foreignTableId": "tbl6qde2qtbRYfrAHi7",
+        "lookupFieldId": "fldyorGX0J3EB8NxFs9",
+        "isOneWay": false,
+        "fkHostTableName": "bse7bbdbrcd6YfA8YpU.tblyYvXEHiXAXW0QIqH",
+        "selfKeyName": "__id",
+        "foreignKeyName": "__fk_fld6YLpZs9YD9ihipjO",
+        "symmetricFieldId": "fldBrEP385Y8LaWdqdL"
+      },
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldNu0KH8EvSVlPKa0a",
+      "name": "Crew Notes",
+      "dbFieldName": "Crew_Notes",
+      "type": "longText",
+      "description": null,
+      "options": {},
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldOnfvYQWNSagIrtLA",
+      "name": "Weather Conditions",
+      "dbFieldName": "Weather_Conditions",
+      "type": "singleLineText",
+      "description": null,
+      "options": {},
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldCtRO1RfRta5kiCZQ",
+      "name": "Start Time",
+      "dbFieldName": "Start_Time",
+      "type": "singleLineText",
+      "description": null,
+      "options": {},
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldrubeGQAXhivtnJtP",
+      "name": "Source Record ID",
+      "dbFieldName": "Source_Record_ID",
+      "type": "singleLineText",
+      "description": "Original ID from YCT chemical application export",
+      "options": {},
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldlwH1So10nYCk0ZkS",
+      "name": "Manufacturer",
+      "dbFieldName": "Manufacturer",
+      "type": "singleLineText",
+      "description": null,
+      "options": {},
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldYtKxoLlbF4URL7kC",
+      "name": "Certification Number",
+      "dbFieldName": "Certification_Number",
+      "type": "singleLineText",
+      "description": null,
+      "options": {},
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    }
+  ]
+}

@@ -1,0 +1,157 @@
+{
+  "id": "tbl22Uv1QXcJMQr0OxE",
+  "name": "Payment Allocations",
+  "description": null,
+  "dbTableName": "\"bse7bbdbrcd6YfA8YpU\".\"tbl22Uv1QXcJMQr0OxE\"",
+  "fields": [
+    {
+      "id": "fldKM0P31epKCpIpi3H",
+      "name": "Payment",
+      "dbFieldName": "Payment",
+      "type": "link",
+      "description": "The payment this allocation belongs to",
+      "options": {
+        "relationship": "manyOne",
+        "foreignTableId": "tbliZD2ZPSZkEr7jdo1",
+        "lookupFieldId": "fldQEqlOUZ6P3k5htDK",
+        "isOneWay": false,
+        "fkHostTableName": "bse7bbdbrcd6YfA8YpU.tbl22Uv1QXcJMQr0OxE",
+        "selfKeyName": "__id",
+        "foreignKeyName": "__fk_fldKM0P31epKCpIpi3H",
+        "symmetricFieldId": "fldRIsGTCwGIPCaLM6U"
+      },
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldJK1HHrMDCS1Wjyma",
+      "name": "Allocated Amount",
+      "dbFieldName": "Allocated_Amount",
+      "type": "number",
+      "description": null,
+      "options": {
+        "formatting": {
+          "type": "decimal",
+          "precision": 2
+        }
+      },
+      "cellValueType": "number",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldcY7LIgL4DfcUpHzk",
+      "name": "Payment Date",
+      "dbFieldName": "Payment_Date",
+      "type": "date",
+      "description": "Lookup of payment date from the linked payment",
+      "options": {
+        "formatting": {
+          "date": "YYYY-MM-DD",
+          "time": "None",
+          "timeZone": "America/Chicago"
+        }
+      },
+      "cellValueType": "dateTime",
+      "isLookup": true,
+      "isComputed": true,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldBSy1P2jVmIfRtmQr",
+      "name": "Notes",
+      "dbFieldName": "Notes",
+      "type": "singleLineText",
+      "description": null,
+      "options": {},
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldA0fbzROIex7HuHA6",
+      "name": "Payment Method",
+      "dbFieldName": "Payment_Method",
+      "type": "singleSelect",
+      "description": "Lookup of payment method from the linked payment",
+      "options": [
+        "Check",
+        "Cash",
+        "Credit Card",
+        "ACH",
+        "Zelle",
+        "Venmo",
+        "PayPal",
+        "Money Order",
+        "Other"
+      ],
+      "cellValueType": "string",
+      "isLookup": true,
+      "isComputed": true,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldbPsFMwiq3zrEJb3j",
+      "name": "Allocation ID",
+      "dbFieldName": "Allocation_ID",
+      "type": "autoNumber",
+      "description": null,
+      "options": {
+        "expression": "AUTO_NUMBER()"
+      },
+      "cellValueType": "number",
+      "isLookup": null,
+      "isComputed": true,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldjbAeSzGAZNbcPcvL",
+      "name": "Check/Ref #",
+      "dbFieldName": "Check_Ref",
+      "type": "singleLineText",
+      "description": "Lookup of check/reference number from the linked payment",
+      "options": {},
+      "cellValueType": "string",
+      "isLookup": true,
+      "isComputed": true,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldxCBJHsUlmPmm8wBK",
+      "name": "QBO Allocation Key",
+      "dbFieldName": "QBO_Allocation_Key",
+      "type": "singleLineText",
+      "description": "Idempotency key composed from QuickBooks payment and invoice IDs.",
+      "options": {},
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldofItvmYa95DZPomJ",
+      "name": "Invoice",
+      "dbFieldName": "Invoice",
+      "type": "link",
+      "description": "The invoice this allocation applies to",
+      "options": {
+        "relationship": "manyOne",
+        "foreignTableId": "tblV7eqBBoDamQaaw8q",
+        "lookupFieldId": "fldzVIHbx4W1mb1z2ju",
+        "isOneWay": false,
+        "fkHostTableName": "bse7bbdbrcd6YfA8YpU.tbl22Uv1QXcJMQr0OxE",
+        "selfKeyName": "__id",
+        "foreignKeyName": "__fk_fldofItvmYa95DZPomJ",
+        "symmetricFieldId": "fld12y5zEIYUTmPI3A8"
+      },
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    }
+  ]
+}

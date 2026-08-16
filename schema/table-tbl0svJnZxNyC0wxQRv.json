@@ -1,0 +1,400 @@
+{
+  "id": "tbl0svJnZxNyC0wxQRv",
+  "name": "Equipment",
+  "description": null,
+  "dbTableName": "\"bse7bbdbrcd6YfA8YpU\".\"tbl0svJnZxNyC0wxQRv\"",
+  "fields": [
+    {
+      "id": "fldisiPQ2WPeNSwwuTA",
+      "name": "Photos",
+      "dbFieldName": "Photos",
+      "type": "attachment",
+      "description": null,
+      "options": {},
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": true
+    },
+    {
+      "id": "fldISYd4xBTYXRjq9nz",
+      "name": "Current Value",
+      "dbFieldName": "Current_Value",
+      "type": "number",
+      "description": null,
+      "options": {
+        "formatting": {
+          "type": "decimal",
+          "precision": 2
+        }
+      },
+      "cellValueType": "number",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldRsozoN301kpHRWHu",
+      "name": "Created",
+      "dbFieldName": "Created",
+      "type": "createdTime",
+      "description": null,
+      "options": {
+        "expression": "CREATED_TIME()",
+        "formatting": {
+          "date": "YYYY-MM-DD",
+          "time": "None",
+          "timeZone": "America/Chicago"
+        }
+      },
+      "cellValueType": "dateTime",
+      "isLookup": null,
+      "isComputed": true,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldMNKaWdnvjKhDloiw",
+      "name": "Notes",
+      "dbFieldName": "Notes",
+      "type": "longText",
+      "description": null,
+      "options": {},
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fld7bFiaPHZpx5eRQas",
+      "name": "Make",
+      "dbFieldName": "Make",
+      "type": "singleLineText",
+      "description": null,
+      "options": {},
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldhXrDqNKNTdggeqwo",
+      "name": "Status",
+      "dbFieldName": "Status",
+      "type": "singleSelect",
+      "description": null,
+      "options": [
+        "Active",
+        "In Repair",
+        "Out of Service",
+        "Retired",
+        "Sold"
+      ],
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "flduRKNObQ4sCaHvd0U",
+      "name": "Total Depreciation to Date",
+      "dbFieldName": "Total_Depreciation_to_Date",
+      "type": "formula",
+      "description": "Cumulative depreciation taken since purchase using MACRS 7-year rates. Yr1: 14.29%, Yr1-2: 38.78%, Yr1-3: 56.27%, Yr1-4: 68.76%, Yr1-5: 77.69%, Yr1-6: 86.61%, Yr1-7: 95.54%, Yr1-8: 100%\"",
+      "options": {
+        "expression": "IF(AND({fldIRtG6cZ4VmxieAYx}, {fldLU053S12uoQCCNyh}), ROUND({fldIRtG6cZ4VmxieAYx} * SWITCH(MIN(CEILING(DATETIME_DIFF(TODAY(), {fldLU053S12uoQCCNyh}, 'day') / 365, 1), 9), 1, 0.1429, 2, 0.3878, 3, 0.5627, 4, 0.6876, 5, 0.7769, 6, 0.8661, 7, 0.9554, 8, 1.0, 9, 1.0, 0), 2), 0)",
+        "timeZone": "America/Chicago",
+        "formatting": {
+          "type": "decimal",
+          "precision": 2
+        }
+      },
+      "cellValueType": "number",
+      "isLookup": null,
+      "isComputed": true,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldnSAnWhL4CODgyksC",
+      "name": "Assigned Employee",
+      "dbFieldName": "Assigned_Employee",
+      "type": "link",
+      "description": null,
+      "options": {
+        "relationship": "manyOne",
+        "foreignTableId": "tbl1gyEIJuVKcV6pKR1",
+        "lookupFieldId": "fldGDdtQpC6cTjtyR7U",
+        "isOneWay": false,
+        "fkHostTableName": "bse7bbdbrcd6YfA8YpU.tbl0svJnZxNyC0wxQRv",
+        "selfKeyName": "__id",
+        "foreignKeyName": "__fk_fldnSAnWhL4CODgyksC",
+        "symmetricFieldId": "fldNBsW3JrPfLVjJ2JP"
+      },
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldAqlvI3MPL3COvML7",
+      "name": "Model",
+      "dbFieldName": "Model",
+      "type": "singleLineText",
+      "description": null,
+      "options": {},
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldE6smAFuPZhAuVHPx",
+      "name": "Location",
+      "dbFieldName": "Location",
+      "type": "singleLineText",
+      "description": null,
+      "options": {},
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldrUMVUxzjeSw3oMQI",
+      "name": "Hours Used",
+      "dbFieldName": "Hours_Used",
+      "type": "number",
+      "description": null,
+      "options": {
+        "formatting": {
+          "type": "decimal",
+          "precision": 2
+        }
+      },
+      "cellValueType": "number",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fld3lgBB9DQyy5hoxRd",
+      "name": "Last Maintenance",
+      "dbFieldName": "Last_Maintenance",
+      "type": "date",
+      "description": null,
+      "options": {
+        "formatting": {
+          "date": "YYYY-MM-DD",
+          "time": "None",
+          "timeZone": "America/Chicago"
+        }
+      },
+      "cellValueType": "dateTime",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldryxg1NATpvN84Kuk",
+      "name": "Book Value",
+      "dbFieldName": "Book_Value",
+      "type": "formula",
+      "description": "Current book value: Purchase Price minus Total Depreciation to Date",
+      "options": {
+        "expression": "IF(AND({fldIRtG6cZ4VmxieAYx}, {fldLU053S12uoQCCNyh}), MAX({fldIRtG6cZ4VmxieAYx} - ROUND({fldIRtG6cZ4VmxieAYx} * SWITCH(MIN(CEILING(DATETIME_DIFF(TODAY(), {fldLU053S12uoQCCNyh}, 'day') / 365, 1), 9), 1, 0.1429, 2, 0.3878, 3, 0.5627, 4, 0.6876, 5, 0.7769, 6, 0.8661, 7, 0.9554, 8, 1.0, 9, 1.0, 0), 2), 0), 0)",
+        "timeZone": "America/Chicago",
+        "formatting": {
+          "type": "decimal",
+          "precision": 2
+        }
+      },
+      "cellValueType": "number",
+      "isLookup": null,
+      "isComputed": true,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldIRtG6cZ4VmxieAYx",
+      "name": "Purchase Price",
+      "dbFieldName": "Purchase_Price",
+      "type": "number",
+      "description": null,
+      "options": {
+        "formatting": {
+          "type": "decimal",
+          "precision": 2
+        }
+      },
+      "cellValueType": "number",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldxYSfy1xCmvewtAS9",
+      "name": "Fuel Type",
+      "dbFieldName": "Fuel_Type",
+      "type": "singleSelect",
+      "description": null,
+      "options": [
+        "Gas",
+        "Diesel",
+        "Electric",
+        "Battery",
+        "N/A"
+      ],
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "flduJNpReqi51b6sn1N",
+      "name": "Serial Number",
+      "dbFieldName": "Serial_Number",
+      "type": "singleLineText",
+      "description": null,
+      "options": {},
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldX08a2moHvMmogO1e",
+      "name": "Next Maintenance Due",
+      "dbFieldName": "Next_Maintenance_Due",
+      "type": "date",
+      "description": null,
+      "options": {
+        "formatting": {
+          "date": "YYYY-MM-DD",
+          "time": "None",
+          "timeZone": "America/Chicago"
+        }
+      },
+      "cellValueType": "dateTime",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fld2Y36aeThxbdEUKQN",
+      "name": "Equipment Name",
+      "dbFieldName": "Equipment_Name",
+      "type": "singleLineText",
+      "description": null,
+      "options": {},
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldrXcRQDWsvRfWWn6Q",
+      "name": "Assigned To",
+      "dbFieldName": "Assigned_To",
+      "type": "singleLineText",
+      "description": null,
+      "options": {},
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldHy7VqBczbOGqvgR9",
+      "name": "Maintenance Interval",
+      "dbFieldName": "Maintenance_Interval",
+      "type": "singleSelect",
+      "description": null,
+      "options": [
+        "Weekly",
+        "Monthly",
+        "Quarterly",
+        "Annually",
+        "As Needed"
+      ],
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldrL0CDz5vH9XgRcmg",
+      "name": "MACRS Year",
+      "dbFieldName": "MACRS_Year",
+      "type": "formula",
+      "description": "Which year of the IRS 7-year MACRS schedule this equipment is currently in (1-8, or 'Fully Depreciated')",
+      "options": {
+        "expression": "IF(AND({fldIRtG6cZ4VmxieAYx}, {fldLU053S12uoQCCNyh}), IF(CEILING(DATETIME_DIFF(TODAY(), {fldLU053S12uoQCCNyh}, 'day') / 365, 1) > 8, 'Fully Depreciated', 'Year ' & CEILING(DATETIME_DIFF(TODAY(), {fldLU053S12uoQCCNyh}, 'day') / 365, 1) & ' of 8'), '')",
+        "timeZone": "America/Chicago"
+      },
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": true,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldWOkbPE1OArgS9j5C",
+      "name": "Daily Depreciation",
+      "dbFieldName": "Depreciation",
+      "type": "formula",
+      "description": "IRS MACRS 7-year depreciation calculated daily. Rates: Yr1=14.29%, Yr2=24.49%, Yr3=17.49%, Yr4=12.49%, Yr5=8.93%, Yr6=8.92%, Yr7=8.93%, Yr8=4.46% (half-year convention). Shows $0 after fully depreciated.",
+      "options": {
+        "expression": "IF(AND({fldIRtG6cZ4VmxieAYx}, {fldLU053S12uoQCCNyh}), IF(CEILING(DATETIME_DIFF(TODAY(), {fldLU053S12uoQCCNyh}, 'day') / 365, 1) > 8, 0, ROUND({fldIRtG6cZ4VmxieAYx} * SWITCH(CEILING(DATETIME_DIFF(TODAY(), {fldLU053S12uoQCCNyh}, 'day') / 365, 1), 1, 0.1429, 2, 0.2449, 3, 0.1749, 4, 0.1249, 5, 0.0893, 6, 0.0892, 7, 0.0893, 8, 0.0446, 0) / 365, 2)), 0)",
+        "timeZone": "utc",
+        "formatting": {
+          "type": "decimal",
+          "precision": 2
+        }
+      },
+      "cellValueType": "number",
+      "isLookup": null,
+      "isComputed": true,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldLU053S12uoQCCNyh",
+      "name": "Purchase Date",
+      "dbFieldName": "Purchase_Date",
+      "type": "date",
+      "description": null,
+      "options": {
+        "formatting": {
+          "date": "YYYY-MM-DD",
+          "time": "None",
+          "timeZone": "America/Chicago"
+        }
+      },
+      "cellValueType": "dateTime",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldwTQmQTMqeaKQ5vQg",
+      "name": "Type",
+      "dbFieldName": "Type",
+      "type": "singleSelect",
+      "description": null,
+      "options": [
+        "Mower",
+        "Trimmer",
+        "Blower",
+        "Edger",
+        "Chainsaw",
+        "Truck",
+        "Trailer",
+        "Skid Steer",
+        "Excavator",
+        "Sprayer",
+        "Aerator",
+        "Other"
+      ],
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    }
+  ]
+}

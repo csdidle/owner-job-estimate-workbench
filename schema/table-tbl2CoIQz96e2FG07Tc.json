@@ -1,0 +1,52 @@
+{
+  "id": "tbl2CoIQz96e2FG07Tc",
+  "name": "Estimate Responses",
+  "description": null,
+  "dbTableName": "\"bse7bbdbrcd6YfA8YpU\".\"tbl2CoIQz96e2FG07Tc\"",
+  "fields": [
+    {
+      "id": "fldZrOYKs4Nnmm8RaaN",
+      "name": "Decision",
+      "dbFieldName": "Decision",
+      "type": "singleSelect",
+      "description": null,
+      "options": [
+        "Approve",
+        "Decline"
+      ],
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldhEm7bWcZ5QEBDIEY",
+      "name": "Estimate Number",
+      "dbFieldName": "Estimate_Number",
+      "type": "number",
+      "description": null,
+      "options": {
+        "formatting": {
+          "type": "decimal",
+          "precision": 0
+        }
+      },
+      "cellValueType": "number",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldzcyGRUlFIoBuppS7",
+      "name": "Notes",
+      "dbFieldName": "Notes",
+      "type": "longText",
+      "description": null,
+      "options": {},
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    }
+  ]
+}

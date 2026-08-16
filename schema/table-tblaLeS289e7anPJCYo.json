@@ -1,0 +1,142 @@
+{
+  "id": "tblaLeS289e7anPJCYo",
+  "name": "Projects",
+  "description": null,
+  "dbTableName": "\"bse7bbdbrcd6YfA8YpU\".\"tblaLeS289e7anPJCYo\"",
+  "fields": [
+    {
+      "id": "fldzSsYUwCunTGHBDlu",
+      "name": "Due Date",
+      "dbFieldName": "Due_Date",
+      "type": "date",
+      "description": null,
+      "options": {
+        "formatting": {
+          "date": "YYYY-MM-DD",
+          "time": "None",
+          "timeZone": "America/Chicago"
+        }
+      },
+      "cellValueType": "dateTime",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldacyoyzth8uTsIw1C",
+      "name": "Completed",
+      "dbFieldName": "Completed",
+      "type": "checkbox",
+      "description": null,
+      "options": {},
+      "cellValueType": "boolean",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldAOWlGX1jW2vEtguV",
+      "name": "Notes",
+      "dbFieldName": "Notes",
+      "type": "longText",
+      "description": null,
+      "options": {},
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldmED7qyLRG9j8f6ev",
+      "name": "Owner",
+      "dbFieldName": "Owner",
+      "type": "user",
+      "description": null,
+      "options": {
+        "isMultiple": false,
+        "shouldNotify": true
+      },
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldURKzpV0Vy025ssBj",
+      "name": "Task",
+      "dbFieldName": "Task",
+      "type": "singleLineText",
+      "description": null,
+      "options": {},
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldRa2Rpgr7JfsjJeTC",
+      "name": "Status",
+      "dbFieldName": "Status",
+      "type": "singleSelect",
+      "description": null,
+      "options": [
+        "Backlog",
+        "Todo",
+        "In Progress",
+        "Blocked",
+        "Done"
+      ],
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldNHdvsdhKrQ318glU",
+      "name": "Start Date",
+      "dbFieldName": "Start_Date",
+      "type": "date",
+      "description": null,
+      "options": {
+        "formatting": {
+          "date": "YYYY-MM-DD",
+          "time": "None",
+          "timeZone": "America/Chicago"
+        }
+      },
+      "cellValueType": "dateTime",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldeEzsvMIXaBCaZ4ml",
+      "name": "Description",
+      "dbFieldName": "Description",
+      "type": "longText",
+      "description": null,
+      "options": {},
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldViR0bvQ0XG4Ph51n",
+      "name": "Priority",
+      "dbFieldName": "Priority",
+      "type": "singleSelect",
+      "description": null,
+      "options": [
+        "Low",
+        "Medium",
+        "High",
+        "Urgent"
+      ],
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    }
+  ]
+}

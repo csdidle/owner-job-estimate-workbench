@@ -1,0 +1,288 @@
+{
+  "id": "tbliZD2ZPSZkEr7jdo1",
+  "name": "Payments",
+  "description": null,
+  "dbTableName": "\"bse7bbdbrcd6YfA8YpU\".\"tbliZD2ZPSZkEr7jdo1\"",
+  "fields": [
+    {
+      "id": "fldMK4NfhW8vruVuE6Q",
+      "name": "Receipt/Scan",
+      "dbFieldName": "Receipt_Scan",
+      "type": "attachment",
+      "description": null,
+      "options": {},
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": true
+    },
+    {
+      "id": "fldQEqlOUZ6P3k5htDK",
+      "name": "Payment ID",
+      "dbFieldName": "Payment_ID",
+      "type": "autoNumber",
+      "description": null,
+      "options": {
+        "expression": "AUTO_NUMBER()"
+      },
+      "cellValueType": "number",
+      "isLookup": null,
+      "isComputed": true,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fld3xf9xVVT5dtk1AOJ",
+      "name": "Created",
+      "dbFieldName": "Created",
+      "type": "createdTime",
+      "description": null,
+      "options": {
+        "expression": "CREATED_TIME()",
+        "formatting": {
+          "date": "YYYY-MM-DD",
+          "time": "None",
+          "timeZone": "America/Chicago"
+        }
+      },
+      "cellValueType": "dateTime",
+      "isLookup": null,
+      "isComputed": true,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldN4jaK7Fy7I2mGGQD",
+      "name": "QBO Payment ID",
+      "dbFieldName": "QBO_Payment_ID",
+      "type": "singleLineText",
+      "description": "QuickBooks Online Payment entity ID used for idempotent synchronization.",
+      "options": {},
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldf7BIKen1nVIFRwhg",
+      "name": "Notes",
+      "dbFieldName": "Notes",
+      "type": "longText",
+      "description": null,
+      "options": {},
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldjgwsG3VLlW9gb4Xp",
+      "name": "Amount",
+      "dbFieldName": "Amount",
+      "type": "number",
+      "description": null,
+      "options": {
+        "formatting": {
+          "type": "decimal",
+          "precision": 2
+        }
+      },
+      "cellValueType": "number",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldxi8JqJR79ynmusx4",
+      "name": "Check/Ref #",
+      "dbFieldName": "Check_Ref",
+      "type": "singleLineText",
+      "description": null,
+      "options": {},
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldQkgLWBV8juHTbwHy",
+      "name": "Contact",
+      "dbFieldName": "Contact",
+      "type": "link",
+      "description": "The contact/customer who made this payment",
+      "options": {
+        "relationship": "manyOne",
+        "foreignTableId": "tbldDs2u3Nj0KR8mZ0c",
+        "lookupFieldId": "fldn4iywC3eN0Wj9znm",
+        "isOneWay": false,
+        "fkHostTableName": "bse7bbdbrcd6YfA8YpU.tbliZD2ZPSZkEr7jdo1",
+        "selfKeyName": "__id",
+        "foreignKeyName": "__fk_fldQkgLWBV8juHTbwHy",
+        "symmetricFieldId": "fld695Ln9wOQPCe7H7F"
+      },
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldKVMXpWxDkQqY5aUq",
+      "name": "QBO Sync Token",
+      "dbFieldName": "QBO_Sync_Token",
+      "type": "singleLineText",
+      "description": "QuickBooks Payment SyncToken.",
+      "options": {},
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldRIsGTCwGIPCaLM6U",
+      "name": "Payment Allocations",
+      "dbFieldName": "Payment_Allocations",
+      "type": "link",
+      "description": null,
+      "options": {
+        "relationship": "oneMany",
+        "foreignTableId": "tbl22Uv1QXcJMQr0OxE",
+        "lookupFieldId": "fldbPsFMwiq3zrEJb3j",
+        "isOneWay": false,
+        "fkHostTableName": "bse7bbdbrcd6YfA8YpU.tbl22Uv1QXcJMQr0OxE",
+        "selfKeyName": "__fk_fldKM0P31epKCpIpi3H",
+        "foreignKeyName": "__id",
+        "symmetricFieldId": "fldKM0P31epKCpIpi3H"
+      },
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": true
+    },
+    {
+      "id": "fldadSGNpsfgWzpvPdi",
+      "name": "Payment Date",
+      "dbFieldName": "Payment_Date",
+      "type": "date",
+      "description": null,
+      "options": {
+        "formatting": {
+          "date": "YYYY-MM-DD",
+          "time": "None",
+          "timeZone": "America/Chicago"
+        }
+      },
+      "cellValueType": "dateTime",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldGKv1NVEM6nstJ8fE",
+      "name": "Total Allocated",
+      "dbFieldName": "Total_Allocated",
+      "type": "rollup",
+      "description": "Sum of all allocations from this payment (should equal Amount)",
+      "options": {
+        "expression": "sum({values})",
+        "timeZone": "America/Chicago",
+        "formatting": {
+          "type": "decimal",
+          "precision": 2
+        }
+      },
+      "cellValueType": "number",
+      "isLookup": null,
+      "isComputed": true,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldihFIge1hidpFRCYG",
+      "name": "Payment Method",
+      "dbFieldName": "Payment_Method",
+      "type": "singleSelect",
+      "description": null,
+      "options": [
+        "Check",
+        "Cash",
+        "Credit Card",
+        "ACH",
+        "Zelle",
+        "Venmo",
+        "PayPal",
+        "Money Order",
+        "Other"
+      ],
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fld4xuulAnH93Gt4B4J",
+      "name": "QBO Last Synced",
+      "dbFieldName": "QBO_Last_Synced",
+      "type": "date",
+      "description": "Timestamp of the latest successful QuickBooks payment synchronization.",
+      "options": {
+        "formatting": {
+          "date": "YYYY-MM-DD",
+          "time": "HH:mm",
+          "timeZone": "America/Chicago"
+        }
+      },
+      "cellValueType": "dateTime",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldDHAu4EWFuY4GY1tq",
+      "name": "Invoice",
+      "dbFieldName": "Invoice",
+      "type": "link",
+      "description": "The invoice this payment is applied to",
+      "options": {
+        "relationship": "manyOne",
+        "foreignTableId": "tblV7eqBBoDamQaaw8q",
+        "lookupFieldId": "fldzVIHbx4W1mb1z2ju",
+        "isOneWay": false,
+        "fkHostTableName": "bse7bbdbrcd6YfA8YpU.tbliZD2ZPSZkEr7jdo1",
+        "selfKeyName": "__id",
+        "foreignKeyName": "__fk_fldDHAu4EWFuY4GY1tq",
+        "symmetricFieldId": "fldG1oZjzHrsNMIfz7Z"
+      },
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldGCxLrJXSBYUxTyh6",
+      "name": "Deposit Date",
+      "dbFieldName": "Deposit_Date",
+      "type": "date",
+      "description": null,
+      "options": {
+        "formatting": {
+          "date": "YYYY-MM-DD",
+          "time": "None",
+          "timeZone": "America/Chicago"
+        }
+      },
+      "cellValueType": "dateTime",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldDAPTLH3xe1GtMGJl",
+      "name": "Unallocated",
+      "dbFieldName": "Unallocated",
+      "type": "singleLineText",
+      "description": "Payment amount not yet allocated to invoices",
+      "options": {},
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    }
+  ]
+}

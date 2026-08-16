@@ -1,0 +1,177 @@
+{
+  "id": "tbl7iJQHPF03Q6N05jy",
+  "name": "Contact Requests",
+  "description": null,
+  "dbTableName": "\"bse7bbdbrcd6YfA8YpU\".\"tbl7iJQHPF03Q6N05jy\"",
+  "fields": [
+    {
+      "id": "fldFVqLURs45Wg0IUr9",
+      "name": "Status",
+      "dbFieldName": "Status",
+      "type": "singleSelect",
+      "description": null,
+      "options": [
+        "New",
+        "Replied",
+        "Closed"
+      ],
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldd7GGexopR8JTBe4D",
+      "name": "Request #",
+      "dbFieldName": "Request",
+      "type": "autoNumber",
+      "description": null,
+      "options": {
+        "expression": "AUTO_NUMBER()"
+      },
+      "cellValueType": "number",
+      "isLookup": null,
+      "isComputed": true,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldKx3iwwwesRgnVu1e",
+      "name": "Message",
+      "dbFieldName": "Message",
+      "type": "longText",
+      "description": null,
+      "options": {},
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldRBAXXnpdkPbwuzOQ",
+      "name": "Created",
+      "dbFieldName": "Created",
+      "type": "createdTime",
+      "description": null,
+      "options": {
+        "expression": "CREATED_TIME()",
+        "formatting": {
+          "date": "YYYY-MM-DD",
+          "time": "None",
+          "timeZone": "America/Chicago"
+        }
+      },
+      "cellValueType": "dateTime",
+      "isLookup": null,
+      "isComputed": true,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldgBVCAgxtpJPDcOKQ",
+      "name": "Source",
+      "dbFieldName": "Source",
+      "type": "singleSelect",
+      "description": null,
+      "options": [
+        "Website",
+        "Facebook",
+        "Instagram",
+        "Google",
+        "Other"
+      ],
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fld8vgcuclECv4IyF9A",
+      "name": "Email",
+      "dbFieldName": "Email",
+      "type": "singleLineText",
+      "description": null,
+      "options": {},
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldJqifiMtXtLEOpTYx",
+      "name": "Contact",
+      "dbFieldName": "Contact",
+      "type": "link",
+      "description": null,
+      "options": {
+        "relationship": "manyOne",
+        "foreignTableId": "tbldDs2u3Nj0KR8mZ0c",
+        "lookupFieldId": "fldn4iywC3eN0Wj9znm",
+        "isOneWay": false,
+        "fkHostTableName": "bse7bbdbrcd6YfA8YpU.tbl7iJQHPF03Q6N05jy",
+        "selfKeyName": "__id",
+        "foreignKeyName": "__fk_fldJqifiMtXtLEOpTYx",
+        "symmetricFieldId": "fldmtNE4IFWgA4xT72r"
+      },
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldlgRovSmEWVaGi0we",
+      "name": "Name",
+      "dbFieldName": "Name",
+      "type": "singleLineText",
+      "description": null,
+      "options": {},
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldA2w13Y8a11LUyund",
+      "name": "Subject",
+      "dbFieldName": "Subject",
+      "type": "singleLineText",
+      "description": null,
+      "options": {},
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldG6e2ZdmUCY8c4CQ9",
+      "name": "Phone",
+      "dbFieldName": "Phone",
+      "type": "singleLineText",
+      "description": null,
+      "options": {},
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldAkn6XBRKs2XQjcbf",
+      "name": "Assigned To",
+      "dbFieldName": "Assigned_To",
+      "type": "link",
+      "description": null,
+      "options": {
+        "relationship": "manyOne",
+        "foreignTableId": "tbl1gyEIJuVKcV6pKR1",
+        "lookupFieldId": "fldGDdtQpC6cTjtyR7U",
+        "isOneWay": false,
+        "fkHostTableName": "bse7bbdbrcd6YfA8YpU.tbl7iJQHPF03Q6N05jy",
+        "selfKeyName": "__id",
+        "foreignKeyName": "__fk_fldAkn6XBRKs2XQjcbf",
+        "symmetricFieldId": "fldDnwhs5D07VV8SVs0"
+      },
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    }
+  ]
+}

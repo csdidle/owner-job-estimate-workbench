@@ -1,0 +1,127 @@
+{
+  "id": "tblDnuJmcOUTDOG0obI",
+  "name": "Employee Messages",
+  "description": null,
+  "dbTableName": "\"bse7bbdbrcd6YfA8YpU\".\"tblDnuJmcOUTDOG0obI\"",
+  "fields": [
+    {
+      "id": "fld7O5ntzTxMw6HseEM",
+      "name": "Created",
+      "dbFieldName": "Created",
+      "type": "createdTime",
+      "description": null,
+      "options": {
+        "expression": "CREATED_TIME()",
+        "formatting": {
+          "date": "YYYY-MM-DD",
+          "time": "None",
+          "timeZone": "America/Chicago"
+        }
+      },
+      "cellValueType": "dateTime",
+      "isLookup": null,
+      "isComputed": true,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldueevvpigbZpFEed3",
+      "name": "From Employee",
+      "dbFieldName": "From_Employee",
+      "type": "link",
+      "description": null,
+      "options": {
+        "relationship": "manyOne",
+        "foreignTableId": "tbl1gyEIJuVKcV6pKR1",
+        "lookupFieldId": "fldGDdtQpC6cTjtyR7U",
+        "isOneWay": false,
+        "fkHostTableName": "bse7bbdbrcd6YfA8YpU.tblDnuJmcOUTDOG0obI",
+        "selfKeyName": "__id",
+        "foreignKeyName": "__fk_fldueevvpigbZpFEed3",
+        "symmetricFieldId": "fldZ9BKpyHfGNNHjBiz"
+      },
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldWQSvQNdb6IaLR8AQ",
+      "name": "Subject",
+      "dbFieldName": "Subject",
+      "type": "singleLineText",
+      "description": null,
+      "options": {},
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldRD8B5FM6JXUoF502",
+      "name": "Status",
+      "dbFieldName": "Status",
+      "type": "singleSelect",
+      "description": null,
+      "options": [
+        "Unread",
+        "Read",
+        "Replied",
+        "Archived"
+      ],
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fld8blDuki66TxWcmZz",
+      "name": "Priority",
+      "dbFieldName": "Priority",
+      "type": "singleSelect",
+      "description": null,
+      "options": [
+        "Low",
+        "Normal",
+        "High",
+        "Urgent"
+      ],
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldUj4Iaggc6a8JY4x9",
+      "name": "Message",
+      "dbFieldName": "Message",
+      "type": "longText",
+      "description": null,
+      "options": {},
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldCzhm1WIWSG8ncNBX",
+      "name": "To Employee",
+      "dbFieldName": "To_Employee",
+      "type": "link",
+      "description": null,
+      "options": {
+        "relationship": "manyOne",
+        "foreignTableId": "tbl1gyEIJuVKcV6pKR1",
+        "lookupFieldId": "fldGDdtQpC6cTjtyR7U",
+        "isOneWay": false,
+        "fkHostTableName": "bse7bbdbrcd6YfA8YpU.tblDnuJmcOUTDOG0obI",
+        "selfKeyName": "__id",
+        "foreignKeyName": "__fk_fldCzhm1WIWSG8ncNBX",
+        "symmetricFieldId": "fldrCLR07TJChkaPlkr"
+      },
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    }
+  ]
+}

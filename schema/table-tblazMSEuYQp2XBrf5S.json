@@ -1,0 +1,221 @@
+{
+  "id": "tblazMSEuYQp2XBrf5S",
+  "name": "Expenses",
+  "description": null,
+  "dbTableName": "\"bse7bbdbrcd6YfA8YpU\".\"tblazMSEuYQp2XBrf5S\"",
+  "fields": [
+    {
+      "id": "fldlo1MiKnvJjkauukC",
+      "name": "Created",
+      "dbFieldName": "Created",
+      "type": "createdTime",
+      "description": null,
+      "options": {
+        "expression": "CREATED_TIME()",
+        "formatting": {
+          "date": "YYYY-MM-DD",
+          "time": "None",
+          "timeZone": "America/Chicago"
+        }
+      },
+      "cellValueType": "dateTime",
+      "isLookup": null,
+      "isComputed": true,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldpPK8aAKBoWzBk3xu",
+      "name": "Description",
+      "dbFieldName": "Description",
+      "type": "singleLineText",
+      "description": null,
+      "options": {},
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldHTwHSC97os7JfSj1",
+      "name": "Expense #",
+      "dbFieldName": "Expense",
+      "type": "autoNumber",
+      "description": null,
+      "options": {
+        "expression": "AUTO_NUMBER()"
+      },
+      "cellValueType": "number",
+      "isLookup": null,
+      "isComputed": true,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldDR9TabQnHLzfJY8H",
+      "name": "Category",
+      "dbFieldName": "Category",
+      "type": "singleSelect",
+      "description": null,
+      "options": [
+        "Materials",
+        "Equipment",
+        "Fuel",
+        "Vehicle",
+        "Insurance",
+        "Marketing",
+        "Office",
+        "Subcontractor",
+        "Uniforms",
+        "Tools",
+        "Other"
+      ],
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldDjrbpDQNt5g11tMD",
+      "name": "Receipt",
+      "dbFieldName": "Receipt",
+      "type": "attachment",
+      "description": null,
+      "options": {},
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": true
+    },
+    {
+      "id": "fldaWJo7POglKrXIhsR",
+      "name": "Amount",
+      "dbFieldName": "Amount",
+      "type": "number",
+      "description": null,
+      "options": {
+        "formatting": {
+          "type": "decimal",
+          "precision": 2
+        }
+      },
+      "cellValueType": "number",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fld0Nq6IAJO9Wskq1xd",
+      "name": "Employee",
+      "dbFieldName": "Employee",
+      "type": "link",
+      "description": null,
+      "options": {
+        "relationship": "manyOne",
+        "foreignTableId": "tbl1gyEIJuVKcV6pKR1",
+        "lookupFieldId": "fldGDdtQpC6cTjtyR7U",
+        "isOneWay": false,
+        "fkHostTableName": "bse7bbdbrcd6YfA8YpU.tblazMSEuYQp2XBrf5S",
+        "selfKeyName": "__id",
+        "foreignKeyName": "__fk_fld0Nq6IAJO9Wskq1xd",
+        "symmetricFieldId": "fld0v3fjQsFPPNhcTXa"
+      },
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldjmL6KpSm0bp7qE3T",
+      "name": "Notes",
+      "dbFieldName": "Notes",
+      "type": "longText",
+      "description": null,
+      "options": {},
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldvaaH8k5LBquBi0ri",
+      "name": "Job",
+      "dbFieldName": "Job",
+      "type": "link",
+      "description": null,
+      "options": {
+        "relationship": "manyOne",
+        "foreignTableId": "tblYoERyR6AmuNXt9fK",
+        "lookupFieldId": "fld9Np9fGRGpothuMNU",
+        "isOneWay": false,
+        "fkHostTableName": "bse7bbdbrcd6YfA8YpU.tblazMSEuYQp2XBrf5S",
+        "selfKeyName": "__id",
+        "foreignKeyName": "__fk_fldvaaH8k5LBquBi0ri",
+        "symmetricFieldId": "fldsAFXjkcFHzFk6bAL"
+      },
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldpQDxyQBcyFdPLRPR",
+      "name": "Vendor",
+      "dbFieldName": "Vendor",
+      "type": "singleLineText",
+      "description": null,
+      "options": {},
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldpdlJz5cVwPDGJI2G",
+      "name": "Payment Method",
+      "dbFieldName": "Payment_Method",
+      "type": "singleSelect",
+      "description": null,
+      "options": [
+        "Company Card",
+        "Cash",
+        "Check",
+        "Personal Card",
+        "ACH",
+        "Other"
+      ],
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fld2gQvbRbevacAV2Jd",
+      "name": "Reimbursable",
+      "dbFieldName": "Reimbursable",
+      "type": "checkbox",
+      "description": null,
+      "options": {},
+      "cellValueType": "boolean",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "flde2pETUZJxY2kcbhI",
+      "name": "Date",
+      "dbFieldName": "Date",
+      "type": "date",
+      "description": null,
+      "options": {
+        "formatting": {
+          "date": "YYYY-MM-DD",
+          "time": "None",
+          "timeZone": "America/Chicago"
+        }
+      },
+      "cellValueType": "dateTime",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    }
+  ]
+}

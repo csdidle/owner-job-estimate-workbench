@@ -1,0 +1,303 @@
+{
+  "id": "tblUPaN45Qfc61TIhWL",
+  "name": "Support Tickets",
+  "description": null,
+  "dbTableName": "\"bse7bbdbrcd6YfA8YpU\".\"tblUPaN45Qfc61TIhWL\"",
+  "fields": [
+    {
+      "id": "fldSSiLOXxFUfUIhgqB",
+      "name": "Source",
+      "dbFieldName": "Source",
+      "type": "singleSelect",
+      "description": null,
+      "options": [
+        "Phone/Voicemail",
+        "Email",
+        "Text/SMS",
+        "Website",
+        "In Person",
+        "AI Voice Mail"
+      ],
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldu1UBQwzOJD7wIk74",
+      "name": "Subject",
+      "dbFieldName": "Subject",
+      "type": "singleLineText",
+      "description": null,
+      "options": {},
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fld5p4TeEvrRcVpSATI",
+      "name": "Ticket #",
+      "dbFieldName": "Ticket",
+      "type": "autoNumber",
+      "description": null,
+      "options": {
+        "expression": "AUTO_NUMBER()"
+      },
+      "cellValueType": "number",
+      "isLookup": null,
+      "isComputed": true,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldHTmGaqCm0VqqJkyY",
+      "name": "Description",
+      "dbFieldName": "Description",
+      "type": "longText",
+      "description": null,
+      "options": {},
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldWlaFC293PWvKXJRZ",
+      "name": "Related Job",
+      "dbFieldName": "Related_Job",
+      "type": "link",
+      "description": null,
+      "options": {
+        "relationship": "manyOne",
+        "foreignTableId": "tblYoERyR6AmuNXt9fK",
+        "lookupFieldId": "fld9Np9fGRGpothuMNU",
+        "isOneWay": false,
+        "fkHostTableName": "bse7bbdbrcd6YfA8YpU.tblUPaN45Qfc61TIhWL",
+        "selfKeyName": "__id",
+        "foreignKeyName": "__fk_fldWlaFC293PWvKXJRZ",
+        "symmetricFieldId": "fldT3E1wHIsaSbNe2Vv"
+      },
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldvIqrmGqTqeEnEJJi",
+      "name": "Customer Satisfaction",
+      "dbFieldName": "Customer_Satisfaction",
+      "type": "rating",
+      "description": null,
+      "options": {
+        "icon": "star",
+        "color": "yellowBright",
+        "max": 5
+      },
+      "cellValueType": "number",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldWwoh3AEv3SwxXTYN",
+      "name": "Priority",
+      "dbFieldName": "Priority",
+      "type": "singleSelect",
+      "description": null,
+      "options": [
+        "Low",
+        "Normal",
+        "High",
+        "Urgent"
+      ],
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldBNscsu4mCpIwYJ2h",
+      "name": "Status",
+      "dbFieldName": "Status",
+      "type": "singleSelect",
+      "description": null,
+      "options": [
+        "New Inquiry",
+        "Assigned",
+        "Investigation",
+        "Scheduled",
+        "Resolved",
+        "Closed"
+      ],
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldyLgQoWlpQScw9gfr",
+      "name": "Contact",
+      "dbFieldName": "Contact",
+      "type": "link",
+      "description": null,
+      "options": {
+        "relationship": "manyOne",
+        "foreignTableId": "tbldDs2u3Nj0KR8mZ0c",
+        "lookupFieldId": "fldn4iywC3eN0Wj9znm",
+        "isOneWay": false,
+        "fkHostTableName": "bse7bbdbrcd6YfA8YpU.tblUPaN45Qfc61TIhWL",
+        "selfKeyName": "__id",
+        "foreignKeyName": "__fk_fldyLgQoWlpQScw9gfr",
+        "symmetricFieldId": "fldb4uBOd1Jih0HjWRM"
+      },
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fld9Hti1I5QgU6jlPww",
+      "name": "AI Priority Classification",
+      "dbFieldName": "AI_Priority_Classification",
+      "type": "singleSelect",
+      "description": "AI-classified urgency/priority based on ticket description",
+      "options": [
+        "Low",
+        "Normal",
+        "High",
+        "Urgent",
+        "Critical"
+      ],
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "flduhtkXZtwSOKTIjfi",
+      "name": "Urgency",
+      "dbFieldName": "Urgency",
+      "type": "singleSelect",
+      "description": null,
+      "options": [
+        "Low",
+        "Medium",
+        "High",
+        "Critical"
+      ],
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fld3OIApc2mHgeBQGzc",
+      "name": "Category",
+      "dbFieldName": "Category",
+      "type": "singleSelect",
+      "description": null,
+      "options": [
+        "Service Issue",
+        "Billing",
+        "Scheduling",
+        "Property Damage",
+        "Complaint",
+        "General Inquiry",
+        "Warranty",
+        "Other"
+      ],
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldWKMAk2JnT9oiaDE5",
+      "name": "Resolution",
+      "dbFieldName": "Resolution",
+      "type": "longText",
+      "description": null,
+      "options": {},
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldB3bSji4KBxQdYNX4",
+      "name": "Assigned To",
+      "dbFieldName": "Assigned_To",
+      "type": "link",
+      "description": null,
+      "options": {
+        "relationship": "manyOne",
+        "foreignTableId": "tbl1gyEIJuVKcV6pKR1",
+        "lookupFieldId": "fldGDdtQpC6cTjtyR7U",
+        "isOneWay": false,
+        "fkHostTableName": "bse7bbdbrcd6YfA8YpU.tblUPaN45Qfc61TIhWL",
+        "selfKeyName": "__id",
+        "foreignKeyName": "__fk_fldB3bSji4KBxQdYNX4",
+        "symmetricFieldId": "fldm2RT8cOcrEXnaIjN"
+      },
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldO7BEGjRgmyWAyfkj",
+      "name": "Created",
+      "dbFieldName": "Created",
+      "type": "createdTime",
+      "description": null,
+      "options": {
+        "expression": "CREATED_TIME()",
+        "formatting": {
+          "date": "YYYY-MM-DD",
+          "time": "None",
+          "timeZone": "America/Chicago"
+        }
+      },
+      "cellValueType": "dateTime",
+      "isLookup": null,
+      "isComputed": true,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldS4JkXB2sM7nIH6Ty",
+      "name": "Resolved Date",
+      "dbFieldName": "Resolved_Date",
+      "type": "date",
+      "description": null,
+      "options": {
+        "formatting": {
+          "date": "YYYY-MM-DD",
+          "time": "None",
+          "timeZone": "America/Chicago"
+        }
+      },
+      "cellValueType": "dateTime",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldQl2yvspoIHv7pW0c",
+      "name": "AI Sentiment",
+      "dbFieldName": "AI_Sentiment",
+      "type": "singleSelect",
+      "description": "AI-detected customer sentiment from ticket description",
+      "options": [
+        "Positive",
+        "Neutral",
+        "Frustrated",
+        "Angry",
+        "Concerned"
+      ],
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    }
+  ]
+}

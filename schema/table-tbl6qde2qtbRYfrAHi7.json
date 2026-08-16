@@ -1,0 +1,225 @@
+{
+  "id": "tbl6qde2qtbRYfrAHi7",
+  "name": "Inventory",
+  "description": null,
+  "dbTableName": "\"bse7bbdbrcd6YfA8YpU\".\"tbl6qde2qtbRYfrAHi7\"",
+  "fields": [
+    {
+      "id": "fldCwCJPtNMizyuENkC",
+      "name": "Created",
+      "dbFieldName": "Created",
+      "type": "createdTime",
+      "description": null,
+      "options": {
+        "expression": "CREATED_TIME()",
+        "formatting": {
+          "date": "YYYY-MM-DD",
+          "time": "None",
+          "timeZone": "America/Chicago"
+        }
+      },
+      "cellValueType": "dateTime",
+      "isLookup": null,
+      "isComputed": true,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldPE1JtWfr7DP4Oqba",
+      "name": "Notes",
+      "dbFieldName": "Notes",
+      "type": "longText",
+      "description": null,
+      "options": {},
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldDm6RtCBqh2PI8d3e",
+      "name": "SKU",
+      "dbFieldName": "SKU",
+      "type": "singleLineText",
+      "description": null,
+      "options": {},
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldxVpQv7waEhwFYBE6",
+      "name": "Quantity On Hand",
+      "dbFieldName": "Quantity_On_Hand",
+      "type": "number",
+      "description": null,
+      "options": {
+        "formatting": {
+          "type": "decimal",
+          "precision": 2
+        }
+      },
+      "cellValueType": "number",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fld4o1HAmQ7dmb5AWkr",
+      "name": "Unit",
+      "dbFieldName": "Unit",
+      "type": "singleSelect",
+      "description": null,
+      "options": [
+        "Each",
+        "Bag",
+        "Pallet",
+        "Cubic Yard",
+        "Ton",
+        "Gallon",
+        "Roll",
+        "Bundle",
+        "Box"
+      ],
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fld4rw9IJEVHLkEoaOr",
+      "name": "Location",
+      "dbFieldName": "Location",
+      "type": "singleLineText",
+      "description": null,
+      "options": {},
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldeAM0X9XVAtSrPUZD",
+      "name": "Reorder Level",
+      "dbFieldName": "Reorder_Level",
+      "type": "number",
+      "description": null,
+      "options": {
+        "formatting": {
+          "type": "decimal",
+          "precision": 2
+        }
+      },
+      "cellValueType": "number",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldyorGX0J3EB8NxFs9",
+      "name": "Item Name",
+      "dbFieldName": "Item_Name",
+      "type": "singleLineText",
+      "description": null,
+      "options": {},
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fld2alXqt4XCd2deIcB",
+      "name": "Category",
+      "dbFieldName": "Category",
+      "type": "singleSelect",
+      "description": null,
+      "options": [
+        "Materials",
+        "Plants",
+        "Fertilizer",
+        "Mulch",
+        "Stone",
+        "Pavers",
+        "Equipment",
+        "Tools",
+        "Chemicals",
+        "Seed",
+        "Soil",
+        "Other"
+      ],
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldh5wb4IXifhGu7vVJ",
+      "name": "Unit Cost",
+      "dbFieldName": "Unit_Cost",
+      "type": "number",
+      "description": null,
+      "options": {
+        "formatting": {
+          "type": "decimal",
+          "precision": 2
+        }
+      },
+      "cellValueType": "number",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldfSJBuBs9x7sbFRhb",
+      "name": "Supplier",
+      "dbFieldName": "Supplier",
+      "type": "singleLineText",
+      "description": null,
+      "options": {},
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldBrEP385Y8LaWdqdL",
+      "name": "Chemical Usage Log",
+      "dbFieldName": "Chemical_Usage_Log",
+      "type": "link",
+      "description": null,
+      "options": {
+        "relationship": "oneMany",
+        "foreignTableId": "tblyYvXEHiXAXW0QIqH",
+        "lookupFieldId": "fld2YhZzZMo0PTSrYwF",
+        "isOneWay": false,
+        "fkHostTableName": "bse7bbdbrcd6YfA8YpU.tblyYvXEHiXAXW0QIqH",
+        "selfKeyName": "__fk_fld6YLpZs9YD9ihipjO",
+        "foreignKeyName": "__id",
+        "symmetricFieldId": "fld6YLpZs9YD9ihipjO"
+      },
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": true
+    },
+    {
+      "id": "fldg8MvoTxFfTs6eLlz",
+      "name": "Reorder Status",
+      "dbFieldName": "Reorder_Status",
+      "type": "singleSelect",
+      "description": "Current reorder status of this inventory item",
+      "options": [
+        "In Stock",
+        "Low Stock",
+        "Reorder Needed",
+        "On Order",
+        "Out of Stock",
+        "Discontinued"
+      ],
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    }
+  ]
+}

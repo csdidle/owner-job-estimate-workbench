@@ -1,0 +1,125 @@
+{
+  "id": "tblRiTRdEvKuMEeLkut",
+  "name": "temp_outstanding_invoices",
+  "description": null,
+  "dbTableName": "\"bse7bbdbrcd6YfA8YpU\".\"tblRiTRdEvKuMEeLkut\"",
+  "fields": [
+    {
+      "id": "fldSd4bmLZ38LfJhvFk",
+      "name": "Tax",
+      "dbFieldName": "Tax",
+      "type": "number",
+      "description": null,
+      "options": {
+        "formatting": {
+          "type": "decimal",
+          "precision": 2
+        }
+      },
+      "cellValueType": "number",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldk7GsQ4MVuv26HKVJ",
+      "name": "Invoice #",
+      "dbFieldName": "Label",
+      "type": "number",
+      "description": null,
+      "options": {
+        "formatting": {
+          "type": "decimal",
+          "precision": 0
+        }
+      },
+      "cellValueType": "number",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldY1xc7QaR69BsLtbD",
+      "name": "Address",
+      "dbFieldName": "Address",
+      "type": "singleLineText",
+      "description": null,
+      "options": {},
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldnv9UWIg0P9M4h8cZ",
+      "name": "Amount",
+      "dbFieldName": "Amount",
+      "type": "number",
+      "description": null,
+      "options": {
+        "formatting": {
+          "type": "decimal",
+          "precision": 2
+        }
+      },
+      "cellValueType": "number",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "flduMswHvDQxX5HmvVF",
+      "name": "Apartment Name",
+      "dbFieldName": "Status",
+      "type": "singleLineText",
+      "description": null,
+      "options": {},
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldAbVF33isx5ptKScP",
+      "name": "Invoice Date",
+      "dbFieldName": "Number",
+      "type": "date",
+      "description": null,
+      "options": {
+        "formatting": {
+          "date": "YYYY-MM-DD",
+          "time": "None",
+          "timeZone": "America/Chicago"
+        }
+      },
+      "cellValueType": "dateTime",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldrdNoG0GcaOuJhAxu",
+      "name": "Status",
+      "dbFieldName": "Status1774725370982",
+      "type": "singleLineText",
+      "description": null,
+      "options": {},
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldTHjCLJ09H7aj7qXj",
+      "name": "Terms",
+      "dbFieldName": "Terms",
+      "type": "singleLineText",
+      "description": null,
+      "options": {},
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    }
+  ]
+}

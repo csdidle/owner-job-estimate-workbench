@@ -1,0 +1,762 @@
+{
+  "id": "tblV7eqBBoDamQaaw8q",
+  "name": "Invoices",
+  "description": null,
+  "dbTableName": "\"bse7bbdbrcd6YfA8YpU\".\"tblV7eqBBoDamQaaw8q\"",
+  "fields": [
+    {
+      "id": "fld9dT5dphfJJEIxdtY",
+      "name": "QBO Last Synced",
+      "dbFieldName": "QBO_Last_Synced",
+      "type": "date",
+      "description": "Timestamp of the latest successful QuickBooks synchronization.",
+      "options": {
+        "formatting": {
+          "date": "YYYY-MM-DD",
+          "time": "HH:mm",
+          "timeZone": "America/Chicago"
+        }
+      },
+      "cellValueType": "dateTime",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldI7hrsrXCSAJM5NKb",
+      "name": "Billing Cycle Status",
+      "dbFieldName": "Billing_Cycle_Status",
+      "type": "singleSelect",
+      "description": null,
+      "options": [
+        "Open",
+        "Ready to Close",
+        "Finalized",
+        "Paid"
+      ],
+      "cellValueType": "string",
+      "isLookup": true,
+      "isComputed": true,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldjbzVTW29Ywvw3F1p",
+      "name": "Tax %",
+      "dbFieldName": "Tax",
+      "type": "number",
+      "description": null,
+      "options": {
+        "formatting": {
+          "type": "decimal",
+          "precision": 2
+        }
+      },
+      "cellValueType": "number",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldlWKsOfqmHZGvXpfu",
+      "name": "Cycle Due Date",
+      "dbFieldName": "Cycle_Due_Date",
+      "type": "formula",
+      "description": null,
+      "options": {
+        "expression": "\"\"",
+        "formatting": {
+          "date": "YYYY-MM-DD",
+          "time": "None",
+          "timeZone": "utc"
+        }
+      },
+      "cellValueType": "dateTime",
+      "isLookup": true,
+      "isComputed": true,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldD1OCeiK3iwHrqvNo",
+      "name": "Discount",
+      "dbFieldName": "Discount",
+      "type": "number",
+      "description": null,
+      "options": {
+        "formatting": {
+          "type": "decimal",
+          "precision": 2
+        }
+      },
+      "cellValueType": "number",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldgooQxQEHAVZa5bea",
+      "name": "Contact",
+      "dbFieldName": "Contact",
+      "type": "link",
+      "description": null,
+      "options": {
+        "relationship": "manyOne",
+        "foreignTableId": "tbldDs2u3Nj0KR8mZ0c",
+        "lookupFieldId": "fldn4iywC3eN0Wj9znm",
+        "isOneWay": false,
+        "fkHostTableName": "bse7bbdbrcd6YfA8YpU.tblV7eqBBoDamQaaw8q",
+        "selfKeyName": "__id",
+        "foreignKeyName": "__fk_fldgooQxQEHAVZa5bea",
+        "symmetricFieldId": "fldXyYYHvOcSBkQHFMk"
+      },
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldAaMk1OzcOxxVeGRl",
+      "name": "QBO Sync Token",
+      "dbFieldName": "QBO_Sync_Token",
+      "type": "singleLineText",
+      "description": "QuickBooks entity SyncToken used for safe sparse updates.",
+      "options": {},
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldFu85Fug0CdUlHzc1",
+      "name": "Invoice Date",
+      "dbFieldName": "Invoice_Date",
+      "type": "date",
+      "description": null,
+      "options": {
+        "formatting": {
+          "date": "YYYY-MM-DD",
+          "time": "None",
+          "timeZone": "America/Chicago"
+        }
+      },
+      "cellValueType": "dateTime",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldwVhhzPZaCCkPFzac",
+      "name": "Cycle Reference",
+      "dbFieldName": "Cycle_Reference",
+      "type": "singleLineText",
+      "description": null,
+      "options": {},
+      "cellValueType": "string",
+      "isLookup": true,
+      "isComputed": true,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldYeb45dWjEWulIw4c",
+      "name": "Billing Cycle",
+      "dbFieldName": "Billing_Cycle",
+      "type": "link",
+      "description": null,
+      "options": {
+        "relationship": "manyOne",
+        "foreignTableId": "tblgzrgJT1g1lkaZodJ",
+        "lookupFieldId": "fldr0iYV5GQshh2eYv8",
+        "isOneWay": false,
+        "fkHostTableName": "bse7bbdbrcd6YfA8YpU.tblV7eqBBoDamQaaw8q",
+        "selfKeyName": "__id",
+        "foreignKeyName": "__fk_fldYeb45dWjEWulIw4c",
+        "symmetricFieldId": "fldAENQhLnSenazddn6"
+      },
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldrMLYDI3HYjo1wA3C",
+      "name": "Statement Included",
+      "dbFieldName": "Statement_Included",
+      "type": "checkbox",
+      "description": "Whether this invoice appeared on the consolidated monthly statement.",
+      "options": {},
+      "cellValueType": "boolean",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldl7nR9jrFiYBztRR3",
+      "name": "Amount Paid",
+      "dbFieldName": "Amount_Paid",
+      "type": "number",
+      "description": null,
+      "options": {
+        "formatting": {
+          "type": "decimal",
+          "precision": 2
+        }
+      },
+      "cellValueType": "number",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldh7BoYmggjK9qyqgz",
+      "name": "Terms",
+      "dbFieldName": "Terms",
+      "type": "singleSelect",
+      "description": null,
+      "options": [
+        "Net 30",
+        "On Receipt",
+        "Due On Receipt",
+        "Due on receipt"
+      ],
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fld7HC3609926ujhcoV",
+      "name": "Amount Paid (from Allocations)",
+      "dbFieldName": "Amount_Paid_from_Allocations",
+      "type": "rollup",
+      "description": "Sum of all payment allocations applied to this invoice",
+      "options": {
+        "expression": "sum({values})",
+        "timeZone": "America/Chicago",
+        "formatting": {
+          "type": "decimal",
+          "precision": 2
+        }
+      },
+      "cellValueType": "number",
+      "isLookup": null,
+      "isComputed": true,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldMjf10Gf4CFblsoXd",
+      "name": "Job List",
+      "dbFieldName": "Job_List",
+      "type": "link",
+      "description": null,
+      "options": {
+        "relationship": "oneMany",
+        "foreignTableId": "tblYoERyR6AmuNXt9fK",
+        "lookupFieldId": "fld9Np9fGRGpothuMNU",
+        "isOneWay": false,
+        "fkHostTableName": "bse7bbdbrcd6YfA8YpU.tblYoERyR6AmuNXt9fK",
+        "selfKeyName": "__fk_fldBcL6fyGKeea8dspO",
+        "foreignKeyName": "__id",
+        "symmetricFieldId": "fldBcL6fyGKeea8dspO"
+      },
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": true
+    },
+    {
+      "id": "fldG1oZjzHrsNMIfz7Z",
+      "name": "Payments",
+      "dbFieldName": "Payments",
+      "type": "link",
+      "description": null,
+      "options": {
+        "relationship": "oneMany",
+        "foreignTableId": "tbliZD2ZPSZkEr7jdo1",
+        "lookupFieldId": "fldQEqlOUZ6P3k5htDK",
+        "isOneWay": false,
+        "fkHostTableName": "bse7bbdbrcd6YfA8YpU.tbliZD2ZPSZkEr7jdo1",
+        "selfKeyName": "__fk_fldDHAu4EWFuY4GY1tq",
+        "foreignKeyName": "__id",
+        "symmetricFieldId": "fldDHAu4EWFuY4GY1tq"
+      },
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": true
+    },
+    {
+      "id": "fldqge2OxF3tYhpV2uf",
+      "name": "Status",
+      "dbFieldName": "Status",
+      "type": "singleSelect",
+      "description": null,
+      "options": [
+        "Draft",
+        "Sent",
+        "Viewed",
+        "Paid",
+        "Partial",
+        "Overdue",
+        "Void",
+        "Pending Payment",
+        "New"
+      ],
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldQEhqexNFC3DjmjYs",
+      "name": "Property City",
+      "dbFieldName": "Property_City",
+      "type": "singleLineText",
+      "description": null,
+      "options": {},
+      "cellValueType": "string",
+      "isLookup": true,
+      "isComputed": true,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldxCtcmb7mf0OUNnt8",
+      "name": "Property Address",
+      "dbFieldName": "Property_Address",
+      "type": "singleLineText",
+      "description": null,
+      "options": {},
+      "cellValueType": "string",
+      "isLookup": true,
+      "isComputed": true,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldMrjaWW7YeDaf8vle",
+      "name": "Billing Address Line 1",
+      "dbFieldName": "Billing_Address_Line_1",
+      "type": "singleLineText",
+      "description": null,
+      "options": {},
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldPWXgcE4rNvEGR1OA",
+      "name": "Due Date",
+      "dbFieldName": "Due_Date",
+      "type": "formula",
+      "description": null,
+      "options": {
+        "expression": "DATE_ADD({fldFu85Fug0CdUlHzc1}, 30, \"day\")",
+        "timeZone": "America/Chicago",
+        "formatting": {
+          "date": "YYYY-MM-DD",
+          "time": "None",
+          "timeZone": "America/Chicago"
+        }
+      },
+      "cellValueType": "dateTime",
+      "isLookup": null,
+      "isComputed": true,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldfGwcKDiHWf1t1Y3X",
+      "name": "Created",
+      "dbFieldName": "Created",
+      "type": "createdTime",
+      "description": null,
+      "options": {
+        "expression": "CREATED_TIME()",
+        "formatting": {
+          "date": "YYYY-MM-DD",
+          "time": "None",
+          "timeZone": "America/Chicago"
+        }
+      },
+      "cellValueType": "dateTime",
+      "isLookup": null,
+      "isComputed": true,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldW4qgtYeGbfHowjsv",
+      "name": "Payment Method",
+      "dbFieldName": "Payment_Method",
+      "type": "singleSelect",
+      "description": null,
+      "options": [
+        "Cash",
+        "Check",
+        "Credit Card",
+        "ACH",
+        "Zelle",
+        "Venmo",
+        "PayPal",
+        "Other"
+      ],
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldoqru7ROsUfNM8Tiy",
+      "name": "QBO Sync Status",
+      "dbFieldName": "QBO_Sync_Status",
+      "type": "singleSelect",
+      "description": "Current QuickBooks invoice synchronization state.",
+      "options": [
+        "Not Synced",
+        "Queued for Draft",
+        "Drafted in QBO",
+        "Queued to Send",
+        "Sent from QBO",
+        "Partially Paid",
+        "Paid",
+        "Error"
+      ],
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldN2otVcsRlWMW25vm",
+      "name": "QBO Invoice ID",
+      "dbFieldName": "QBO_Invoice_ID",
+      "type": "singleLineText",
+      "description": "QuickBooks Online Invoice entity ID. Distinct from Teable Invoice ID.",
+      "options": {},
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldmzVDfiSyY7Zk9BYo",
+      "name": "Final Invoice",
+      "dbFieldName": "Final_Invoice",
+      "type": "checkbox",
+      "description": "Marks the last weekly invoice in a finalized monthly billing cycle.",
+      "options": {},
+      "cellValueType": "boolean",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fld8cRnDTp7L5MTTrwW",
+      "name": "Invoice Line Items",
+      "dbFieldName": "Invoice_Line_Items",
+      "type": "link",
+      "description": null,
+      "options": {
+        "relationship": "oneMany",
+        "foreignTableId": "tbly9cohTVaM3sqRB2T",
+        "lookupFieldId": "flduGqViJce3Jufqu2F",
+        "isOneWay": false,
+        "fkHostTableName": "bse7bbdbrcd6YfA8YpU.tbly9cohTVaM3sqRB2T",
+        "selfKeyName": "__fk_fldo87BFxiKft6CvLZ4",
+        "foreignKeyName": "__id",
+        "symmetricFieldId": "fldo87BFxiKft6CvLZ4"
+      },
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": true
+    },
+    {
+      "id": "fldfyamMSuROsGtjztu",
+      "name": "Balance Due",
+      "dbFieldName": "Balance_Due",
+      "type": "formula",
+      "description": null,
+      "options": {
+        "expression": "IF({fldqge2OxF3tYhpV2uf} = 'Void', 0, IF({fldCQoA6MxUS46Dn8r8}, {fldCQoA6MxUS46Dn8r8} - IF({fldl7nR9jrFiYBztRR3}, {fldl7nR9jrFiYBztRR3}, 0), 0))",
+        "timeZone": "utc",
+        "formatting": {
+          "type": "decimal",
+          "precision": 2
+        }
+      },
+      "cellValueType": "number",
+      "isLookup": null,
+      "isComputed": true,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fld4L3NMl5Xtkwrno9r",
+      "name": "Notes",
+      "dbFieldName": "Notes",
+      "type": "longText",
+      "description": null,
+      "options": {},
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldCQoA6MxUS46Dn8r8",
+      "name": "Total",
+      "dbFieldName": "Total",
+      "type": "singleLineText",
+      "description": null,
+      "options": {},
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fld3o6QnQ1dH0kAlpTh",
+      "name": "Subtotal",
+      "dbFieldName": "Subtotal",
+      "type": "rollup",
+      "description": null,
+      "options": {
+        "expression": "sum({values})",
+        "formatting": {
+          "type": "decimal",
+          "precision": 2
+        }
+      },
+      "cellValueType": "number",
+      "isLookup": null,
+      "isComputed": true,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fld12y5zEIYUTmPI3A8",
+      "name": "Payment Allocations",
+      "dbFieldName": "Payment_Allocations",
+      "type": "link",
+      "description": null,
+      "options": {
+        "relationship": "oneMany",
+        "foreignTableId": "tbl22Uv1QXcJMQr0OxE",
+        "lookupFieldId": "fldbPsFMwiq3zrEJb3j",
+        "isOneWay": false,
+        "fkHostTableName": "bse7bbdbrcd6YfA8YpU.tbl22Uv1QXcJMQr0OxE",
+        "selfKeyName": "__fk_fldofItvmYa95DZPomJ",
+        "foreignKeyName": "__id",
+        "symmetricFieldId": "fldofItvmYa95DZPomJ"
+      },
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": true
+    },
+    {
+      "id": "fldyIrPpQSRtBqWbrQt",
+      "name": "Billing Review Status",
+      "dbFieldName": "Billing_Review_Status",
+      "type": "singleSelect",
+      "description": null,
+      "options": [
+        "Building",
+        "Ready for Review",
+        "Approved",
+        "Submitted to QBO",
+        "Exception"
+      ],
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldcDh6Vd2urcVOVOXQ",
+      "name": "Tax Amount",
+      "dbFieldName": "Tax_Amount",
+      "type": "number",
+      "description": null,
+      "options": {
+        "formatting": {
+          "type": "decimal",
+          "precision": 2
+        }
+      },
+      "cellValueType": "number",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldACwWlFebaX7llb3k",
+      "name": "Send via QBO",
+      "dbFieldName": "Send_via_QBO",
+      "type": "checkbox",
+      "description": "Explicit approval to email an existing QuickBooks draft invoice to the customer.",
+      "options": {},
+      "cellValueType": "boolean",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fld4a9La7oenbC4MJHh",
+      "name": "Invoice Sequence",
+      "dbFieldName": "Invoice_Sequence",
+      "type": "number",
+      "description": "Position of this invoice within the monthly billing cycle.",
+      "options": {
+        "formatting": {
+          "type": "decimal",
+          "precision": 2
+        }
+      },
+      "cellValueType": "number",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fld4m3wv5op7w7u9DUh",
+      "name": "Billing Customer Name",
+      "dbFieldName": "Billing_Customer_Name",
+      "type": "singleLineText",
+      "description": null,
+      "options": {},
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldxA3t6qS6TUM7SVvd",
+      "name": "Invoice ID",
+      "dbFieldName": "Company_ID",
+      "type": "singleLineText",
+      "description": null,
+      "options": {},
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "flddkpUrQLcFRW8m7Qq",
+      "name": "Estimate",
+      "dbFieldName": "Estimate",
+      "type": "link",
+      "description": null,
+      "options": {
+        "relationship": "manyOne",
+        "foreignTableId": "tblLu0d0Hn2YawgvFOI",
+        "lookupFieldId": "fldMjDPMxPekGdU8JN0",
+        "isOneWay": false,
+        "fkHostTableName": "bse7bbdbrcd6YfA8YpU.tblV7eqBBoDamQaaw8q",
+        "selfKeyName": "__id",
+        "foreignKeyName": "__fk_flddkpUrQLcFRW8m7Qq",
+        "symmetricFieldId": "fldLNcCRhGQR2jTEvWi"
+      },
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldz6XMOArLiY1jQQpR",
+      "name": "QBO Sync Error",
+      "dbFieldName": "QBO_Sync_Error",
+      "type": "longText",
+      "description": "Most recent QuickBooks synchronization error, cleared after a successful sync.",
+      "options": {},
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldTHDpJs6Z9Qh9VFmH",
+      "name": "Property Total Open",
+      "dbFieldName": "Property_Total_Open",
+      "type": "conditionalRollup",
+      "description": "Total positive unpaid balance across invoices for this property/contact, excluding Void and Paid statuses",
+      "options": {
+        "expression": "sum({values})",
+        "timeZone": "America/Chicago",
+        "formatting": {
+          "type": "decimal",
+          "precision": 2
+        },
+        "foreignTableId": "tblV7eqBBoDamQaaw8q",
+        "lookupFieldId": "fldfyamMSuROsGtjztu",
+        "filter": {
+          "conjunction": "and",
+          "filterSet": [
+            {
+              "fieldId": "fldgooQxQEHAVZa5bea",
+              "operator": "is",
+              "value": {
+                "type": "field",
+                "fieldId": "fldgooQxQEHAVZa5bea"
+              }
+            },
+            {
+              "fieldId": "fldfyamMSuROsGtjztu",
+              "operator": "isGreater",
+              "value": 0
+            },
+            {
+              "fieldId": "fldqge2OxF3tYhpV2uf",
+              "operator": "isNoneOf",
+              "value": [
+                "Void",
+                "Paid"
+              ]
+            }
+          ]
+        }
+      },
+      "cellValueType": "number",
+      "isLookup": null,
+      "isComputed": true,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldx8lg3Qujk54mDsHG",
+      "name": "QBO Doc Number",
+      "dbFieldName": "QBO_Doc_Number",
+      "type": "singleLineText",
+      "description": "Invoice document number assigned by QuickBooks Online.",
+      "options": {},
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldzVIHbx4W1mb1z2ju",
+      "name": "Invoice #",
+      "dbFieldName": "Invoice",
+      "type": "number",
+      "description": null,
+      "options": {
+        "formatting": {
+          "type": "decimal",
+          "precision": 0
+        }
+      },
+      "cellValueType": "number",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldX676Le1i7XptltkR",
+      "name": "Create QBO Draft",
+      "dbFieldName": "Create_QBO_Draft",
+      "type": "checkbox",
+      "description": "Explicit request to create this reviewed invoice as a draft in QuickBooks Online.",
+      "options": {},
+      "cellValueType": "boolean",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    }
+  ]
+}

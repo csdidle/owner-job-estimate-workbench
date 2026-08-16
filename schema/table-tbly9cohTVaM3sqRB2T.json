@@ -1,0 +1,296 @@
+{
+  "id": "tbly9cohTVaM3sqRB2T",
+  "name": "Invoice Line Items",
+  "description": null,
+  "dbTableName": "\"bse7bbdbrcd6YfA8YpU\".\"tbly9cohTVaM3sqRB2T\"",
+  "fields": [
+    {
+      "id": "fldXJZz4aUEKKa45gQF",
+      "name": "Removed From Invoice",
+      "dbFieldName": "Removed_From_Invoice",
+      "type": "link",
+      "description": "Original invoice for a recoverable removed line.",
+      "options": {
+        "relationship": "manyOne",
+        "foreignTableId": "tblV7eqBBoDamQaaw8q",
+        "lookupFieldId": "fldzVIHbx4W1mb1z2ju",
+        "isOneWay": true,
+        "fkHostTableName": "bse7bbdbrcd6YfA8YpU.tbly9cohTVaM3sqRB2T",
+        "selfKeyName": "__id",
+        "foreignKeyName": "__fk_fldXJZz4aUEKKa45gQF"
+      },
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "flduGqViJce3Jufqu2F",
+      "name": "Line Item",
+      "dbFieldName": "Line_Item",
+      "type": "singleLineText",
+      "description": null,
+      "options": {},
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldewT6GDnqohPYVR1H",
+      "name": "Source Estimate Line",
+      "dbFieldName": "Source_Estimate_Line",
+      "type": "link",
+      "description": "Estimate line copied into this invoice line.",
+      "options": {
+        "relationship": "manyOne",
+        "foreignTableId": "tblg2El8ltcSA18Avwk",
+        "lookupFieldId": "fldeCOcL8tAttZ52PZv",
+        "isOneWay": true,
+        "fkHostTableName": "bse7bbdbrcd6YfA8YpU.tbly9cohTVaM3sqRB2T",
+        "selfKeyName": "__id",
+        "foreignKeyName": "__fk_fldewT6GDnqohPYVR1H"
+      },
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldg6sfGp0S6OdEQWxP",
+      "name": "Invoice Date",
+      "dbFieldName": "Invoice_Date",
+      "type": "date",
+      "description": null,
+      "options": {
+        "formatting": {
+          "date": "YYYY-MM-DD",
+          "time": "None",
+          "timeZone": "America/Chicago"
+        }
+      },
+      "cellValueType": "dateTime",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldqFUHfLdnvWtYgpje",
+      "name": "Line Origin",
+      "dbFieldName": "Line_Origin",
+      "type": "singleSelect",
+      "description": "Authoritative source used to create this invoice line.",
+      "options": [
+        "Estimate",
+        "Service",
+        "Job",
+        "Custom"
+      ],
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fld2TDdddufzBQ3mj8K",
+      "name": "Removed At",
+      "dbFieldName": "Removed_At",
+      "type": "date",
+      "description": "Timestamp when the line moved to invoice trash.",
+      "options": {
+        "formatting": {
+          "date": "YYYY-MM-DD",
+          "time": "HH:mm",
+          "timeZone": "America/Chicago"
+        }
+      },
+      "cellValueType": "dateTime",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldGbYHJ1XONNbdCpri",
+      "name": "Service",
+      "dbFieldName": "Service",
+      "type": "link",
+      "description": null,
+      "options": {
+        "relationship": "manyOne",
+        "foreignTableId": "tbl9zU4PkhGggW7Dc9R",
+        "lookupFieldId": "flddfje4aYOCjiJxvDy",
+        "isOneWay": false,
+        "fkHostTableName": "bse7bbdbrcd6YfA8YpU.tbly9cohTVaM3sqRB2T",
+        "selfKeyName": "__id",
+        "foreignKeyName": "__fk_fldGbYHJ1XONNbdCpri",
+        "symmetricFieldId": "fldSgVJlwDf8s8OhhIi"
+      },
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldP9JXRcYd8asljfad",
+      "name": "Total",
+      "dbFieldName": "Total",
+      "type": "number",
+      "description": null,
+      "options": {
+        "formatting": {
+          "type": "decimal",
+          "precision": 2
+        }
+      },
+      "cellValueType": "number",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldkEtMICjjFXo9bpif",
+      "name": "Status",
+      "dbFieldName": "Status",
+      "type": "singleSelect",
+      "description": "Invoice Status",
+      "options": [
+        "Draft",
+        "Sent",
+        "Viewed",
+        "Paid",
+        "Partial",
+        "Overdue",
+        "Void",
+        "Pending Payment",
+        "New"
+      ],
+      "cellValueType": "string",
+      "isLookup": true,
+      "isComputed": true,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fld8w6DNEZ8RvFnNGHE",
+      "name": "Source Jobs",
+      "dbFieldName": "Source_Jobs",
+      "type": "link",
+      "description": "Completed jobs that produced this invoice line.",
+      "options": {
+        "relationship": "manyMany",
+        "foreignTableId": "tblYoERyR6AmuNXt9fK",
+        "lookupFieldId": "fld9Np9fGRGpothuMNU",
+        "isOneWay": true,
+        "fkHostTableName": "bse7bbdbrcd6YfA8YpU.junction_fld8w6DNEZ8RvFnNGHE",
+        "selfKeyName": "__fk_radma7zabJCg8hs4WEs",
+        "foreignKeyName": "__fk_fld8w6DNEZ8RvFnNGHE"
+      },
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": true
+    },
+    {
+      "id": "fld97ACxK96kBohsavw",
+      "name": "Unit Price",
+      "dbFieldName": "Unit_Price",
+      "type": "number",
+      "description": null,
+      "options": {
+        "formatting": {
+          "type": "decimal",
+          "precision": 2
+        }
+      },
+      "cellValueType": "number",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldo87BFxiKft6CvLZ4",
+      "name": "Invoice",
+      "dbFieldName": "Invoice",
+      "type": "link",
+      "description": null,
+      "options": {
+        "relationship": "manyOne",
+        "foreignTableId": "tblV7eqBBoDamQaaw8q",
+        "lookupFieldId": "fldzVIHbx4W1mb1z2ju",
+        "isOneWay": false,
+        "fkHostTableName": "bse7bbdbrcd6YfA8YpU.tbly9cohTVaM3sqRB2T",
+        "selfKeyName": "__id",
+        "foreignKeyName": "__fk_fldo87BFxiKft6CvLZ4",
+        "symmetricFieldId": "fld8cRnDTp7L5MTTrwW"
+      },
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldDfPPfPtQglL2kJTa",
+      "name": "Quantity",
+      "dbFieldName": "Quantity",
+      "type": "number",
+      "description": null,
+      "options": {
+        "formatting": {
+          "type": "decimal",
+          "precision": 2
+        }
+      },
+      "cellValueType": "number",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldy0GjVkiX14xGdn8h",
+      "name": "Created",
+      "dbFieldName": "Created",
+      "type": "createdTime",
+      "description": null,
+      "options": {
+        "expression": "CREATED_TIME()",
+        "formatting": {
+          "date": "YYYY-MM-DD",
+          "time": "None",
+          "timeZone": "America/Chicago"
+        }
+      },
+      "cellValueType": "dateTime",
+      "isLookup": null,
+      "isComputed": true,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldWVemab58BWenJRz7",
+      "name": "Invoice ID",
+      "dbFieldName": "Company_ID",
+      "type": "number",
+      "description": null,
+      "options": {
+        "formatting": {
+          "type": "decimal",
+          "precision": 0
+        }
+      },
+      "cellValueType": "number",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fld4n4VRtFMOFvYEkKr",
+      "name": "Description",
+      "dbFieldName": "Description",
+      "type": "longText",
+      "description": null,
+      "options": {},
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    }
+  ]
+}

@@ -1,0 +1,304 @@
+{
+  "id": "tbl0NUXNZZozFKMRhRN",
+  "name": "Property Profitability",
+  "description": null,
+  "dbTableName": "\"bse7bbdbrcd6YfA8YpU\".\"tbl0NUXNZZozFKMRhRN\"",
+  "fields": [
+    {
+      "id": "fldwJTjZPGGtl2Sdl3m",
+      "name": "Mowing Yearly Rev Per Acre",
+      "dbFieldName": "Mowing_Yearly_Rev_Per_Acre",
+      "type": "number",
+      "description": null,
+      "options": {
+        "formatting": {
+          "type": "decimal",
+          "precision": 2
+        }
+      },
+      "cellValueType": "number",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldLSxcBAiqoSTMwlGZ",
+      "name": "Yearly Payroll",
+      "dbFieldName": "Yearly_Payroll",
+      "type": "number",
+      "description": null,
+      "options": {
+        "formatting": {
+          "type": "decimal",
+          "precision": 2
+        }
+      },
+      "cellValueType": "number",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldqtfc6lCwZumAb4j3",
+      "name": "Yearly Rev Per Acre",
+      "dbFieldName": "Yearly_Rev_Per_Acre",
+      "type": "number",
+      "description": null,
+      "options": {
+        "formatting": {
+          "type": "decimal",
+          "precision": 2
+        }
+      },
+      "cellValueType": "number",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldThofuuDQIBjdLgxO",
+      "name": "Mowing Rev Per Year (36 Weeks)",
+      "dbFieldName": "Mowing_Rev_Per_Year_36_Weeks",
+      "type": "number",
+      "description": null,
+      "options": {
+        "formatting": {
+          "type": "decimal",
+          "precision": 2
+        }
+      },
+      "cellValueType": "number",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldqltQbstg1hXxiowS",
+      "name": "Man Hrs Weekly",
+      "dbFieldName": "Man_Hrs_Weekly",
+      "type": "number",
+      "description": null,
+      "options": {
+        "formatting": {
+          "type": "decimal",
+          "precision": 2
+        }
+      },
+      "cellValueType": "number",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fld4OWGtNLdKAqMyAzB",
+      "name": "Notes",
+      "dbFieldName": "Notes",
+      "type": "longText",
+      "description": null,
+      "options": {},
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fld59Dt1fikLvX7lGhR",
+      "name": "Weekly Rev Per Acre",
+      "dbFieldName": "Weekly_Rev_Per_Acre",
+      "type": "number",
+      "description": null,
+      "options": {
+        "formatting": {
+          "type": "decimal",
+          "precision": 2
+        }
+      },
+      "cellValueType": "number",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldKhj8ckwFl572imjI",
+      "name": "Property",
+      "dbFieldName": "Property",
+      "type": "singleLineText",
+      "description": null,
+      "options": {},
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldfE6ZcIilYSXkgo3s",
+      "name": "Mowing Rev Per Week",
+      "dbFieldName": "Mowing_Rev_Per_Week",
+      "type": "number",
+      "description": null,
+      "options": {
+        "formatting": {
+          "type": "decimal",
+          "precision": 2
+        }
+      },
+      "cellValueType": "number",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldXIm4Xktixi1nsivd",
+      "name": "Monthly Rev Per Acre",
+      "dbFieldName": "Monthly_Rev_Per_Acre",
+      "type": "number",
+      "description": null,
+      "options": {
+        "formatting": {
+          "type": "decimal",
+          "precision": 2
+        }
+      },
+      "cellValueType": "number",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldxXB9ZEpaCCJnRsj1",
+      "name": "Weekly Payroll",
+      "dbFieldName": "Weekly_Payroll",
+      "type": "number",
+      "description": null,
+      "options": {
+        "formatting": {
+          "type": "decimal",
+          "precision": 2
+        }
+      },
+      "cellValueType": "number",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldW3TWwcueWBLZr63o",
+      "name": "Man Hrs Monthly",
+      "dbFieldName": "Man_Hrs_Monthly",
+      "type": "number",
+      "description": null,
+      "options": {
+        "formatting": {
+          "type": "decimal",
+          "precision": 2
+        }
+      },
+      "cellValueType": "number",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldTgk2FHpdpI4Yjxfb",
+      "name": "Man Hrs Yearly",
+      "dbFieldName": "Man_Hrs_Yearly",
+      "type": "number",
+      "description": null,
+      "options": {
+        "formatting": {
+          "type": "decimal",
+          "precision": 2
+        }
+      },
+      "cellValueType": "number",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldoDm6uOpb21w6pVne",
+      "name": "Mowable Acres",
+      "dbFieldName": "Mowable_Acres",
+      "type": "number",
+      "description": null,
+      "options": {
+        "formatting": {
+          "type": "decimal",
+          "precision": 2
+        }
+      },
+      "cellValueType": "number",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fld45dvCDEV9Zc2v7Qp",
+      "name": "Total Acres",
+      "dbFieldName": "Total_Acres",
+      "type": "number",
+      "description": null,
+      "options": {
+        "formatting": {
+          "type": "decimal",
+          "precision": 2
+        }
+      },
+      "cellValueType": "number",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldDvnwEgFovJKhktNe",
+      "name": "Revenue Per Year",
+      "dbFieldName": "Revenue_Per_Year",
+      "type": "number",
+      "description": null,
+      "options": {
+        "formatting": {
+          "type": "decimal",
+          "precision": 2
+        }
+      },
+      "cellValueType": "number",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fld22AjOYNbW40aOiuM",
+      "name": "Monthly Payroll",
+      "dbFieldName": "Monthly_Payroll",
+      "type": "number",
+      "description": null,
+      "options": {
+        "formatting": {
+          "type": "decimal",
+          "precision": 2
+        }
+      },
+      "cellValueType": "number",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fld1WePf68WGcGMLTwT",
+      "name": "Mowing Weekly Rev Per Acre",
+      "dbFieldName": "Mowing_Weekly_Rev_Per_Acre",
+      "type": "number",
+      "description": null,
+      "options": {
+        "formatting": {
+          "type": "decimal",
+          "precision": 2
+        }
+      },
+      "cellValueType": "number",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    }
+  ]
+}

@@ -1,0 +1,189 @@
+{
+  "id": "tblUjQ1DlNfsQZmXLqA",
+  "name": "Photos",
+  "description": null,
+  "dbTableName": "\"bse7bbdbrcd6YfA8YpU\".\"tblUjQ1DlNfsQZmXLqA\"",
+  "fields": [
+    {
+      "id": "fldvdL0Ki6obJYg4awK",
+      "name": "Date Taken",
+      "dbFieldName": "Date_Taken",
+      "type": "date",
+      "description": "Date the photo was taken",
+      "options": {
+        "formatting": {
+          "date": "YYYY-MM-DD",
+          "time": "None",
+          "timeZone": "America/Chicago"
+        }
+      },
+      "cellValueType": "dateTime",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldnctNYP3zNVQGpWYG",
+      "name": "Tags",
+      "dbFieldName": "Tags",
+      "type": "multipleSelect",
+      "description": "Searchable tags for the photo",
+      "options": [
+        "Lawn",
+        "Trees",
+        "Shrubs",
+        "Flowers",
+        "Hardscape",
+        "Irrigation",
+        "Drainage",
+        "Lighting",
+        "Cleanup",
+        "Snow",
+        "Mulch",
+        "Sod"
+      ],
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": true
+    },
+    {
+      "id": "fldGSHz8z4dhuQTmPLx",
+      "name": "Estimate",
+      "dbFieldName": "Estimate",
+      "type": "link",
+      "description": null,
+      "options": {
+        "relationship": "manyOne",
+        "foreignTableId": "tbl2rkKy5VQucVWwANM",
+        "lookupFieldId": "fldZiK5j84hal67rBbJ",
+        "isOneWay": false,
+        "fkHostTableName": "bse7bbdbrcd6YfA8YpU.tblUjQ1DlNfsQZmXLqA",
+        "selfKeyName": "__id",
+        "foreignKeyName": "__fk_fldGSHz8z4dhuQTmPLx",
+        "symmetricFieldId": "fldHuC2AE82BfWukZ8n"
+      },
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldi2HSw3UPSPFToyyg",
+      "name": "Photo Type",
+      "dbFieldName": "Status",
+      "type": "singleSelect",
+      "description": null,
+      "options": [
+        "Before",
+        "After",
+        "Progress",
+        "Issue/Damage",
+        "Design/Plan",
+        "Inspection",
+        "Marketing",
+        "Other"
+      ],
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldEoYjFSCPiiVQ73aV",
+      "name": "Contact",
+      "dbFieldName": "Contact",
+      "type": "link",
+      "description": "The contact/property this photo belongs to",
+      "options": {
+        "relationship": "manyOne",
+        "foreignTableId": "tbldDs2u3Nj0KR8mZ0c",
+        "lookupFieldId": "fldn4iywC3eN0Wj9znm",
+        "isOneWay": false,
+        "fkHostTableName": "bse7bbdbrcd6YfA8YpU.tblUjQ1DlNfsQZmXLqA",
+        "selfKeyName": "__id",
+        "foreignKeyName": "__fk_fldEoYjFSCPiiVQ73aV",
+        "symmetricFieldId": "fldRMJs7jjd5AaADI9e"
+      },
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldfUaXztHsefVIVQM4",
+      "name": "Notes",
+      "dbFieldName": "Notes",
+      "type": "longText",
+      "description": "Additional details or context about the photo",
+      "options": {},
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fld7fscFqf9UZ3hi5zA",
+      "name": "Taken By",
+      "dbFieldName": "Taken_By",
+      "type": "user",
+      "description": "Team member who took the photo",
+      "options": {
+        "isMultiple": false,
+        "shouldNotify": true
+      },
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldLihwU420LJUzwDT5",
+      "name": "Photo Title",
+      "dbFieldName": "Label",
+      "type": "singleLineText",
+      "description": "Descriptive title for the photo (e.g. \"Front Yard - Before Cleanup\")",
+      "options": {},
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldH3Z8rYrt2tGxFVqd",
+      "name": "Photo",
+      "dbFieldName": "Photo",
+      "type": "attachment",
+      "description": "The actual photo file(s)",
+      "options": {},
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": true
+    },
+    {
+      "id": "fldnkc6uARX0XMsbpUU",
+      "name": "Area/Zone",
+      "dbFieldName": "Area_Zone",
+      "type": "singleSelect",
+      "description": "Which area of the property the photo is of",
+      "options": [
+        "Front Yard",
+        "Back Yard",
+        "Side Yard",
+        "Driveway",
+        "Patio/Deck",
+        "Garden Beds",
+        "Pool Area",
+        "Fence/Perimeter",
+        "Roof/Gutters",
+        "Full Property",
+        "Other"
+      ],
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    }
+  ]
+}

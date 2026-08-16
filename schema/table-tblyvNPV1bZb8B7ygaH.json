@@ -1,0 +1,166 @@
+{
+  "id": "tblyvNPV1bZb8B7ygaH",
+  "name": "Manual Payment Forecasts",
+  "description": null,
+  "dbTableName": "\"bse7bbdbrcd6YfA8YpU\".\"tblyvNPV1bZb8B7ygaH\"",
+  "fields": [
+    {
+      "id": "fld3OWyVhdKhTp1YMCP",
+      "name": "Net 25 Follow-Up Date",
+      "dbFieldName": "Net_25_Follow_Up_Date",
+      "type": "formula",
+      "description": null,
+      "options": {
+        "expression": "IF({fldToqDpFNf8eKmcvzu}, DATE_ADD({fldToqDpFNf8eKmcvzu}, 25, \"day\"), BLANK())",
+        "timeZone": "America/Chicago",
+        "formatting": {
+          "date": "YYYY-MM-DD",
+          "time": "None",
+          "timeZone": "America/Chicago"
+        }
+      },
+      "cellValueType": "dateTime",
+      "isLookup": null,
+      "isComputed": true,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldToqDpFNf8eKmcvzu",
+      "name": "Invoice Date",
+      "dbFieldName": "Invoice_Date",
+      "type": "date",
+      "description": null,
+      "options": {
+        "formatting": {
+          "date": "YYYY-MM-DD",
+          "time": "None",
+          "timeZone": "America/Chicago"
+        }
+      },
+      "cellValueType": "dateTime",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldE8Pw6HBUzFCbcfXd",
+      "name": "Terms",
+      "dbFieldName": "Terms",
+      "type": "singleSelect",
+      "description": null,
+      "options": [
+        "Net 30",
+        "On Receipt",
+        "Due On Receipt",
+        "Custom"
+      ],
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldNlklHubbPaBeKYGf",
+      "name": "Notes",
+      "dbFieldName": "Notes",
+      "type": "longText",
+      "description": null,
+      "options": {},
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldNMJ3FlSyo6R2yURz",
+      "name": "Follow-Up Indicator",
+      "dbFieldName": "Follow_Up_Indicator",
+      "type": "formula",
+      "description": null,
+      "options": {
+        "expression": "IF({fldToqDpFNf8eKmcvzu}, IF(IS_AFTER(TODAY(), DATE_ADD({fldToqDpFNf8eKmcvzu}, 30, \"day\")), \"Overdue\", IF(OR(IS_SAME(TODAY(), DATE_ADD({fldToqDpFNf8eKmcvzu}, 25, \"day\"), \"day\"), IS_AFTER(TODAY(), DATE_ADD({fldToqDpFNf8eKmcvzu}, 25, \"day\"))), \"Call to check status\", \"Not due yet\")), \"Missing invoice date\")",
+        "timeZone": "America/Chicago"
+      },
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": true,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldTdCvX0wVDJVut2Sg",
+      "name": "Forecast Name",
+      "dbFieldName": "Forecast_Name",
+      "type": "singleLineText",
+      "description": null,
+      "options": {},
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldpLWWbvZ7r4i5Dycm",
+      "name": "Amount",
+      "dbFieldName": "Amount",
+      "type": "number",
+      "description": null,
+      "options": {
+        "formatting": {
+          "type": "decimal",
+          "precision": 2
+        }
+      },
+      "cellValueType": "number",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldDUkhw9E6Afb8lYiv",
+      "name": "Expected Payment Date",
+      "dbFieldName": "Expected_Payment_Date",
+      "type": "formula",
+      "description": null,
+      "options": {
+        "expression": "IF({fldToqDpFNf8eKmcvzu}, DATE_ADD({fldToqDpFNf8eKmcvzu}, 30, \"day\"), BLANK())",
+        "timeZone": "America/Chicago",
+        "formatting": {
+          "date": "YYYY-MM-DD",
+          "time": "None",
+          "timeZone": "America/Chicago"
+        }
+      },
+      "cellValueType": "dateTime",
+      "isLookup": null,
+      "isComputed": true,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fld6eBtlR7SUPV64m5M",
+      "name": "Payment Status",
+      "dbFieldName": "Payment_Status",
+      "type": "singleSelect",
+      "description": null,
+      "options": [
+        "Pending Payment",
+        "Paid"
+      ],
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldTg1TIDos3Vj4WdMg",
+      "name": "Customer",
+      "dbFieldName": "Customer",
+      "type": "singleLineText",
+      "description": null,
+      "options": {},
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    }
+  ]
+}

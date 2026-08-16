@@ -1,0 +1,194 @@
+{
+  "id": "tblXrFzojHs7RpKzs9y",
+  "name": "Reminders & Tasks",
+  "description": null,
+  "dbTableName": "\"bse7bbdbrcd6YfA8YpU\".\"tblXrFzojHs7RpKzs9y\"",
+  "fields": [
+    {
+      "id": "fld1Z4uiz7O1ZX6dFZr",
+      "name": "Due Date",
+      "dbFieldName": "Due_Date",
+      "type": "date",
+      "description": null,
+      "options": {
+        "formatting": {
+          "date": "YYYY-MM-DD",
+          "time": "None",
+          "timeZone": "America/Chicago"
+        }
+      },
+      "cellValueType": "dateTime",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldc7VO1oyf7c8pzoo5",
+      "name": "Assigned To",
+      "dbFieldName": "Assigned_To",
+      "type": "link",
+      "description": null,
+      "options": {
+        "relationship": "manyOne",
+        "foreignTableId": "tbl1gyEIJuVKcV6pKR1",
+        "lookupFieldId": "fldGDdtQpC6cTjtyR7U",
+        "isOneWay": false,
+        "fkHostTableName": "bse7bbdbrcd6YfA8YpU.tblXrFzojHs7RpKzs9y",
+        "selfKeyName": "__id",
+        "foreignKeyName": "__fk_fldc7VO1oyf7c8pzoo5",
+        "symmetricFieldId": "fldBOxVmHbCkYir0jSd"
+      },
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldwgcVt8Km26uP7UIy",
+      "name": "Description",
+      "dbFieldName": "Description",
+      "type": "longText",
+      "description": null,
+      "options": {},
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "flddnqJXbL1WY3wQf3w",
+      "name": "Due Time",
+      "dbFieldName": "Due_Time",
+      "type": "singleLineText",
+      "description": null,
+      "options": {},
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldBtVvkVxoDFjDZXom",
+      "name": "Status",
+      "dbFieldName": "Status",
+      "type": "singleSelect",
+      "description": null,
+      "options": [
+        "Open",
+        "In Progress",
+        "Completed",
+        "Cancelled"
+      ],
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldYvXVIE4tw2p2nNjl",
+      "name": "Task Name",
+      "dbFieldName": "Task_Name",
+      "type": "singleLineText",
+      "description": null,
+      "options": {},
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldwRMDN3RZSDxdLm1J",
+      "name": "Created",
+      "dbFieldName": "Created",
+      "type": "createdTime",
+      "description": null,
+      "options": {
+        "expression": "CREATED_TIME()",
+        "formatting": {
+          "date": "YYYY-MM-DD",
+          "time": "None",
+          "timeZone": "America/Chicago"
+        }
+      },
+      "cellValueType": "dateTime",
+      "isLookup": null,
+      "isComputed": true,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fld63noNtp34lueMwZk",
+      "name": "Contact",
+      "dbFieldName": "Contact",
+      "type": "link",
+      "description": null,
+      "options": {
+        "relationship": "manyOne",
+        "foreignTableId": "tbldDs2u3Nj0KR8mZ0c",
+        "lookupFieldId": "fldn4iywC3eN0Wj9znm",
+        "isOneWay": false,
+        "fkHostTableName": "bse7bbdbrcd6YfA8YpU.tblXrFzojHs7RpKzs9y",
+        "selfKeyName": "__id",
+        "foreignKeyName": "__fk_fld63noNtp34lueMwZk",
+        "symmetricFieldId": "fldKI9Pp9ZySXtvqLn0"
+      },
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldw4DmfmdqTm1omtKc",
+      "name": "Type",
+      "dbFieldName": "Type",
+      "type": "singleSelect",
+      "description": null,
+      "options": [
+        "Reminder",
+        "Follow Up",
+        "To-Do",
+        "Call Back",
+        "Site Visit",
+        "Meeting"
+      ],
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldCfvwAiGdo2tDvuro",
+      "name": "Completed Date",
+      "dbFieldName": "Completed_Date",
+      "type": "date",
+      "description": null,
+      "options": {
+        "formatting": {
+          "date": "YYYY-MM-DD",
+          "time": "None",
+          "timeZone": "America/Chicago"
+        }
+      },
+      "cellValueType": "dateTime",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldr0Sml14mv14B7iI6",
+      "name": "Priority",
+      "dbFieldName": "Priority",
+      "type": "singleSelect",
+      "description": null,
+      "options": [
+        "Low",
+        "Normal",
+        "High",
+        "Urgent"
+      ],
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    }
+  ]
+}

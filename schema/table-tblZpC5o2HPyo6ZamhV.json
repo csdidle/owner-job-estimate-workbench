@@ -1,0 +1,305 @@
+{
+  "id": "tblZpC5o2HPyo6ZamhV",
+  "name": "Pipelines",
+  "description": null,
+  "dbTableName": "\"bse7bbdbrcd6YfA8YpU\".\"tblZpC5o2HPyo6ZamhV\"",
+  "fields": [
+    {
+      "id": "fldrVzoeKN5BSmxhCer",
+      "name": "Weighted Value",
+      "dbFieldName": "Weighted_Value",
+      "type": "formula",
+      "description": "Deal value weighted by probability percentage",
+      "options": {
+        "expression": "{fldZuFL3Bfnt115wV1C} * {fldcnPzZp01GYDvY8GF} / 100",
+        "timeZone": "America/Chicago",
+        "formatting": {
+          "type": "decimal",
+          "precision": 2
+        }
+      },
+      "cellValueType": "number",
+      "isLookup": null,
+      "isComputed": true,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldBuqMZciPf7wXD590",
+      "name": "Assigned To",
+      "dbFieldName": "Assigned_To",
+      "type": "link",
+      "description": null,
+      "options": {
+        "relationship": "manyOne",
+        "foreignTableId": "tbl1gyEIJuVKcV6pKR1",
+        "lookupFieldId": "fldGDdtQpC6cTjtyR7U",
+        "isOneWay": false,
+        "fkHostTableName": "bse7bbdbrcd6YfA8YpU.tblZpC5o2HPyo6ZamhV",
+        "selfKeyName": "__id",
+        "foreignKeyName": "__fk_fldBuqMZciPf7wXD590",
+        "symmetricFieldId": "fld1YbEtFa9khKs9pEa"
+      },
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fld2XSoEbltYrr9EWZb",
+      "name": "Loss Reason",
+      "dbFieldName": "Loss_Reason",
+      "type": "singleSelect",
+      "description": "Reason the deal was lost - tracked for pipeline analytics",
+      "options": [
+        "Price Too High",
+        "Chose Competitor",
+        "Timing/Not Ready",
+        "Scope Changed",
+        "No Response",
+        "Out of Service Area",
+        "Budget Constraints",
+        "DIY/Self-Service",
+        "Other"
+      ],
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldZiiK63prvdF7s3EQ",
+      "name": "Deal Name",
+      "dbFieldName": "Deal_Name",
+      "type": "singleLineText",
+      "description": null,
+      "options": {},
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldNlvimdpgkiuNPPlU",
+      "name": "Last Activity",
+      "dbFieldName": "Last_Activity",
+      "type": "date",
+      "description": null,
+      "options": {
+        "formatting": {
+          "date": "YYYY-MM-DD",
+          "time": "None",
+          "timeZone": "America/Chicago"
+        }
+      },
+      "cellValueType": "dateTime",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldYDx87BaCliXHsa5c",
+      "name": "Notes",
+      "dbFieldName": "Notes",
+      "type": "longText",
+      "description": null,
+      "options": {},
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldEA3LQM64BEMjBhmM",
+      "name": "Expected Close Date",
+      "dbFieldName": "Expected_Close_Date",
+      "type": "date",
+      "description": null,
+      "options": {
+        "formatting": {
+          "date": "YYYY-MM-DD",
+          "time": "None",
+          "timeZone": "America/Chicago"
+        }
+      },
+      "cellValueType": "dateTime",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldZuFL3Bfnt115wV1C",
+      "name": "Value",
+      "dbFieldName": "Value",
+      "type": "number",
+      "description": null,
+      "options": {
+        "formatting": {
+          "type": "decimal",
+          "precision": 2
+        }
+      },
+      "cellValueType": "number",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldxO5C1KKRYVjnDDPx",
+      "name": "Estimate",
+      "dbFieldName": "Estimate",
+      "type": "link",
+      "description": null,
+      "options": {
+        "relationship": "manyOne",
+        "foreignTableId": "tblLu0d0Hn2YawgvFOI",
+        "lookupFieldId": "fldMjDPMxPekGdU8JN0",
+        "isOneWay": false,
+        "fkHostTableName": "bse7bbdbrcd6YfA8YpU.tblZpC5o2HPyo6ZamhV",
+        "selfKeyName": "__id",
+        "foreignKeyName": "__fk_fldxO5C1KKRYVjnDDPx",
+        "symmetricFieldId": "fld7LahgiDtvPT3JRVK"
+      },
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldukk1FVJKO2eZ0H9Q",
+      "name": "Stage",
+      "dbFieldName": "Stage",
+      "type": "singleSelect",
+      "description": null,
+      "options": [
+        "New Lead",
+        "Contacted",
+        "Estimate Scheduled",
+        "Estimate Sent",
+        "Follow Up",
+        "Awaiting Decision",
+        "Negotiation",
+        "Won",
+        "Lost"
+      ],
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldloEogRXnKyr4lsT0",
+      "name": "Follow Up Date",
+      "dbFieldName": "Follow_Up_Date",
+      "type": "date",
+      "description": "Next scheduled follow-up date for this deal",
+      "options": {
+        "formatting": {
+          "date": "YYYY-MM-DD",
+          "time": "None",
+          "timeZone": "America/Chicago"
+        }
+      },
+      "cellValueType": "dateTime",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldDwSxmYx3KSKtDg4p",
+      "name": "Contact",
+      "dbFieldName": "Contact",
+      "type": "link",
+      "description": null,
+      "options": {
+        "relationship": "manyOne",
+        "foreignTableId": "tbldDs2u3Nj0KR8mZ0c",
+        "lookupFieldId": "fldn4iywC3eN0Wj9znm",
+        "isOneWay": false,
+        "fkHostTableName": "bse7bbdbrcd6YfA8YpU.tblZpC5o2HPyo6ZamhV",
+        "selfKeyName": "__id",
+        "foreignKeyName": "__fk_fldDwSxmYx3KSKtDg4p",
+        "symmetricFieldId": "fldzCZelYs0cO2qs7H5"
+      },
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fld3SEl3MnUu8jmHByv",
+      "name": "Source",
+      "dbFieldName": "Source",
+      "type": "singleSelect",
+      "description": null,
+      "options": [
+        "Website",
+        "Referral",
+        "Google",
+        "Social Media",
+        "Door Hanger",
+        "Yard Sign",
+        "Cold Call",
+        "Other"
+      ],
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldx9y9IfuEwcDtGlQU",
+      "name": "Days in Stage",
+      "dbFieldName": "Days_in_Stage",
+      "type": "formula",
+      "description": "Number of days since last activity on this deal",
+      "options": {
+        "expression": "IF({fldNlvimdpgkiuNPPlU}, DATETIME_DIFF(NOW(), {fldNlvimdpgkiuNPPlU}, 'day'), DATETIME_DIFF(NOW(), {fldbZ4m5Ti8Sdw2phDH}, 'day'))",
+        "timeZone": "America/Chicago",
+        "formatting": {
+          "type": "decimal",
+          "precision": 2
+        }
+      },
+      "cellValueType": "number",
+      "isLookup": null,
+      "isComputed": true,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldbZ4m5Ti8Sdw2phDH",
+      "name": "Created",
+      "dbFieldName": "Created",
+      "type": "createdTime",
+      "description": null,
+      "options": {
+        "expression": "CREATED_TIME()",
+        "formatting": {
+          "date": "YYYY-MM-DD",
+          "time": "None",
+          "timeZone": "America/Chicago"
+        }
+      },
+      "cellValueType": "dateTime",
+      "isLookup": null,
+      "isComputed": true,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldcnPzZp01GYDvY8GF",
+      "name": "Probability %",
+      "dbFieldName": "Probability",
+      "type": "number",
+      "description": null,
+      "options": {
+        "formatting": {
+          "type": "decimal",
+          "precision": 2
+        }
+      },
+      "cellValueType": "number",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    }
+  ]
+}
