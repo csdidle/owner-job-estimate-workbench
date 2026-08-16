@@ -267,7 +267,6 @@ Available tables (id → name → schema file):
 - `tblUjQ1DlNfsQZmXLqA` → Photos → `schema/table-tblUjQ1DlNfsQZmXLqA.json` (SQL: `"bse7bbdbrcd6YfA8YpU"."tblUjQ1DlNfsQZmXLqA"`)
 - `tbliZD2ZPSZkEr7jdo1` → Payments → `schema/table-tbliZD2ZPSZkEr7jdo1.json` (SQL: `"bse7bbdbrcd6YfA8YpU"."tbliZD2ZPSZkEr7jdo1"`)
 - `tbl22Uv1QXcJMQr0OxE` → Payment Allocations → `schema/table-tbl22Uv1QXcJMQr0OxE.json` (SQL: `"bse7bbdbrcd6YfA8YpU"."tbl22Uv1QXcJMQr0OxE"`)
-- `tblRiTRdEvKuMEeLkut` → temp_outstanding_invoices → `schema/table-tblRiTRdEvKuMEeLkut.json` (SQL: `"bse7bbdbrcd6YfA8YpU"."tblRiTRdEvKuMEeLkut"`)
 - `tbl2rkKy5VQucVWwANM` → Pricing Calculator → `schema/table-tbl2rkKy5VQucVWwANM.json` (SQL: `"bse7bbdbrcd6YfA8YpU"."tbl2rkKy5VQucVWwANM"`)
 - `tblzbMYZf6lqd3CpkxR` → PC Line Items → `schema/table-tblzbMYZf6lqd3CpkxR.json` (SQL: `"bse7bbdbrcd6YfA8YpU"."tblzbMYZf6lqd3CpkxR"`)
 - `tbl2CoIQz96e2FG07Tc` → Estimate Responses → `schema/table-tbl2CoIQz96e2FG07Tc.json` (SQL: `"bse7bbdbrcd6YfA8YpU"."tbl2CoIQz96e2FG07Tc"`)
