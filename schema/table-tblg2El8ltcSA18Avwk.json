@@ -1,0 +1,161 @@
+{
+  "id": "tblg2El8ltcSA18Avwk",
+  "name": "Estimate Line Items",
+  "description": null,
+  "dbTableName": "\"bse7bbdbrcd6YfA8YpU\".\"tblg2El8ltcSA18Avwk\"",
+  "fields": [
+    {
+      "id": "fldeCOcL8tAttZ52PZv",
+      "name": "Line Item",
+      "dbFieldName": "Line_Item",
+      "type": "singleLineText",
+      "description": null,
+      "options": {},
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldzzPQV83FqmDIOQDJ",
+      "name": "Created",
+      "dbFieldName": "Created",
+      "type": "createdTime",
+      "description": null,
+      "options": {
+        "expression": "CREATED_TIME()",
+        "formatting": {
+          "date": "YYYY-MM-DD",
+          "time": "None",
+          "timeZone": "America/Chicago"
+        }
+      },
+      "cellValueType": "dateTime",
+      "isLookup": null,
+      "isComputed": true,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldosdWIdTpDqLywNAd",
+      "name": "Unit Price",
+      "dbFieldName": "Unit_Price",
+      "type": "number",
+      "description": null,
+      "options": {
+        "formatting": {
+          "type": "decimal",
+          "precision": 2
+        }
+      },
+      "cellValueType": "number",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldwpZLGnlVCISY27VW",
+      "name": "Total",
+      "dbFieldName": "Total",
+      "type": "number",
+      "description": null,
+      "options": {
+        "formatting": {
+          "type": "decimal",
+          "precision": 2
+        }
+      },
+      "cellValueType": "number",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldX2JUOslgXPaSzkEs",
+      "name": "Quantity",
+      "dbFieldName": "Quantity",
+      "type": "number",
+      "description": null,
+      "options": {
+        "formatting": {
+          "type": "decimal",
+          "precision": 2
+        }
+      },
+      "cellValueType": "number",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldVUkcNMUDRAoc1KB1",
+      "name": "Estimate",
+      "dbFieldName": "Estimate",
+      "type": "link",
+      "description": null,
+      "options": {
+        "relationship": "manyOne",
+        "foreignTableId": "tblLu0d0Hn2YawgvFOI",
+        "lookupFieldId": "fldMjDPMxPekGdU8JN0",
+        "isOneWay": false,
+        "fkHostTableName": "bse7bbdbrcd6YfA8YpU.tblg2El8ltcSA18Avwk",
+        "selfKeyName": "__id",
+        "foreignKeyName": "__fk_fldVUkcNMUDRAoc1KB1",
+        "symmetricFieldId": "fldjgFXMt9TQgZIkZAv"
+      },
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fld9OvFBlZiIBYldoTP",
+      "name": "Service",
+      "dbFieldName": "Service",
+      "type": "link",
+      "description": null,
+      "options": {
+        "relationship": "manyOne",
+        "foreignTableId": "tbl9zU4PkhGggW7Dc9R",
+        "lookupFieldId": "flddfje4aYOCjiJxvDy",
+        "isOneWay": false,
+        "fkHostTableName": "bse7bbdbrcd6YfA8YpU.tblg2El8ltcSA18Avwk",
+        "selfKeyName": "__id",
+        "foreignKeyName": "__fk_fld9OvFBlZiIBYldoTP",
+        "symmetricFieldId": "fldTwtjaNNAUAg0mfEO"
+      },
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldQDRClbCKit57CL9v",
+      "name": "Description",
+      "dbFieldName": "Description",
+      "type": "longText",
+      "description": null,
+      "options": {},
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldpzAgrpE45naeunvG",
+      "name": "Line Order",
+      "dbFieldName": "Line_Order",
+      "type": "number",
+      "description": "Stable display order for the visual estimate builder and QBO lines.",
+      "options": {
+        "formatting": {
+          "type": "decimal",
+          "precision": 0
+        }
+      },
+      "cellValueType": "number",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    }
+  ]
+}

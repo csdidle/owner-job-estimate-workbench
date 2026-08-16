@@ -1,0 +1,810 @@
+{
+  "id": "tblYoERyR6AmuNXt9fK",
+  "name": "Job List",
+  "description": null,
+  "dbTableName": "\"bse7bbdbrcd6YfA8YpU\".\"tblYoERyR6AmuNXt9fK\"",
+  "fields": [
+    {
+      "id": "fld0zjPt44GhGTkpqYP",
+      "name": "Release to Pipeline",
+      "dbFieldName": "Release_to_Pipeline",
+      "type": "checkbox",
+      "description": "Manual manager command that activates an estimate-gated job through the shared release workflow.",
+      "options": {
+        "defaultValue": false
+      },
+      "cellValueType": "boolean",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldTRE91nXokn2dZWDk",
+      "name": "Completed Date",
+      "dbFieldName": "Completed_Date",
+      "type": "date",
+      "description": "Date the job was actually completed",
+      "options": {
+        "formatting": {
+          "date": "YYYY-MM-DD",
+          "time": "None",
+          "timeZone": "America/Chicago"
+        }
+      },
+      "cellValueType": "dateTime",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldsAFXjkcFHzFk6bAL",
+      "name": "Expenses",
+      "dbFieldName": "Expenses",
+      "type": "link",
+      "description": null,
+      "options": {
+        "relationship": "oneMany",
+        "foreignTableId": "tblazMSEuYQp2XBrf5S",
+        "lookupFieldId": "fldHTwHSC97os7JfSj1",
+        "isOneWay": false,
+        "fkHostTableName": "bse7bbdbrcd6YfA8YpU.tblazMSEuYQp2XBrf5S",
+        "selfKeyName": "__fk_fldvaaH8k5LBquBi0ri",
+        "foreignKeyName": "__id",
+        "symmetricFieldId": "fldvaaH8k5LBquBi0ri"
+      },
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": true
+    },
+    {
+      "id": "fldFh2KPsZEEuyXGj2Q",
+      "name": "Start Time",
+      "dbFieldName": "Start_Time",
+      "type": "date",
+      "description": null,
+      "options": {
+        "formatting": {
+          "date": "None",
+          "time": "hh:mm A",
+          "timeZone": "America/Chicago"
+        }
+      },
+      "cellValueType": "dateTime",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldZ4qY2P4YdtRQ50dA",
+      "name": "State",
+      "dbFieldName": "State",
+      "type": "singleLineText",
+      "description": null,
+      "options": {},
+      "cellValueType": "string",
+      "isLookup": true,
+      "isComputed": true,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldT3E1wHIsaSbNe2Vv",
+      "name": "Support Tickets",
+      "dbFieldName": "Support_Tickets",
+      "type": "link",
+      "description": null,
+      "options": {
+        "relationship": "oneMany",
+        "foreignTableId": "tblUPaN45Qfc61TIhWL",
+        "lookupFieldId": "fld5p4TeEvrRcVpSATI",
+        "isOneWay": false,
+        "fkHostTableName": "bse7bbdbrcd6YfA8YpU.tblUPaN45Qfc61TIhWL",
+        "selfKeyName": "__fk_fldWlaFC293PWvKXJRZ",
+        "foreignKeyName": "__id",
+        "symmetricFieldId": "fldWlaFC293PWvKXJRZ"
+      },
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": true
+    },
+    {
+      "id": "fldBcL6fyGKeea8dspO",
+      "name": "Invoice",
+      "dbFieldName": "Invoice",
+      "type": "link",
+      "description": null,
+      "options": {
+        "relationship": "manyOne",
+        "foreignTableId": "tblV7eqBBoDamQaaw8q",
+        "lookupFieldId": "fldzVIHbx4W1mb1z2ju",
+        "isOneWay": false,
+        "fkHostTableName": "bse7bbdbrcd6YfA8YpU.tblYoERyR6AmuNXt9fK",
+        "selfKeyName": "__id",
+        "foreignKeyName": "__fk_fldBcL6fyGKeea8dspO",
+        "symmetricFieldId": "fldMjf10Gf4CFblsoXd"
+      },
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldLM82oUWtsbQrnIkC",
+      "name": "Nombre del Trabajo",
+      "dbFieldName": "Nombre_del_Trabajo",
+      "type": "singleLineText",
+      "description": null,
+      "options": {},
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldybhDAuycpRO3LQux",
+      "name": "Departure Time",
+      "dbFieldName": "Departure_Time",
+      "type": "date",
+      "description": null,
+      "options": {
+        "formatting": {
+          "date": "M/D/YYYY",
+          "time": "hh:mm A",
+          "timeZone": "America/Chicago"
+        }
+      },
+      "cellValueType": "dateTime",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldOSgGeJdfmfw8H5zF",
+      "name": "Actual Hours",
+      "dbFieldName": "Actual_Hours",
+      "type": "number",
+      "description": null,
+      "options": {
+        "formatting": {
+          "type": "decimal",
+          "precision": 2
+        }
+      },
+      "cellValueType": "number",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fld9Np9fGRGpothuMNU",
+      "name": "Job #",
+      "dbFieldName": "Job",
+      "type": "autoNumber",
+      "description": null,
+      "options": {
+        "expression": "AUTO_NUMBER()"
+      },
+      "cellValueType": "number",
+      "isLookup": null,
+      "isComputed": true,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldIi6ovaWA1OmNNnTv",
+      "name": "Address",
+      "dbFieldName": "Address",
+      "type": "singleLineText",
+      "description": null,
+      "options": {},
+      "cellValueType": "string",
+      "isLookup": true,
+      "isComputed": true,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldUCvA2NhDBwwC6vM0",
+      "name": "Job Name",
+      "dbFieldName": "Job_Name",
+      "type": "singleLineText",
+      "description": null,
+      "options": {},
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fld3TExNwOYo5fiUnhj",
+      "name": "Invoice Conversion Date",
+      "dbFieldName": "Invoice_Conversion_Date",
+      "type": "date",
+      "description": null,
+      "options": {
+        "formatting": {
+          "date": "YYYY-MM-DD",
+          "time": "None",
+          "timeZone": "America/Chicago"
+        }
+      },
+      "cellValueType": "dateTime",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldoFSkpih4AqRtn3MH",
+      "name": "Proposed Invoice Amount",
+      "dbFieldName": "Proposed_Invoice_Amount",
+      "type": "number",
+      "description": null,
+      "options": {
+        "formatting": {
+          "type": "decimal",
+          "precision": 2
+        }
+      },
+      "cellValueType": "number",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldBxV81hzt3Ov65LrI",
+      "name": "Billing Hold Reason",
+      "dbFieldName": "Billing_Hold_Reason",
+      "type": "longText",
+      "description": null,
+      "options": {},
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldMd4f4xZ5AcZzF2gj",
+      "name": "Services",
+      "dbFieldName": "Services",
+      "type": "link",
+      "description": null,
+      "options": {
+        "relationship": "manyMany",
+        "foreignTableId": "tbl9zU4PkhGggW7Dc9R",
+        "lookupFieldId": "flddfje4aYOCjiJxvDy",
+        "isOneWay": false,
+        "fkHostTableName": "bse7bbdbrcd6YfA8YpU.junction_fldMd4f4xZ5AcZzF2gj_fldzciKtCA29nkprSU1",
+        "selfKeyName": "__fk_fldzciKtCA29nkprSU1",
+        "foreignKeyName": "__fk_fldMd4f4xZ5AcZzF2gj",
+        "symmetricFieldId": "fldzciKtCA29nkprSU1"
+      },
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": true
+    },
+    {
+      "id": "fldrVdR4AWvaD9pWPCL",
+      "name": "Field Notes",
+      "dbFieldName": "Field_Notes",
+      "type": "longText",
+      "description": null,
+      "options": {},
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldCFM0k913xpJZPCyl",
+      "name": "Assigned Crew",
+      "dbFieldName": "Assigned_Crew",
+      "type": "link",
+      "description": null,
+      "options": {
+        "relationship": "manyMany",
+        "foreignTableId": "tbl1gyEIJuVKcV6pKR1",
+        "lookupFieldId": "fldGDdtQpC6cTjtyR7U",
+        "isOneWay": false,
+        "fkHostTableName": "bse7bbdbrcd6YfA8YpU.junction_fldCFM0k913xpJZPCyl_fldjmVQsXSerjBEgcDL",
+        "selfKeyName": "__fk_fldjmVQsXSerjBEgcDL",
+        "foreignKeyName": "__fk_fldCFM0k913xpJZPCyl",
+        "symmetricFieldId": "fldjmVQsXSerjBEgcDL"
+      },
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": true
+    },
+    {
+      "id": "fldG9K8m1ZKiPdFUn33",
+      "name": "Ready to Invoice",
+      "dbFieldName": "Ready_to_Invoice",
+      "type": "checkbox",
+      "description": "Explicit approval gate required before the completed-job invoice automation runs.",
+      "options": {},
+      "cellValueType": "boolean",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldiHtjyz1Xm5bZuhlg",
+      "name": "Descripción",
+      "dbFieldName": "Descripcion",
+      "type": "longText",
+      "description": null,
+      "options": {},
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldi8mOyAL6vk70TwJP",
+      "name": "Billing Status",
+      "dbFieldName": "Billing_Status",
+      "type": "singleSelect",
+      "description": "Job-to-invoice conversion status used by the Invoice Workbench.",
+      "options": [
+        "Not Ready",
+        "Ready for Review",
+        "Added to Draft",
+        "Submitted to QBO",
+        "Invoiced",
+        "Billing Hold",
+        "Error"
+      ],
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldheIOjZy2Zig7Vzjz",
+      "name": "Recurring",
+      "dbFieldName": "Recurring",
+      "type": "checkbox",
+      "description": "Whether this is a recurring job",
+      "options": {},
+      "cellValueType": "boolean",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldRqAFo3PzQhJZUZwt",
+      "name": "Arrival Time",
+      "dbFieldName": "Arrival_Time",
+      "type": "date",
+      "description": null,
+      "options": {
+        "formatting": {
+          "date": "M/D/YYYY",
+          "time": "hh:mm A",
+          "timeZone": "America/Chicago"
+        }
+      },
+      "cellValueType": "dateTime",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldHVbUZrm9HDU2Am74",
+      "name": "Estimated Hours",
+      "dbFieldName": "Estimated_Hours",
+      "type": "number",
+      "description": "Estimated hours for the job",
+      "options": {
+        "formatting": {
+          "type": "decimal",
+          "precision": 2
+        }
+      },
+      "cellValueType": "number",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldZk6IuygPaD05sNVd",
+      "name": "Scheduled Date",
+      "dbFieldName": "Scheduled_Date",
+      "type": "date",
+      "description": null,
+      "options": {
+        "formatting": {
+          "date": "YYYY-MM-DD",
+          "time": "None",
+          "timeZone": "America/Chicago"
+        }
+      },
+      "cellValueType": "dateTime",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fld6bDmoUFixnzUOeof",
+      "name": "Description",
+      "dbFieldName": "Description",
+      "type": "longText",
+      "description": null,
+      "options": {},
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldsRaZ9jSjqrIY5kTP",
+      "name": "Photos Synced",
+      "dbFieldName": "Photos_Synced",
+      "type": "checkbox",
+      "description": null,
+      "options": {},
+      "cellValueType": "boolean",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fld0xgjzdSUcmi5FDKZ",
+      "name": "Completion Notes",
+      "dbFieldName": "Completion_Notes",
+      "type": "longText",
+      "description": "Notes added by crew upon job completion",
+      "options": {},
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldq3HxbavoVI94fklZ",
+      "name": "Created",
+      "dbFieldName": "Created",
+      "type": "createdTime",
+      "description": null,
+      "options": {
+        "expression": "CREATED_TIME()",
+        "formatting": {
+          "date": "YYYY-MM-DD",
+          "time": "None",
+          "timeZone": "America/Chicago"
+        }
+      },
+      "cellValueType": "dateTime",
+      "isLookup": null,
+      "isComputed": true,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fld16hNHfTdFa0IcesO",
+      "name": "Converted By",
+      "dbFieldName": "Converted_By",
+      "type": "user",
+      "description": null,
+      "options": {
+        "isMultiple": false,
+        "shouldNotify": true
+      },
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fld8LQIOaNKBdIW1IDk",
+      "name": "Recurrence",
+      "dbFieldName": "Recurrence",
+      "type": "singleSelect",
+      "description": "How often this recurring job repeats",
+      "options": [
+        "Weekly",
+        "Bi-Weekly",
+        "Monthly",
+        "Quarterly",
+        "Seasonal"
+      ],
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldSFdJly6bku4WWE7p",
+      "name": "Notas del Trabajo",
+      "dbFieldName": "Notas_del_Trabajo",
+      "type": "longText",
+      "description": null,
+      "options": {},
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldUwIRjAWUMGs78YSp",
+      "name": "Contact",
+      "dbFieldName": "Contact",
+      "type": "link",
+      "description": null,
+      "options": {
+        "relationship": "manyOne",
+        "foreignTableId": "tbldDs2u3Nj0KR8mZ0c",
+        "lookupFieldId": "fldn4iywC3eN0Wj9znm",
+        "isOneWay": false,
+        "fkHostTableName": "bse7bbdbrcd6YfA8YpU.tblYoERyR6AmuNXt9fK",
+        "selfKeyName": "__id",
+        "foreignKeyName": "__fk_fldUwIRjAWUMGs78YSp",
+        "symmetricFieldId": "fldZS7UhrA0LsK4Cllx"
+      },
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldht3hRgbvwA9Xsiin",
+      "name": "Time Tracker",
+      "dbFieldName": "Time_Tracker",
+      "type": "link",
+      "description": null,
+      "options": {
+        "relationship": "oneMany",
+        "foreignTableId": "tblgYRHd6wVWTDKwM33",
+        "lookupFieldId": "flduYTV9RdaFq4lmmv4",
+        "isOneWay": false,
+        "fkHostTableName": "bse7bbdbrcd6YfA8YpU.tblgYRHd6wVWTDKwM33",
+        "selfKeyName": "__fk_fldQxus6MHkqnXjg884",
+        "foreignKeyName": "__id",
+        "symmetricFieldId": "fldQxus6MHkqnXjg884"
+      },
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": true
+    },
+    {
+      "id": "fldAb30ir6nwnF6XIsv",
+      "name": "Job Notes",
+      "dbFieldName": "Job_Notes",
+      "type": "longText",
+      "description": null,
+      "options": {},
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldlhxBQQ1VmwnEMNKL",
+      "name": "Photos",
+      "dbFieldName": "Photos",
+      "type": "attachment",
+      "description": null,
+      "options": {},
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": true
+    },
+    {
+      "id": "fld1ujMxByfaN5LZcAK",
+      "name": "Job Type",
+      "dbFieldName": "Job_Type",
+      "type": "singleSelect",
+      "description": null,
+      "options": [
+        "One-Time",
+        "Recurring",
+        "Maintenance",
+        "Emergency"
+      ],
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldvIvBcGzn1lQQHixx",
+      "name": "Internal Notes",
+      "dbFieldName": "Internal_Notes",
+      "type": "longText",
+      "description": null,
+      "options": {},
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldj55qdfwnLSnp6Alr",
+      "name": "End Time",
+      "dbFieldName": "End_Time",
+      "type": "date",
+      "description": null,
+      "options": {
+        "formatting": {
+          "date": "None",
+          "time": "hh:mm A",
+          "timeZone": "America/Chicago"
+        }
+      },
+      "cellValueType": "dateTime",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "flda3YeUjYbHsqoyRdM",
+      "name": "Job Photos",
+      "dbFieldName": "Job_Photos",
+      "type": "attachment",
+      "description": "Before/during/after photos uploaded by field crews",
+      "options": {},
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": true
+    },
+    {
+      "id": "fldvfPdfcpFx3uOzbvR",
+      "name": "Chemical Usage Log",
+      "dbFieldName": "Chemical_Usage_Log",
+      "type": "link",
+      "description": null,
+      "options": {
+        "relationship": "oneMany",
+        "foreignTableId": "tblyYvXEHiXAXW0QIqH",
+        "lookupFieldId": "fld2YhZzZMo0PTSrYwF",
+        "isOneWay": false,
+        "fkHostTableName": "bse7bbdbrcd6YfA8YpU.tblyYvXEHiXAXW0QIqH",
+        "selfKeyName": "__fk_fldjDonJZB2Z6MDTpvz",
+        "foreignKeyName": "__id",
+        "symmetricFieldId": "fldjDonJZB2Z6MDTpvz"
+      },
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": true
+    },
+    {
+      "id": "flddIJ21uKWGZkNSHCh",
+      "name": "Priority",
+      "dbFieldName": "Priority",
+      "type": "singleSelect",
+      "description": null,
+      "options": [
+        "Low",
+        "Normal",
+        "High",
+        "Urgent"
+      ],
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldZvoJFTUWqDWH3pzM",
+      "name": "Estimate",
+      "dbFieldName": "Estimate",
+      "type": "link",
+      "description": null,
+      "options": {
+        "relationship": "manyOne",
+        "foreignTableId": "tblLu0d0Hn2YawgvFOI",
+        "lookupFieldId": "fldMjDPMxPekGdU8JN0",
+        "isOneWay": false,
+        "fkHostTableName": "bse7bbdbrcd6YfA8YpU.tblYoERyR6AmuNXt9fK",
+        "selfKeyName": "__id",
+        "foreignKeyName": "__fk_fldZvoJFTUWqDWH3pzM",
+        "symmetricFieldId": "fldJaEGuroxxGNV3dbu"
+      },
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldFuavPDanD3eIywTE",
+      "name": "City",
+      "dbFieldName": "City",
+      "type": "singleLineText",
+      "description": null,
+      "options": {},
+      "cellValueType": "string",
+      "isLookup": true,
+      "isComputed": true,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldncZgKnSGeW79Hvck",
+      "name": "Zip",
+      "dbFieldName": "Zip",
+      "type": "singleLineText",
+      "description": null,
+      "options": {},
+      "cellValueType": "string",
+      "isLookup": true,
+      "isComputed": true,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldqzwt88Io2KEeAtEs",
+      "name": "Activated By",
+      "dbFieldName": "Activated_By",
+      "type": "user",
+      "description": "Manager or collaborator who released this job to Active.",
+      "options": {
+        "isMultiple": false,
+        "shouldNotify": false
+      },
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldwQSZgT6Tl3B8UnHA",
+      "name": "Activated At",
+      "dbFieldName": "Activated_At",
+      "type": "date",
+      "description": "Timestamp when the manager or direct route moved this job to Active.",
+      "options": {
+        "formatting": {
+          "date": "YYYY-MM-DD",
+          "time": "hh:mm A",
+          "timeZone": "America/Chicago"
+        }
+      },
+      "cellValueType": "dateTime",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldQ6ZWSYprYZkDQtIO",
+      "name": "Status",
+      "dbFieldName": "Status",
+      "type": "singleSelect",
+      "description": null,
+      "options": [
+        "Scheduled",
+        "In Progress",
+        "Completed",
+        "On Hold",
+        "Cancelled",
+        "Waiting for Estimate",
+        "Active"
+      ],
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldfadhKBaXrTcUR7JG",
+      "name": "Pricing Calculator",
+      "dbFieldName": "Pricing_Calculator",
+      "type": "link",
+      "description": null,
+      "options": {
+        "relationship": "oneMany",
+        "foreignTableId": "tbl2rkKy5VQucVWwANM",
+        "lookupFieldId": "fldZiK5j84hal67rBbJ",
+        "isOneWay": false,
+        "fkHostTableName": "bse7bbdbrcd6YfA8YpU.tbl2rkKy5VQucVWwANM",
+        "selfKeyName": "__fk_fldAVF8a8mk3RDa2FS1",
+        "foreignKeyName": "__id",
+        "symmetricFieldId": "fldAVF8a8mk3RDa2FS1"
+      },
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": true
+    }
+  ]
+}

@@ -1,0 +1,310 @@
+{
+  "id": "tbl9zU4PkhGggW7Dc9R",
+  "name": "Price Book (Services)",
+  "description": null,
+  "dbTableName": "\"bse7bbdbrcd6YfA8YpU\".\"tbl9zU4PkhGggW7Dc9R\"",
+  "fields": [
+    {
+      "id": "fldSgVJlwDf8s8OhhIi",
+      "name": "Invoice Line Items",
+      "dbFieldName": "Invoice_Line_Items",
+      "type": "link",
+      "description": null,
+      "options": {
+        "relationship": "oneMany",
+        "foreignTableId": "tbly9cohTVaM3sqRB2T",
+        "lookupFieldId": "flduGqViJce3Jufqu2F",
+        "isOneWay": false,
+        "fkHostTableName": "bse7bbdbrcd6YfA8YpU.tbly9cohTVaM3sqRB2T",
+        "selfKeyName": "__fk_fldGbYHJ1XONNbdCpri",
+        "foreignKeyName": "__id",
+        "symmetricFieldId": "fldGbYHJ1XONNbdCpri"
+      },
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": true
+    },
+    {
+      "id": "fldGTYp1MZgFUt0VZBm",
+      "name": "Category",
+      "dbFieldName": "Category",
+      "type": "singleSelect",
+      "description": null,
+      "options": [
+        "Lawn Care",
+        "Landscaping",
+        "Hardscaping",
+        "Irrigation",
+        "Tree Service",
+        "Snow Removal",
+        "Cleanup",
+        "Design",
+        "Other"
+      ],
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldz4qRxCnT2TVV02zk",
+      "name": "PC Line Items",
+      "dbFieldName": "PC_Line_Items",
+      "type": "link",
+      "description": null,
+      "options": {
+        "relationship": "oneMany",
+        "foreignTableId": "tblzbMYZf6lqd3CpkxR",
+        "lookupFieldId": "fldvGfwizqG2xV6HDbz",
+        "isOneWay": false,
+        "fkHostTableName": "bse7bbdbrcd6YfA8YpU.tblzbMYZf6lqd3CpkxR",
+        "selfKeyName": "__fk_fld9xgdrWv5bzEKfUPJ",
+        "foreignKeyName": "__id",
+        "symmetricFieldId": "fld9xgdrWv5bzEKfUPJ"
+      },
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": true
+    },
+    {
+      "id": "flddfje4aYOCjiJxvDy",
+      "name": "Service Name",
+      "dbFieldName": "Service_Name",
+      "type": "singleLineText",
+      "description": null,
+      "options": {},
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldbr5quy5o4mC0GJvK",
+      "name": "Pricing Calculator",
+      "dbFieldName": "Pricing_Calculator",
+      "type": "link",
+      "description": null,
+      "options": {
+        "relationship": "oneMany",
+        "foreignTableId": "tbl2rkKy5VQucVWwANM",
+        "lookupFieldId": "fldZiK5j84hal67rBbJ",
+        "isOneWay": false,
+        "fkHostTableName": "bse7bbdbrcd6YfA8YpU.tbl2rkKy5VQucVWwANM",
+        "selfKeyName": "__fk_fldmt57556dMKqtCezc",
+        "foreignKeyName": "__id",
+        "symmetricFieldId": "fldmt57556dMKqtCezc"
+      },
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": true
+    },
+    {
+      "id": "flduLjD6jIChK74WKBX",
+      "name": "QBO Item ID",
+      "dbFieldName": "QBO_Item_ID",
+      "type": "singleLineText",
+      "description": "QuickBooks Online Product/Service Item entity ID for invoice line mapping.",
+      "options": {},
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldMmVt5DZOnZxxvFmL",
+      "name": "New Price",
+      "dbFieldName": "New_Cost",
+      "type": "formula",
+      "description": null,
+      "options": {
+        "expression": "{fldep6cktMXwSZAGBiE} * (1 + {fldOqZ9oBEGVmyp0xKH} / 100)",
+        "timeZone": "utc",
+        "formatting": {
+          "type": "decimal",
+          "precision": 2
+        }
+      },
+      "cellValueType": "number",
+      "isLookup": null,
+      "isComputed": true,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldkWZyar375VaoBJoo",
+      "name": "Markup %",
+      "dbFieldName": "Markup",
+      "type": "number",
+      "description": null,
+      "options": {
+        "formatting": {
+          "type": "decimal",
+          "precision": 2
+        }
+      },
+      "cellValueType": "number",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldOqZ9oBEGVmyp0xKH",
+      "name": "Profit Margin",
+      "dbFieldName": "Profit_Margin",
+      "type": "number",
+      "description": null,
+      "options": {
+        "formatting": {
+          "type": "decimal",
+          "precision": 2
+        },
+        "defaultValue": 100
+      },
+      "cellValueType": "number",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldTwtjaNNAUAg0mfEO",
+      "name": "Estimate Line Items",
+      "dbFieldName": "Estimate_Line_Items",
+      "type": "link",
+      "description": null,
+      "options": {
+        "relationship": "oneMany",
+        "foreignTableId": "tblg2El8ltcSA18Avwk",
+        "lookupFieldId": "fldeCOcL8tAttZ52PZv",
+        "isOneWay": false,
+        "fkHostTableName": "bse7bbdbrcd6YfA8YpU.tblg2El8ltcSA18Avwk",
+        "selfKeyName": "__fk_fld9OvFBlZiIBYldoTP",
+        "foreignKeyName": "__id",
+        "symmetricFieldId": "fld9OvFBlZiIBYldoTP"
+      },
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": true
+    },
+    {
+      "id": "fld021jdXnm1ONbIYzl",
+      "name": "Description",
+      "dbFieldName": "Description",
+      "type": "longText",
+      "description": null,
+      "options": {},
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldUO1wYxXCR2tkx9YV",
+      "name": "Unit",
+      "dbFieldName": "Unit",
+      "type": "singleSelect",
+      "description": null,
+      "options": [
+        "Per Hour",
+        "Per Sq Ft",
+        "Per Linear Ft",
+        "Per Yard",
+        "Per Job",
+        "Flat Rate",
+        "Per Visit"
+      ],
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldep6cktMXwSZAGBiE",
+      "name": "Cost",
+      "dbFieldName": "Cost",
+      "type": "number",
+      "description": "These are your actual Costs. They need to be updated/checked frequently. ",
+      "options": {
+        "formatting": {
+          "type": "decimal",
+          "precision": 2
+        }
+      },
+      "cellValueType": "number",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldzciKtCA29nkprSU1",
+      "name": "Job List",
+      "dbFieldName": "Job_List",
+      "type": "link",
+      "description": null,
+      "options": {
+        "relationship": "manyMany",
+        "foreignTableId": "tblYoERyR6AmuNXt9fK",
+        "lookupFieldId": "fld9Np9fGRGpothuMNU",
+        "isOneWay": false,
+        "fkHostTableName": "bse7bbdbrcd6YfA8YpU.junction_fldzciKtCA29nkprSU1_fldMd4f4xZ5AcZzF2gj",
+        "selfKeyName": "__fk_fldMd4f4xZ5AcZzF2gj",
+        "foreignKeyName": "__fk_fldzciKtCA29nkprSU1",
+        "symmetricFieldId": "fldMd4f4xZ5AcZzF2gj"
+      },
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": true
+    },
+    {
+      "id": "fldc5Nz02pDmx2qC9wS",
+      "name": "Active",
+      "dbFieldName": "Active",
+      "type": "checkbox",
+      "description": null,
+      "options": {},
+      "cellValueType": "boolean",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldbkXhIlVlMHs8lBpP",
+      "name": "Created",
+      "dbFieldName": "Created",
+      "type": "createdTime",
+      "description": null,
+      "options": {
+        "expression": "CREATED_TIME()",
+        "formatting": {
+          "date": "YYYY-MM-DD",
+          "time": "None",
+          "timeZone": "America/Chicago"
+        }
+      },
+      "cellValueType": "dateTime",
+      "isLookup": null,
+      "isComputed": true,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldlmEcuuO0hmKe9Jog",
+      "name": "Unit Price",
+      "dbFieldName": "Unit_Price",
+      "type": "number",
+      "description": null,
+      "options": {
+        "formatting": {
+          "type": "decimal",
+          "precision": 2
+        }
+      },
+      "cellValueType": "number",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    }
+  ]
+}

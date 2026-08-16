@@ -1,0 +1,985 @@
+{
+  "id": "tbl2rkKy5VQucVWwANM",
+  "name": "Pricing Calculator",
+  "description": null,
+  "dbTableName": "\"bse7bbdbrcd6YfA8YpU\".\"tbl2rkKy5VQucVWwANM\"",
+  "fields": [
+    {
+      "id": "fldDRT1dCOUwLXtliWB",
+      "name": "Requires Estimate",
+      "dbFieldName": "Requires_Estimate",
+      "type": "checkbox",
+      "description": "Routes pricing through estimate approval before the linked job can become Active.",
+      "options": {
+        "defaultValue": false
+      },
+      "cellValueType": "boolean",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldIfaE81b6AQvV5KbF",
+      "name": "Estimated Hours",
+      "dbFieldName": "Estimated_Hours",
+      "type": "number",
+      "description": null,
+      "options": {
+        "formatting": {
+          "type": "decimal",
+          "precision": 2
+        }
+      },
+      "cellValueType": "number",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fld4I5rmy0Li1OgaWdY",
+      "name": "vs Price Book",
+      "dbFieldName": "vs_Price_Book",
+      "type": "formula",
+      "description": "Dollar difference: Price to Quote minus Price Book Rate. Positive = quoting above book rate. Negative = quoting below book rate.",
+      "options": {
+        "expression": "IF(AND({fldXfkGhdN6VKjfga5M}, {fld5FQiCGXlUeftLMI9}), {fld5FQiCGXlUeftLMI9} - {fldXfkGhdN6VKjfga5M}, 0)",
+        "timeZone": "America/Chicago",
+        "formatting": {
+          "type": "decimal",
+          "precision": 2
+        }
+      },
+      "cellValueType": "number",
+      "isLookup": null,
+      "isComputed": true,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldXfkGhdN6VKjfga5M",
+      "name": "Price Book Rate",
+      "dbFieldName": "Price_Book_Rate",
+      "type": "number",
+      "description": "Standard unit price from the Price Book",
+      "options": {
+        "formatting": {
+          "type": "decimal",
+          "precision": 2
+        }
+      },
+      "cellValueType": "number",
+      "isLookup": true,
+      "isComputed": true,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldvwIv5abW0YUpXVwR",
+      "name": "Subcontractor Cost",
+      "dbFieldName": "Subcontractor_Cost",
+      "type": "number",
+      "description": null,
+      "options": {
+        "formatting": {
+          "type": "currency",
+          "precision": 2,
+          "symbol": "$"
+        }
+      },
+      "cellValueType": "number",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldFTddEoulZGo9t1mZ",
+      "name": "Pricing Verdict",
+      "dbFieldName": "Pricing_Verdict",
+      "type": "formula",
+      "description": "Verdict based on your actual margin: 🟢 40%+, 🟡 20-39%, 🟠 10-19%, 🔴 under 10%",
+      "options": {
+        "expression": "IF({fld5FQiCGXlUeftLMI9} = 0, '', IF({fldK6923OtEPhoGBW7p} >= 40, '🟢 Strong Margin', IF({fldK6923OtEPhoGBW7p} >= 20, '🟡 Healthy', IF({fldK6923OtEPhoGBW7p} >= 10, '🟠 Thin Margin', '🔴 Low/No Margin'))))",
+        "timeZone": "America/Chicago"
+      },
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": true,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldP875pU0FZePIeBCg",
+      "name": "Terrain Multiplier",
+      "dbFieldName": "Terrain_Multiplier",
+      "type": "formula",
+      "description": "Auto-adjusts pricing based on terrain: Easy=1.0x, Moderate=1.25x, Difficult=1.5x",
+      "options": {
+        "expression": "SWITCH({fldl6oKYNbblDnvnPdw}, 'Easy (Flat/Open)', 1.0, 'Moderate (Some Slopes/Obstacles)', 1.25, 'Difficult (Steep/Heavy Obstacles)', 1.5, 1.0)",
+        "timeZone": "America/Chicago",
+        "formatting": {
+          "type": "decimal",
+          "precision": 2
+        }
+      },
+      "cellValueType": "number",
+      "isLookup": null,
+      "isComputed": true,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldZiK5j84hal67rBbJ",
+      "name": "Estimate Name",
+      "dbFieldName": "Estimate_Name",
+      "type": "singleLineText",
+      "description": null,
+      "options": {},
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldknJgGFbLScTQauTJ",
+      "name": "Status",
+      "dbFieldName": "Status",
+      "type": "singleSelect",
+      "description": null,
+      "options": [
+        "In Progress",
+        "Estimate Created",
+        "Approved",
+        "Closed"
+      ],
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fld5MWqKmXPGQujotm3",
+      "name": "Acreage",
+      "dbFieldName": "Acreage",
+      "type": "number",
+      "description": null,
+      "options": {
+        "formatting": {
+          "type": "decimal",
+          "precision": 2
+        }
+      },
+      "cellValueType": "number",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldlYp01gCLvLnz0m4l",
+      "name": "Archive",
+      "dbFieldName": "Archive",
+      "type": "checkbox",
+      "description": null,
+      "options": {},
+      "cellValueType": "boolean",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldWiGzKj2uCpnwy2gS",
+      "name": "Visits per Season",
+      "dbFieldName": "Visits_per_Season",
+      "type": "number",
+      "description": null,
+      "options": {
+        "formatting": {
+          "type": "decimal",
+          "precision": 2
+        }
+      },
+      "cellValueType": "number",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldLLuq4ukVSnnzk9Uz",
+      "name": "Calculated Price (per visit)",
+      "dbFieldName": "Calculated_Price_per_visit",
+      "type": "formula",
+      "description": "Adjusted Cost with target margin applied: Cost / (1 - Margin%/100)",
+      "options": {
+        "expression": "IF(AND({fldSkeBjzSPgNcBdz72}, {fldHEz4AVaJ76nEeYTx}), ROUND({fldSkeBjzSPgNcBdz72} / (1 - {fldHEz4AVaJ76nEeYTx} / 100), 2), {fldSkeBjzSPgNcBdz72})",
+        "timeZone": "America/Chicago",
+        "formatting": {
+          "type": "decimal",
+          "precision": 2
+        }
+      },
+      "cellValueType": "number",
+      "isLookup": null,
+      "isComputed": true,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldHuC2AE82BfWukZ8n",
+      "name": "Photos",
+      "dbFieldName": "Photos",
+      "type": "link",
+      "description": null,
+      "options": {
+        "relationship": "oneMany",
+        "foreignTableId": "tblUjQ1DlNfsQZmXLqA",
+        "lookupFieldId": "fldLihwU420LJUzwDT5",
+        "isOneWay": false,
+        "fkHostTableName": "bse7bbdbrcd6YfA8YpU.tblUjQ1DlNfsQZmXLqA",
+        "selfKeyName": "__fk_fldGSHz8z4dhuQTmPLx",
+        "foreignKeyName": "__id",
+        "symmetricFieldId": "fldGSHz8z4dhuQTmPLx"
+      },
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": true
+    },
+    {
+      "id": "fld2rnEWSVRvmwWuGbf",
+      "name": "Grass Condition",
+      "dbFieldName": "Grass_Condition",
+      "type": "singleSelect",
+      "description": null,
+      "options": [
+        "Well Maintained",
+        "Overgrown",
+        "First-Time Cleanup",
+        "One-Time"
+      ],
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldmt57556dMKqtCezc",
+      "name": "Service",
+      "dbFieldName": "Service",
+      "type": "link",
+      "description": "Link to the Price Book service for base rate comparison",
+      "options": {
+        "relationship": "manyOne",
+        "foreignTableId": "tbl9zU4PkhGggW7Dc9R",
+        "lookupFieldId": "flddfje4aYOCjiJxvDy",
+        "isOneWay": false,
+        "fkHostTableName": "bse7bbdbrcd6YfA8YpU.tbl2rkKy5VQucVWwANM",
+        "selfKeyName": "__id",
+        "foreignKeyName": "__fk_fldmt57556dMKqtCezc",
+        "symmetricFieldId": "fldbr5quy5o4mC0GJvK"
+      },
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldUepSDnw2PNVuuR4n",
+      "name": "Photos Synced",
+      "dbFieldName": "Photos_Synced",
+      "type": "checkbox",
+      "description": null,
+      "options": {},
+      "cellValueType": "boolean",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fld7cKgjWVP8ODABgkS",
+      "name": "Contact",
+      "dbFieldName": "Contact",
+      "type": "link",
+      "description": "Link to the property/contact being estimated",
+      "options": {
+        "relationship": "manyOne",
+        "foreignTableId": "tbldDs2u3Nj0KR8mZ0c",
+        "lookupFieldId": "fldn4iywC3eN0Wj9znm",
+        "isOneWay": false,
+        "fkHostTableName": "bse7bbdbrcd6YfA8YpU.tbl2rkKy5VQucVWwANM",
+        "selfKeyName": "__id",
+        "foreignKeyName": "__fk_fld7cKgjWVP8ODABgkS",
+        "symmetricFieldId": "fldw8daIkxIAYca2SCx"
+      },
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldHEz4AVaJ76nEeYTx",
+      "name": "Target Margin %",
+      "dbFieldName": "Target_Margin",
+      "type": "number",
+      "description": null,
+      "options": {
+        "formatting": {
+          "type": "decimal",
+          "precision": 2
+        }
+      },
+      "cellValueType": "number",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldK6923OtEPhoGBW7p",
+      "name": "Actual Margin %",
+      "dbFieldName": "Actual_Margin",
+      "type": "formula",
+      "description": "True profit margin based on the price you'll actually quote",
+      "options": {
+        "expression": "IF(IF({fldxoD9TSRD0qyC03m0}, {fldxoD9TSRD0qyC03m0}, IF(AND({fldSkeBjzSPgNcBdz72}, {fldHEz4AVaJ76nEeYTx}), ROUND({fldSkeBjzSPgNcBdz72} / (1 - {fldHEz4AVaJ76nEeYTx} / 100), 2), 0)) > 0, ROUND((IF({fldxoD9TSRD0qyC03m0}, {fldxoD9TSRD0qyC03m0}, IF(AND({fldSkeBjzSPgNcBdz72}, {fldHEz4AVaJ76nEeYTx}), ROUND({fldSkeBjzSPgNcBdz72} / (1 - {fldHEz4AVaJ76nEeYTx} / 100), 2), 0)) - {fldSkeBjzSPgNcBdz72}) / IF({fldxoD9TSRD0qyC03m0}, {fldxoD9TSRD0qyC03m0}, IF(AND({fldSkeBjzSPgNcBdz72}, {fldHEz4AVaJ76nEeYTx}), ROUND({fldSkeBjzSPgNcBdz72} / (1 - {fldHEz4AVaJ76nEeYTx} / 100), 2), 0)) * 100, 1), 0)",
+        "timeZone": "America/Chicago",
+        "formatting": {
+          "type": "decimal",
+          "precision": 2
+        }
+      },
+      "cellValueType": "number",
+      "isLookup": null,
+      "isComputed": true,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldSsXkiif0J1JhkTbx",
+      "name": "Labor Rate (per person/hr)",
+      "dbFieldName": "Labor_Rate_per_person_hr",
+      "type": "number",
+      "description": null,
+      "options": {
+        "formatting": {
+          "type": "currency",
+          "precision": 2,
+          "symbol": "$"
+        }
+      },
+      "cellValueType": "number",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldEZjt8n8wfwgZ44dp",
+      "name": "Estimate",
+      "dbFieldName": "Estimate",
+      "type": "link",
+      "description": "Link to the Estimate this calculation is for",
+      "options": {
+        "relationship": "manyOne",
+        "foreignTableId": "tblLu0d0Hn2YawgvFOI",
+        "lookupFieldId": "fldMjDPMxPekGdU8JN0",
+        "isOneWay": false,
+        "fkHostTableName": "bse7bbdbrcd6YfA8YpU.tbl2rkKy5VQucVWwANM",
+        "selfKeyName": "__id",
+        "foreignKeyName": "__fk_fldEZjt8n8wfwgZ44dp",
+        "symmetricFieldId": "fldLSNEcoUd8MW6vcFe"
+      },
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fld1AHqEKV4wh3CD66b",
+      "name": "Estimate Photos",
+      "dbFieldName": "Job_Photos",
+      "type": "attachment",
+      "description": "Photos from the job site — snap pictures when filling out the form in the field",
+      "options": {},
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": true
+    },
+    {
+      "id": "fld7ykoS08KqHjGsoW7",
+      "name": "Notes",
+      "dbFieldName": "Notes",
+      "type": "longText",
+      "description": null,
+      "options": {},
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldEN172Ww8aq7hyZYx",
+      "name": "Calculated Profit (per visit)",
+      "dbFieldName": "Calculated_Profit_per_visit",
+      "type": "formula",
+      "description": "Calculated Price minus Adjusted Cost",
+      "options": {
+        "expression": "IF(AND({fldSkeBjzSPgNcBdz72}, {fldHEz4AVaJ76nEeYTx}), ROUND({fldSkeBjzSPgNcBdz72} / (1 - {fldHEz4AVaJ76nEeYTx} / 100), 2) - {fldSkeBjzSPgNcBdz72}, 0)",
+        "timeZone": "America/Chicago",
+        "formatting": {
+          "type": "decimal",
+          "precision": 2
+        }
+      },
+      "cellValueType": "number",
+      "isLookup": null,
+      "isComputed": true,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldhy1eSz9I2JcWRuLu",
+      "name": "Materials Cost",
+      "dbFieldName": "Materials_Cost",
+      "type": "number",
+      "description": null,
+      "options": {
+        "formatting": {
+          "type": "currency",
+          "precision": 2,
+          "symbol": "$"
+        }
+      },
+      "cellValueType": "number",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fld5FQiCGXlUeftLMI9",
+      "name": "Price to Quote",
+      "dbFieldName": "Price_to_Quote",
+      "type": "formula",
+      "description": "The actual price to put on the estimate — uses override if set, otherwise the calculated price",
+      "options": {
+        "expression": "IF({fldxoD9TSRD0qyC03m0}, {fldxoD9TSRD0qyC03m0}, IF(AND({fldSkeBjzSPgNcBdz72}, {fldHEz4AVaJ76nEeYTx}), ROUND({fldSkeBjzSPgNcBdz72} / (1 - {fldHEz4AVaJ76nEeYTx} / 100), 2), 0))",
+        "timeZone": "America/Chicago",
+        "formatting": {
+          "type": "currency",
+          "precision": 2,
+          "symbol": "$"
+        }
+      },
+      "cellValueType": "number",
+      "isLookup": null,
+      "isComputed": true,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldmol54RwBstoAZdPJ",
+      "name": "Category",
+      "dbFieldName": "Category",
+      "type": "singleSelect",
+      "description": null,
+      "options": [
+        "Lawn Care",
+        "Landscaping",
+        "Hardscaping",
+        "Irrigation",
+        "Tree Service",
+        "Snow Removal",
+        "Cleanup",
+        "Design",
+        "Other"
+      ],
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldkQ0Zz9BpmE3yYtnW",
+      "name": "Fuel/Travel Cost",
+      "dbFieldName": "Fuel_Travel_Cost",
+      "type": "number",
+      "description": null,
+      "options": {
+        "formatting": {
+          "type": "currency",
+          "precision": 2,
+          "symbol": "$"
+        }
+      },
+      "cellValueType": "number",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldWyPva0BGUgfIX2SL",
+      "name": "Frequency",
+      "dbFieldName": "Frequency",
+      "type": "singleSelect",
+      "description": null,
+      "options": [
+        "One-Time",
+        "Weekly",
+        "Bi-Weekly",
+        "Monthly",
+        "Quarterly",
+        "Seasonal"
+      ],
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldvul0CaeqYiklRipa",
+      "name": "Total Direct Cost",
+      "dbFieldName": "Total_Direct_Cost",
+      "type": "formula",
+      "description": "Sum of all costs: Labor + Equipment + Fuel + Materials + Disposal + Subcontractor",
+      "options": {
+        "expression": "IF({fldoDMdtWr3U8h6btj3}, {fldoDMdtWr3U8h6btj3} * {fldIfaE81b6AQvV5KbF} * {fldSsXkiif0J1JhkTbx}, 0) + IF({fldjwKkNIBAJCDLSWOm}, {fldjwKkNIBAJCDLSWOm}, 0) + IF({fldkQ0Zz9BpmE3yYtnW}, {fldkQ0Zz9BpmE3yYtnW}, 0) + IF({fldhy1eSz9I2JcWRuLu}, {fldhy1eSz9I2JcWRuLu}, 0) + IF({fldmQmofbeW5muPsVXa}, {fldmQmofbeW5muPsVXa}, 0) + IF({fldvwIv5abW0YUpXVwR}, {fldvwIv5abW0YUpXVwR}, 0)",
+        "timeZone": "America/Chicago",
+        "formatting": {
+          "type": "decimal",
+          "precision": 2
+        }
+      },
+      "cellValueType": "number",
+      "isLookup": null,
+      "isComputed": true,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldb7enfJr1ai3VFWny",
+      "name": "Season Total",
+      "dbFieldName": "Season_Total",
+      "type": "formula",
+      "description": "Calculated Price × number of visits per season (for recurring services)",
+      "options": {
+        "expression": "IF({fldWiGzKj2uCpnwy2gS}, ROUND({fldSkeBjzSPgNcBdz72} / (1 - IF({fldHEz4AVaJ76nEeYTx}, {fldHEz4AVaJ76nEeYTx}, 26) / 100), 2) * {fldWiGzKj2uCpnwy2gS}, ROUND({fldSkeBjzSPgNcBdz72} / (1 - IF({fldHEz4AVaJ76nEeYTx}, {fldHEz4AVaJ76nEeYTx}, 26) / 100), 2))",
+        "timeZone": "America/Chicago",
+        "formatting": {
+          "type": "decimal",
+          "precision": 2
+        }
+      },
+      "cellValueType": "number",
+      "isLookup": null,
+      "isComputed": true,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldoDMdtWr3U8h6btj3",
+      "name": "Crew Size",
+      "dbFieldName": "Crew_Size",
+      "type": "number",
+      "description": null,
+      "options": {
+        "formatting": {
+          "type": "decimal",
+          "precision": 2
+        }
+      },
+      "cellValueType": "number",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldzrXk73axRF5CXsEq",
+      "name": "Condition Multiplier",
+      "dbFieldName": "Condition_Multiplier",
+      "type": "formula",
+      "description": "Adjusts for property condition: Maintained=1.0x, Overgrown=1.35x, First-Time=1.75x",
+      "options": {
+        "expression": "SWITCH({fld2rnEWSVRvmwWuGbf}, 'Well Maintained', 1.0, 'Overgrown', 1.35, 'First-Time Cleanup', 1.75, 1.0)",
+        "timeZone": "America/Chicago",
+        "formatting": {
+          "type": "decimal",
+          "precision": 2
+        }
+      },
+      "cellValueType": "number",
+      "isLookup": null,
+      "isComputed": true,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldl6oKYNbblDnvnPdw",
+      "name": "Terrain Difficulty",
+      "dbFieldName": "Terrain_Difficulty",
+      "type": "singleSelect",
+      "description": null,
+      "options": [
+        "Easy (Flat/Open)",
+        "Moderate (Some Slopes/Obstacles)",
+        "Difficult (Steep/Heavy Obstacles)"
+      ],
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldcv4DjSVCT6bgs5OE",
+      "name": "Price Book Cost",
+      "dbFieldName": "Price_Book_Cost",
+      "type": "number",
+      "description": "Standard cost from the Price Book",
+      "options": {
+        "formatting": {
+          "type": "decimal",
+          "precision": 2
+        }
+      },
+      "cellValueType": "number",
+      "isLookup": true,
+      "isComputed": true,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldE7Bk98i5ilpmlAvc",
+      "name": "PC Line Items",
+      "dbFieldName": "PC_Line_Items",
+      "type": "link",
+      "description": null,
+      "options": {
+        "relationship": "oneMany",
+        "foreignTableId": "tblzbMYZf6lqd3CpkxR",
+        "lookupFieldId": "fldvGfwizqG2xV6HDbz",
+        "isOneWay": false,
+        "fkHostTableName": "bse7bbdbrcd6YfA8YpU.tblzbMYZf6lqd3CpkxR",
+        "selfKeyName": "__fk_fldFT3ZrdF2nXVIOvrD",
+        "foreignKeyName": "__id",
+        "symmetricFieldId": "fldFT3ZrdF2nXVIOvrD"
+      },
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": true
+    },
+    {
+      "id": "fldzGbabV7a9Xle9Jl7",
+      "name": "Season Multiplier",
+      "dbFieldName": "Season_Multiplier",
+      "type": "formula",
+      "description": "Seasonal premium: Spring=1.1x (heavy growth), Summer=1.0x, Fall=1.15x (leaf season), Winter=1.25x (snow premium)",
+      "options": {
+        "expression": "SWITCH({fld2EDcwlG33ManHWjH}, 'Spring', 1.1, 'Summer', 1.0, 'Fall', 1.15, 'Winter', 1.25, 1.0)",
+        "timeZone": "America/Chicago",
+        "formatting": {
+          "type": "decimal",
+          "precision": 2
+        }
+      },
+      "cellValueType": "number",
+      "isLookup": null,
+      "isComputed": true,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldjwKkNIBAJCDLSWOm",
+      "name": "Equipment Cost",
+      "dbFieldName": "Equipment_Cost",
+      "type": "number",
+      "description": null,
+      "options": {
+        "formatting": {
+          "type": "currency",
+          "precision": 2,
+          "symbol": "$"
+        }
+      },
+      "cellValueType": "number",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fld2EDcwlG33ManHWjH",
+      "name": "Season",
+      "dbFieldName": "Season",
+      "type": "singleSelect",
+      "description": null,
+      "options": [
+        "Spring",
+        "Summer",
+        "Fall",
+        "Winter"
+      ],
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldSkeBjzSPgNcBdz72",
+      "name": "Adjusted Cost",
+      "dbFieldName": "Adjusted_Cost",
+      "type": "formula",
+      "description": "Total Direct Cost adjusted by terrain, condition, and season multipliers",
+      "options": {
+        "expression": "IF({fldvul0CaeqYiklRipa}, {fldvul0CaeqYiklRipa} * IF({fldP875pU0FZePIeBCg}, {fldP875pU0FZePIeBCg}, 1) * IF({fldzrXk73axRF5CXsEq}, {fldzrXk73axRF5CXsEq}, 1) * IF({fldzGbabV7a9Xle9Jl7}, {fldzGbabV7a9Xle9Jl7}, 1), 0)",
+        "timeZone": "America/Chicago",
+        "formatting": {
+          "type": "decimal",
+          "precision": 2
+        }
+      },
+      "cellValueType": "number",
+      "isLookup": null,
+      "isComputed": true,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldmQmofbeW5muPsVXa",
+      "name": "Disposal/Dump Fees",
+      "dbFieldName": "Disposal_Dump_Fees",
+      "type": "number",
+      "description": null,
+      "options": {
+        "formatting": {
+          "type": "currency",
+          "precision": 2,
+          "symbol": "$"
+        }
+      },
+      "cellValueType": "number",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldxoD9TSRD0qyC03m0",
+      "name": "Final Price (Override)",
+      "dbFieldName": "Final_Price_Override",
+      "type": "number",
+      "description": "Optional: manually override the calculated price. Leave blank to use the calculated price.",
+      "options": {
+        "formatting": {
+          "type": "currency",
+          "precision": 2,
+          "symbol": "$"
+        }
+      },
+      "cellValueType": "number",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldaEZKweH7yodhLVLC",
+      "name": "Line Items Total",
+      "dbFieldName": "Line_Items_Total",
+      "type": "rollup",
+      "description": null,
+      "options": {
+        "expression": "sum({values})",
+        "timeZone": "America/Chicago",
+        "formatting": {
+          "type": "decimal",
+          "precision": 2
+        }
+      },
+      "cellValueType": "number",
+      "isLookup": null,
+      "isComputed": true,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldGpAiWXXLDCSZfXZa",
+      "name": "Created",
+      "dbFieldName": "Created",
+      "type": "createdTime",
+      "description": null,
+      "options": {
+        "expression": "CREATED_TIME()",
+        "formatting": {
+          "date": "YYYY-MM-DD",
+          "time": "None",
+          "timeZone": "America/Chicago"
+        }
+      },
+      "cellValueType": "dateTime",
+      "isLookup": null,
+      "isComputed": true,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldqjNSx9YsemCqdQel",
+      "name": "Labor Cost",
+      "dbFieldName": "Labor_Cost",
+      "type": "formula",
+      "description": "Crew Size × Hours × Labor Rate per person",
+      "options": {
+        "expression": "IF(AND({fldoDMdtWr3U8h6btj3}, {fldIfaE81b6AQvV5KbF}, {fldSsXkiif0J1JhkTbx}), {fldoDMdtWr3U8h6btj3} * {fldIfaE81b6AQvV5KbF} * {fldSsXkiif0J1JhkTbx}, 0)",
+        "timeZone": "America/Chicago",
+        "formatting": {
+          "type": "decimal",
+          "precision": 2
+        }
+      },
+      "cellValueType": "number",
+      "isLookup": null,
+      "isComputed": true,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldya1VrQjEXys7OOBn",
+      "name": "Price Book Unit",
+      "dbFieldName": "Price_Book_Unit",
+      "type": "singleSelect",
+      "description": "Unit type from the Price Book",
+      "options": [
+        "Per Hour",
+        "Per Sq Ft",
+        "Per Linear Ft",
+        "Per Yard",
+        "Per Job",
+        "Flat Rate",
+        "Per Visit"
+      ],
+      "cellValueType": "string",
+      "isLookup": true,
+      "isComputed": true,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldTxirEHdWspVXx1vJ",
+      "name": "Routing Status",
+      "dbFieldName": "Routing_Status",
+      "type": "singleSelect",
+      "description": "Shared workflow state used by apps and functions to route approved pricing exactly once.",
+      "options": [
+        "Draft",
+        "Ready to Route",
+        "Routing",
+        "Job Active",
+        "Waiting for Estimate",
+        "Error"
+      ],
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fld0F0ErwJNkErIHsAM",
+      "name": "Job Type",
+      "dbFieldName": "Job_Type",
+      "type": "singleSelect",
+      "description": "Job type copied to the routed job.",
+      "options": [
+        "One-Time",
+        "Recurring",
+        "Maintenance",
+        "Emergency"
+      ],
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldrxL9msiBbG3guRod",
+      "name": "Routed At",
+      "dbFieldName": "Routed_At",
+      "type": "date",
+      "description": "Timestamp when pricing successfully created and linked its job records.",
+      "options": {
+        "formatting": {
+          "date": "YYYY-MM-DD",
+          "time": "hh:mm A",
+          "timeZone": "America/Chicago"
+        }
+      },
+      "cellValueType": "dateTime",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldugMFE3Ti6kFpLpfV",
+      "name": "Routing Error",
+      "dbFieldName": "Routing_Error",
+      "type": "longText",
+      "description": "Last pricing-to-job routing error for operator review.",
+      "options": {},
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldpbIaqJEYue6vurAH",
+      "name": "Scheduled Date",
+      "dbFieldName": "Scheduled_Date",
+      "type": "date",
+      "description": "Proposed service date copied to the routed job.",
+      "options": {
+        "formatting": {
+          "date": "YYYY-MM-DD",
+          "time": "None",
+          "timeZone": "America/Chicago"
+        }
+      },
+      "cellValueType": "dateTime",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldAVF8a8mk3RDa2FS1",
+      "name": "Job",
+      "dbFieldName": "Job",
+      "type": "link",
+      "description": "Job created from this pricing request.",
+      "options": {
+        "relationship": "manyOne",
+        "foreignTableId": "tblYoERyR6AmuNXt9fK",
+        "lookupFieldId": "fld9Np9fGRGpothuMNU",
+        "isOneWay": false,
+        "fkHostTableName": "bse7bbdbrcd6YfA8YpU.tbl2rkKy5VQucVWwANM",
+        "selfKeyName": "__id",
+        "foreignKeyName": "__fk_fldAVF8a8mk3RDa2FS1",
+        "symmetricFieldId": "fldfadhKBaXrTcUR7JG"
+      },
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldFIDzSohqhjXg8wuv",
+      "name": "Assigned Crew",
+      "dbFieldName": "Assigned_Crew",
+      "type": "link",
+      "description": "Crew assignment copied to the routed job.",
+      "options": {
+        "relationship": "manyMany",
+        "foreignTableId": "tbl1gyEIJuVKcV6pKR1",
+        "lookupFieldId": "fldGDdtQpC6cTjtyR7U",
+        "isOneWay": false,
+        "fkHostTableName": "bse7bbdbrcd6YfA8YpU.junction_fldFIDzSohqhjXg8wuv_fldVhy8CwizqvFQ0nMf",
+        "selfKeyName": "__fk_fldVhy8CwizqvFQ0nMf",
+        "foreignKeyName": "__fk_fldFIDzSohqhjXg8wuv",
+        "symmetricFieldId": "fldVhy8CwizqvFQ0nMf"
+      },
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": true
+    },
+    {
+      "id": "fldIpFWEz5idEoof0LC",
+      "name": "Priority",
+      "dbFieldName": "Priority",
+      "type": "singleSelect",
+      "description": "Priority copied to the routed job.",
+      "options": [
+        "Low",
+        "Normal",
+        "High",
+        "Urgent"
+      ],
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    }
+  ]
+}

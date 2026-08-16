@@ -1,0 +1,827 @@
+{
+  "id": "tbldDs2u3Nj0KR8mZ0c",
+  "name": "Contacts",
+  "description": null,
+  "dbTableName": "\"bse7bbdbrcd6YfA8YpU\".\"tbldDs2u3Nj0KR8mZ0c\"",
+  "fields": [
+    {
+      "id": "fldPIEtfArtFWrfLyPG",
+      "name": "Preferred Contact Method",
+      "dbFieldName": "Preferred_Contact_Method",
+      "type": "singleSelect",
+      "description": null,
+      "options": [
+        "Phone",
+        "Email",
+        "Text/SMS",
+        "In Person"
+      ],
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldm0tPcr49IZetr17C",
+      "name": "Status",
+      "dbFieldName": "Status",
+      "type": "singleSelect",
+      "description": null,
+      "options": [
+        "Active",
+        "Inactive",
+        "Do Not Contact",
+        "VIP"
+      ],
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fld4jxXv9Sv9PeUdd6x",
+      "name": "Total Jobs",
+      "dbFieldName": "Total_Jobs",
+      "type": "rollup",
+      "description": "Total number of jobs for this contact",
+      "options": {
+        "expression": "countall({values})",
+        "timeZone": "America/Chicago",
+        "formatting": {
+          "type": "decimal",
+          "precision": 2
+        }
+      },
+      "cellValueType": "number",
+      "isLookup": null,
+      "isComputed": true,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldmtNE4IFWgA4xT72r",
+      "name": "Contact Requests",
+      "dbFieldName": "Contact_Requests1773583479364",
+      "type": "link",
+      "description": null,
+      "options": {
+        "relationship": "oneMany",
+        "foreignTableId": "tbl7iJQHPF03Q6N05jy",
+        "lookupFieldId": "fldd7GGexopR8JTBe4D",
+        "isOneWay": false,
+        "fkHostTableName": "bse7bbdbrcd6YfA8YpU.tbl7iJQHPF03Q6N05jy",
+        "selfKeyName": "__fk_fldJqifiMtXtLEOpTYx",
+        "foreignKeyName": "__id",
+        "symmetricFieldId": "fldJqifiMtXtLEOpTYx"
+      },
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": true
+    },
+    {
+      "id": "fldfP2dLQ3FdBr2O6oG",
+      "name": "Zip",
+      "dbFieldName": "Zip",
+      "type": "singleLineText",
+      "description": null,
+      "options": {},
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldFOyzj6BSpD99WjUJ",
+      "name": "Total Revenue (CLV)",
+      "dbFieldName": "Total_Revenue_CLV",
+      "type": "rollup",
+      "description": "Customer Lifetime Value - total of all invoice amounts",
+      "options": {
+        "expression": "sum({values})",
+        "timeZone": "America/Chicago",
+        "formatting": {
+          "type": "decimal",
+          "precision": 2
+        }
+      },
+      "cellValueType": "number",
+      "isLookup": null,
+      "isComputed": true,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fld7Uyeg9XoWwL3tojW",
+      "name": "Referral Source",
+      "dbFieldName": "Referral_Source",
+      "type": "singleLineText",
+      "description": null,
+      "options": {},
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldAtW6Grkb6J1UecoK",
+      "name": "Chemical Usage Log",
+      "dbFieldName": "Chemical_Usage_Log1773166078690",
+      "type": "link",
+      "description": null,
+      "options": {
+        "relationship": "oneMany",
+        "foreignTableId": "tblyYvXEHiXAXW0QIqH",
+        "lookupFieldId": "fld2YhZzZMo0PTSrYwF",
+        "isOneWay": false,
+        "fkHostTableName": "bse7bbdbrcd6YfA8YpU.tblyYvXEHiXAXW0QIqH",
+        "selfKeyName": "__fk_fldW6aDKKZvbP719bSA",
+        "foreignKeyName": "__id",
+        "symmetricFieldId": "fldW6aDKKZvbP719bSA"
+      },
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": true
+    },
+    {
+      "id": "fldAC3PSwkdoyVMKh2p",
+      "name": "Last Name",
+      "dbFieldName": "Last_Name",
+      "type": "singleLineText",
+      "description": null,
+      "options": {},
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldn4iywC3eN0Wj9znm",
+      "name": "Apartment Name",
+      "dbFieldName": "First_Name",
+      "type": "singleLineText",
+      "description": null,
+      "options": {},
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldtc6oX9TgP1ukP3PV",
+      "name": "In Service Area",
+      "dbFieldName": "In_Service_Area",
+      "type": "checkbox",
+      "description": null,
+      "options": {},
+      "cellValueType": "boolean",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldaeFR2d7PD297mlnt",
+      "name": "Property Notes",
+      "dbFieldName": "Property_Notes",
+      "type": "longText",
+      "description": null,
+      "options": {},
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldZS7UhrA0LsK4Cllx",
+      "name": "Job List",
+      "dbFieldName": "Job_List1773583475412",
+      "type": "link",
+      "description": null,
+      "options": {
+        "relationship": "oneMany",
+        "foreignTableId": "tblYoERyR6AmuNXt9fK",
+        "lookupFieldId": "fld9Np9fGRGpothuMNU",
+        "isOneWay": false,
+        "fkHostTableName": "bse7bbdbrcd6YfA8YpU.tblYoERyR6AmuNXt9fK",
+        "selfKeyName": "__fk_fldUwIRjAWUMGs78YSp",
+        "foreignKeyName": "__id",
+        "symmetricFieldId": "fldUwIRjAWUMGs78YSp"
+      },
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": true
+    },
+    {
+      "id": "fldDhvQtMBQcWdGARkZ",
+      "name": "Company",
+      "dbFieldName": "Company",
+      "type": "singleLineText",
+      "description": null,
+      "options": {},
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldb4uBOd1Jih0HjWRM",
+      "name": "Support Tickets",
+      "dbFieldName": "Support_Tickets1773583478453",
+      "type": "link",
+      "description": null,
+      "options": {
+        "relationship": "oneMany",
+        "foreignTableId": "tblUPaN45Qfc61TIhWL",
+        "lookupFieldId": "fld5p4TeEvrRcVpSATI",
+        "isOneWay": false,
+        "fkHostTableName": "bse7bbdbrcd6YfA8YpU.tblUPaN45Qfc61TIhWL",
+        "selfKeyName": "__fk_fldyLgQoWlpQScw9gfr",
+        "foreignKeyName": "__id",
+        "symmetricFieldId": "fldyLgQoWlpQScw9gfr"
+      },
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": true
+    },
+    {
+      "id": "fldzCZelYs0cO2qs7H5",
+      "name": "Pipelines",
+      "dbFieldName": "Pipelines1773583477295",
+      "type": "link",
+      "description": null,
+      "options": {
+        "relationship": "oneMany",
+        "foreignTableId": "tblZpC5o2HPyo6ZamhV",
+        "lookupFieldId": "fldZiiK63prvdF7s3EQ",
+        "isOneWay": false,
+        "fkHostTableName": "bse7bbdbrcd6YfA8YpU.tblZpC5o2HPyo6ZamhV",
+        "selfKeyName": "__fk_fldDwSxmYx3KSKtDg4p",
+        "foreignKeyName": "__id",
+        "symmetricFieldId": "fldDwSxmYx3KSKtDg4p"
+      },
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": true
+    },
+    {
+      "id": "fld2s3zCMk6JbfPZy2n",
+      "name": "Last Contact Date",
+      "dbFieldName": "Last_Contact_Date",
+      "type": "date",
+      "description": null,
+      "options": {
+        "formatting": {
+          "date": "YYYY-MM-DD",
+          "time": "None",
+          "timeZone": "America/Chicago"
+        }
+      },
+      "cellValueType": "dateTime",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldI7fTZDrTZ5hLSNg5",
+      "name": "Billing Cycles",
+      "dbFieldName": "Billing_Cycles",
+      "type": "link",
+      "description": null,
+      "options": {
+        "relationship": "oneMany",
+        "foreignTableId": "tblgzrgJT1g1lkaZodJ",
+        "lookupFieldId": "fldr0iYV5GQshh2eYv8",
+        "isOneWay": false,
+        "fkHostTableName": "bse7bbdbrcd6YfA8YpU.tblgzrgJT1g1lkaZodJ",
+        "selfKeyName": "__fk_fldmc0MskFuahKP0mX6",
+        "foreignKeyName": "__id",
+        "symmetricFieldId": "fldmc0MskFuahKP0mX6"
+      },
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": true
+    },
+    {
+      "id": "fldo8MAToXrycOaoITB",
+      "name": "Contact Type",
+      "dbFieldName": "Contact_Type",
+      "type": "singleSelect",
+      "description": null,
+      "options": [
+        "Lead",
+        "Customer",
+        "Prospect",
+        "Vendor",
+        "Referral",
+        "Inactive",
+        "Residential",
+        "Commercial"
+      ],
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fld17yeQ3vbCSfNEWT9",
+      "name": "Schedule Requests",
+      "dbFieldName": "Schedule_Requests1773583480300",
+      "type": "link",
+      "description": null,
+      "options": {
+        "relationship": "oneMany",
+        "foreignTableId": "tblPhyRLVsjUBLIkj9E",
+        "lookupFieldId": "fldG60WsiWAOXmkYlJW",
+        "isOneWay": false,
+        "fkHostTableName": "bse7bbdbrcd6YfA8YpU.tblPhyRLVsjUBLIkj9E",
+        "selfKeyName": "__fk_fldNf2FZEOGojQYreuQ",
+        "foreignKeyName": "__id",
+        "symmetricFieldId": "fldNf2FZEOGojQYreuQ"
+      },
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": true
+    },
+    {
+      "id": "fldA5Wkg9X2xwXmwNZH",
+      "name": "Next Service Date",
+      "dbFieldName": "Next_Service_Date",
+      "type": "date",
+      "description": null,
+      "options": {
+        "formatting": {
+          "date": "YYYY-MM-DD",
+          "time": "None",
+          "timeZone": "America/Chicago"
+        }
+      },
+      "cellValueType": "dateTime",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fld4EckLPO7DkswO3Li",
+      "name": "Company ID",
+      "dbFieldName": "Company_ID",
+      "type": "number",
+      "description": null,
+      "options": {
+        "formatting": {
+          "type": "decimal",
+          "precision": 0
+        }
+      },
+      "cellValueType": "number",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldnijkHYrPfByKIK51",
+      "name": "Role",
+      "dbFieldName": "Role",
+      "type": "singleLineText",
+      "description": null,
+      "options": {},
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldYk92NBvNWIxh467a",
+      "name": "Photos Synced",
+      "dbFieldName": "Photos_Synced",
+      "type": "checkbox",
+      "description": null,
+      "options": {},
+      "cellValueType": "boolean",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldGuVXmAazUvN5oc55",
+      "name": "Property Size",
+      "dbFieldName": "Property_Size",
+      "type": "singleLineText",
+      "description": null,
+      "options": {},
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldY2tv82u4jzM9nHYG",
+      "name": "Open Tickets",
+      "dbFieldName": "Open_Tickets",
+      "type": "rollup",
+      "description": "Number of support tickets for this contact",
+      "options": {
+        "expression": "countall({values})",
+        "timeZone": "America/Chicago",
+        "formatting": {
+          "type": "decimal",
+          "precision": 2
+        }
+      },
+      "cellValueType": "number",
+      "isLookup": null,
+      "isComputed": true,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldwvJqWwBkHAZ12NXC",
+      "name": "Property Photos",
+      "dbFieldName": "Property_Photos",
+      "type": "attachment",
+      "description": null,
+      "options": {},
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": true
+    },
+    {
+      "id": "fldN8DFBUyjTW5n37HP",
+      "name": "AI Customer Summary",
+      "dbFieldName": "AI_Customer_Summary",
+      "type": "longText",
+      "description": "AI-generated summary of customer interaction history",
+      "options": {},
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldRMJs7jjd5AaADI9e",
+      "name": "Property Photos 2",
+      "dbFieldName": "Property_Photos1774222671971",
+      "type": "link",
+      "description": null,
+      "options": {
+        "relationship": "oneMany",
+        "foreignTableId": "tblUjQ1DlNfsQZmXLqA",
+        "lookupFieldId": "fldLihwU420LJUzwDT5",
+        "isOneWay": false,
+        "fkHostTableName": "bse7bbdbrcd6YfA8YpU.tblUjQ1DlNfsQZmXLqA",
+        "selfKeyName": "__fk_fldEoYjFSCPiiVQ73aV",
+        "foreignKeyName": "__id",
+        "symmetricFieldId": "fldEoYjFSCPiiVQ73aV"
+      },
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": true
+    },
+    {
+      "id": "fldtNmwf05ZoZvl64nn",
+      "name": "First Name",
+      "dbFieldName": "First_Name1773607325102",
+      "type": "singleLineText",
+      "description": null,
+      "options": {},
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldScTX0Ff3pMLXOLV9",
+      "name": "QBO Customer ID",
+      "dbFieldName": "QBO_Customer_ID",
+      "type": "singleLineText",
+      "description": "QuickBooks Online Customer entity ID. Distinct from Teable Company ID.",
+      "options": {},
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldT0YLMJPiLKwzgtnp",
+      "name": "Outstanding Balance",
+      "dbFieldName": "Outstanding_Balance",
+      "type": "rollup",
+      "description": "Total positive unpaid balance across linked invoices, excluding Void and Paid statuses",
+      "options": {
+        "expression": "sum({values})",
+        "timeZone": "America/Chicago",
+        "formatting": {
+          "type": "decimal",
+          "precision": 2
+        }
+      },
+      "cellValueType": "number",
+      "isLookup": null,
+      "isComputed": true,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldCd2BnCh9L1XShola",
+      "name": "Email",
+      "dbFieldName": "Email",
+      "type": "singleLineText",
+      "description": null,
+      "options": {},
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldGn0eSKqxMSugTp7u",
+      "name": "Address",
+      "dbFieldName": "Address",
+      "type": "singleLineText",
+      "description": null,
+      "options": {},
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fld695Ln9wOQPCe7H7F",
+      "name": "Payments",
+      "dbFieldName": "Payments",
+      "type": "link",
+      "description": null,
+      "options": {
+        "relationship": "oneMany",
+        "foreignTableId": "tbliZD2ZPSZkEr7jdo1",
+        "lookupFieldId": "fldQEqlOUZ6P3k5htDK",
+        "isOneWay": false,
+        "fkHostTableName": "bse7bbdbrcd6YfA8YpU.tbliZD2ZPSZkEr7jdo1",
+        "selfKeyName": "__fk_fldQkgLWBV8juHTbwHy",
+        "foreignKeyName": "__id",
+        "symmetricFieldId": "fldQkgLWBV8juHTbwHy"
+      },
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": true
+    },
+    {
+      "id": "fldBbNU3AibEedSZ57U",
+      "name": "Budget Range",
+      "dbFieldName": "Budget_Range",
+      "type": "singleSelect",
+      "description": null,
+      "options": [
+        "Under $500",
+        "$500-$1,000",
+        "$1,000-$2,500",
+        "$2,500-$5,000",
+        "$5,000-$10,000",
+        "$10,000-$25,000",
+        "$25,000+",
+        "Not Disclosed"
+      ],
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldt3vFsdDzzswI8cV6",
+      "name": "Created",
+      "dbFieldName": "Created",
+      "type": "createdTime",
+      "description": null,
+      "options": {
+        "expression": "CREATED_TIME()",
+        "formatting": {
+          "date": "YYYY-MM-DD",
+          "time": "None",
+          "timeZone": "America/Chicago"
+        }
+      },
+      "cellValueType": "dateTime",
+      "isLookup": null,
+      "isComputed": true,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldw8daIkxIAYca2SCx",
+      "name": "Pricing Calculator",
+      "dbFieldName": "Pricing_Calculator",
+      "type": "link",
+      "description": null,
+      "options": {
+        "relationship": "oneMany",
+        "foreignTableId": "tbl2rkKy5VQucVWwANM",
+        "lookupFieldId": "fldZiK5j84hal67rBbJ",
+        "isOneWay": false,
+        "fkHostTableName": "bse7bbdbrcd6YfA8YpU.tbl2rkKy5VQucVWwANM",
+        "selfKeyName": "__fk_fld7cKgjWVP8ODABgkS",
+        "foreignKeyName": "__id",
+        "symmetricFieldId": "fld7cKgjWVP8ODABgkS"
+      },
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": true
+    },
+    {
+      "id": "fld5j4E2FZBX76BLBSO",
+      "name": "Customer Type",
+      "dbFieldName": "Customer_Type",
+      "type": "singleSelect",
+      "description": null,
+      "options": [
+        "Residential",
+        "Commercial"
+      ],
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldKI9Pp9ZySXtvqLn0",
+      "name": "Reminders & Tasks",
+      "dbFieldName": "Reminders_Tasks1773054702304",
+      "type": "link",
+      "description": null,
+      "options": {
+        "relationship": "oneMany",
+        "foreignTableId": "tblXrFzojHs7RpKzs9y",
+        "lookupFieldId": "fldYvXVIE4tw2p2nNjl",
+        "isOneWay": false,
+        "fkHostTableName": "bse7bbdbrcd6YfA8YpU.tblXrFzojHs7RpKzs9y",
+        "selfKeyName": "__fk_fld63noNtp34lueMwZk",
+        "foreignKeyName": "__id",
+        "symmetricFieldId": "fld63noNtp34lueMwZk"
+      },
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": true
+    },
+    {
+      "id": "fldXyYYHvOcSBkQHFMk",
+      "name": "Invoices",
+      "dbFieldName": "Invoices1773054674532",
+      "type": "link",
+      "description": null,
+      "options": {
+        "relationship": "oneMany",
+        "foreignTableId": "tblV7eqBBoDamQaaw8q",
+        "lookupFieldId": "fldzVIHbx4W1mb1z2ju",
+        "isOneWay": false,
+        "fkHostTableName": "bse7bbdbrcd6YfA8YpU.tblV7eqBBoDamQaaw8q",
+        "selfKeyName": "__fk_fldgooQxQEHAVZa5bea",
+        "foreignKeyName": "__id",
+        "symmetricFieldId": "fldgooQxQEHAVZa5bea"
+      },
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": true
+    },
+    {
+      "id": "fldfTiBIYTGDIpXHYDq",
+      "name": "Notes",
+      "dbFieldName": "Notes",
+      "type": "longText",
+      "description": null,
+      "options": {},
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldFRTlFB07uJizIbpq",
+      "name": "Services Interested In",
+      "dbFieldName": "Services_Interested_In",
+      "type": "multipleSelect",
+      "description": null,
+      "options": [
+        "Lawn Care",
+        "Landscaping",
+        "Hardscaping",
+        "Irrigation",
+        "Tree Service",
+        "Snow Removal",
+        "Cleanup",
+        "Design",
+        "Drainage",
+        "Patio/Outdoor Living"
+      ],
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": true
+    },
+    {
+      "id": "fldR7f0GP7F8MmyThkU",
+      "name": "Estimates",
+      "dbFieldName": "Estimates1773054700064",
+      "type": "link",
+      "description": null,
+      "options": {
+        "relationship": "oneMany",
+        "foreignTableId": "tblLu0d0Hn2YawgvFOI",
+        "lookupFieldId": "fldMjDPMxPekGdU8JN0",
+        "isOneWay": false,
+        "fkHostTableName": "bse7bbdbrcd6YfA8YpU.tblLu0d0Hn2YawgvFOI",
+        "selfKeyName": "__fk_fldS7ZFfBWqnQGrOoB6",
+        "foreignKeyName": "__id",
+        "symmetricFieldId": "fldS7ZFfBWqnQGrOoB6"
+      },
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": true
+    },
+    {
+      "id": "fld9YfBY7v8UkIVotvi",
+      "name": "Source",
+      "dbFieldName": "Source",
+      "type": "singleSelect",
+      "description": null,
+      "options": [
+        "Website",
+        "Referral",
+        "Google",
+        "Social Media",
+        "Door Hanger",
+        "Yard Sign",
+        "Other",
+        "Phone Call",
+        "Walk-in",
+        "Drive-by",
+        "QuickBooks"
+      ],
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldGGl9G1RU0WmJhFQQ",
+      "name": "Service Frequency",
+      "dbFieldName": "Service_Frequency",
+      "type": "singleSelect",
+      "description": null,
+      "options": [
+        "Weekly",
+        "Bi-Weekly",
+        "Monthly",
+        "Quarterly",
+        "Seasonal",
+        "One-Time",
+        "As Needed"
+      ],
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldBe99DWOET7cZhfPN",
+      "name": "State",
+      "dbFieldName": "State",
+      "type": "singleLineText",
+      "description": null,
+      "options": {},
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fld3aMaETc4Re0CGaBk",
+      "name": "City",
+      "dbFieldName": "City",
+      "type": "singleLineText",
+      "description": null,
+      "options": {},
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldwNCua5jseeaX34DO",
+      "name": "Phone",
+      "dbFieldName": "Phone",
+      "type": "singleLineText",
+      "description": null,
+      "options": {},
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    }
+  ]
+}

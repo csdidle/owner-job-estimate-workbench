@@ -1,0 +1,523 @@
+{
+  "id": "tblLu0d0Hn2YawgvFOI",
+  "name": "Estimates",
+  "description": null,
+  "dbTableName": "\"bse7bbdbrcd6YfA8YpU\".\"tblLu0d0Hn2YawgvFOI\"",
+  "fields": [
+    {
+      "id": "fld7PWGNHhJRdLbThRi",
+      "name": "Create QBO Draft",
+      "dbFieldName": "Create_QBO_Draft",
+      "type": "checkbox",
+      "description": "Queues this estimate for future QuickBooks draft creation when QBO is configured.",
+      "options": {
+        "defaultValue": false
+      },
+      "cellValueType": "boolean",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldJ2gDzguGdRqBAZ8Q",
+      "name": "QBO Sync Error",
+      "dbFieldName": "QBO_Sync_Error",
+      "type": "longText",
+      "description": "Last outbound QuickBooks estimate error for operator review.",
+      "options": {},
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fld7yS1h1gM6PK5UK8e",
+      "name": "Estimate Name",
+      "dbFieldName": "Estimate_Name",
+      "type": "singleLineText",
+      "description": null,
+      "options": {},
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldW5AqOGvK5WorxBow",
+      "name": "Tax Amount",
+      "dbFieldName": "Tax_Amount",
+      "type": "number",
+      "description": null,
+      "options": {
+        "formatting": {
+          "type": "decimal",
+          "precision": 2
+        }
+      },
+      "cellValueType": "number",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldlOzysvXfq4YegSXx",
+      "name": "Notes",
+      "dbFieldName": "Notes",
+      "type": "longText",
+      "description": null,
+      "options": {},
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldpEqxvyb9D0KAASLm",
+      "name": "Created",
+      "dbFieldName": "Created",
+      "type": "createdTime",
+      "description": null,
+      "options": {
+        "expression": "CREATED_TIME()",
+        "formatting": {
+          "date": "YYYY-MM-DD",
+          "time": "None",
+          "timeZone": "America/Chicago"
+        }
+      },
+      "cellValueType": "dateTime",
+      "isLookup": null,
+      "isComputed": true,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldWNkEzYleX9U8S4rx",
+      "name": "Subtotal",
+      "dbFieldName": "Subtotal",
+      "type": "number",
+      "description": null,
+      "options": {
+        "formatting": {
+          "type": "decimal",
+          "precision": 2
+        }
+      },
+      "cellValueType": "number",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldWkSDl5Qo0hnJhZQ8",
+      "name": "Total",
+      "dbFieldName": "Total",
+      "type": "number",
+      "description": null,
+      "options": {
+        "formatting": {
+          "type": "decimal",
+          "precision": 2
+        }
+      },
+      "cellValueType": "number",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fld0yR6850QegP1gC5A",
+      "name": "Tax %",
+      "dbFieldName": "Tax",
+      "type": "number",
+      "description": null,
+      "options": {
+        "formatting": {
+          "type": "decimal",
+          "precision": 2
+        }
+      },
+      "cellValueType": "number",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldwSJ7DCdNPbFAmmPa",
+      "name": "Company ID",
+      "dbFieldName": "Company_ID",
+      "type": "number",
+      "description": null,
+      "options": {
+        "formatting": {
+          "type": "decimal",
+          "precision": 0
+        }
+      },
+      "cellValueType": "number",
+      "isLookup": true,
+      "isComputed": true,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldrsrFhScdIOBZ8lCG",
+      "name": "Status",
+      "dbFieldName": "Status",
+      "type": "singleSelect",
+      "description": null,
+      "options": [
+        "Draft",
+        "Sent",
+        "Viewed",
+        "Accepted",
+        "Declined",
+        "Expired"
+      ],
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fld3nxAw7FieamiTLoQ",
+      "name": "AI Estimate Summary",
+      "dbFieldName": "AI_Estimate_Summary",
+      "type": "longText",
+      "description": "AI-generated customer-friendly summary of the estimate",
+      "options": {},
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldLSNEcoUd8MW6vcFe",
+      "name": "Pricing Calculator",
+      "dbFieldName": "Pricing_Calculator",
+      "type": "link",
+      "description": null,
+      "options": {
+        "relationship": "oneMany",
+        "foreignTableId": "tbl2rkKy5VQucVWwANM",
+        "lookupFieldId": "fldZiK5j84hal67rBbJ",
+        "isOneWay": false,
+        "fkHostTableName": "bse7bbdbrcd6YfA8YpU.tbl2rkKy5VQucVWwANM",
+        "selfKeyName": "__fk_fldEZjt8n8wfwgZ44dp",
+        "foreignKeyName": "__id",
+        "symmetricFieldId": "fldEZjt8n8wfwgZ44dp"
+      },
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": true
+    },
+    {
+      "id": "fldJaEGuroxxGNV3dbu",
+      "name": "Job List",
+      "dbFieldName": "Job_List",
+      "type": "link",
+      "description": null,
+      "options": {
+        "relationship": "oneMany",
+        "foreignTableId": "tblYoERyR6AmuNXt9fK",
+        "lookupFieldId": "fld9Np9fGRGpothuMNU",
+        "isOneWay": false,
+        "fkHostTableName": "bse7bbdbrcd6YfA8YpU.tblYoERyR6AmuNXt9fK",
+        "selfKeyName": "__fk_fldZvoJFTUWqDWH3pzM",
+        "foreignKeyName": "__id",
+        "symmetricFieldId": "fldZvoJFTUWqDWH3pzM"
+      },
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": true
+    },
+    {
+      "id": "fldS7ZFfBWqnQGrOoB6",
+      "name": "Contact",
+      "dbFieldName": "Contact",
+      "type": "link",
+      "description": null,
+      "options": {
+        "relationship": "manyOne",
+        "foreignTableId": "tbldDs2u3Nj0KR8mZ0c",
+        "lookupFieldId": "fldn4iywC3eN0Wj9znm",
+        "isOneWay": false,
+        "fkHostTableName": "bse7bbdbrcd6YfA8YpU.tblLu0d0Hn2YawgvFOI",
+        "selfKeyName": "__id",
+        "foreignKeyName": "__fk_fldS7ZFfBWqnQGrOoB6",
+        "symmetricFieldId": "fldR7f0GP7F8MmyThkU"
+      },
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldsosZJFjNsIzDx5tl",
+      "name": "Discount",
+      "dbFieldName": "Discount",
+      "type": "number",
+      "description": null,
+      "options": {
+        "formatting": {
+          "type": "decimal",
+          "precision": 2
+        }
+      },
+      "cellValueType": "number",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fld7LahgiDtvPT3JRVK",
+      "name": "Pipelines",
+      "dbFieldName": "Pipelines",
+      "type": "link",
+      "description": null,
+      "options": {
+        "relationship": "oneMany",
+        "foreignTableId": "tblZpC5o2HPyo6ZamhV",
+        "lookupFieldId": "fldZiiK63prvdF7s3EQ",
+        "isOneWay": false,
+        "fkHostTableName": "bse7bbdbrcd6YfA8YpU.tblZpC5o2HPyo6ZamhV",
+        "selfKeyName": "__fk_fldxO5C1KKRYVjnDDPx",
+        "foreignKeyName": "__id",
+        "symmetricFieldId": "fldxO5C1KKRYVjnDDPx"
+      },
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": true
+    },
+    {
+      "id": "fldH66x6wTsy89lZqWy",
+      "name": "Internal Notes",
+      "dbFieldName": "Internal_Notes",
+      "type": "longText",
+      "description": null,
+      "options": {},
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldOZubmmeu0J38nmpg",
+      "name": "Assigned To",
+      "dbFieldName": "Assigned_To",
+      "type": "link",
+      "description": null,
+      "options": {
+        "relationship": "manyOne",
+        "foreignTableId": "tbl1gyEIJuVKcV6pKR1",
+        "lookupFieldId": "fldGDdtQpC6cTjtyR7U",
+        "isOneWay": false,
+        "fkHostTableName": "bse7bbdbrcd6YfA8YpU.tblLu0d0Hn2YawgvFOI",
+        "selfKeyName": "__id",
+        "foreignKeyName": "__fk_fldOZubmmeu0J38nmpg",
+        "symmetricFieldId": "fldyNCQkhbRBb7EVenM"
+      },
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldjgFXMt9TQgZIkZAv",
+      "name": "Estimate Line Items",
+      "dbFieldName": "Estimate_Line_Items",
+      "type": "link",
+      "description": null,
+      "options": {
+        "relationship": "oneMany",
+        "foreignTableId": "tblg2El8ltcSA18Avwk",
+        "lookupFieldId": "fldeCOcL8tAttZ52PZv",
+        "isOneWay": false,
+        "fkHostTableName": "bse7bbdbrcd6YfA8YpU.tblg2El8ltcSA18Avwk",
+        "selfKeyName": "__fk_fldVUkcNMUDRAoc1KB1",
+        "foreignKeyName": "__id",
+        "symmetricFieldId": "fldVUkcNMUDRAoc1KB1"
+      },
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": true
+    },
+    {
+      "id": "fldLNcCRhGQR2jTEvWi",
+      "name": "Invoices",
+      "dbFieldName": "Invoices",
+      "type": "link",
+      "description": null,
+      "options": {
+        "relationship": "oneMany",
+        "foreignTableId": "tblV7eqBBoDamQaaw8q",
+        "lookupFieldId": "fldzVIHbx4W1mb1z2ju",
+        "isOneWay": false,
+        "fkHostTableName": "bse7bbdbrcd6YfA8YpU.tblV7eqBBoDamQaaw8q",
+        "selfKeyName": "__fk_flddkpUrQLcFRW8m7Qq",
+        "foreignKeyName": "__id",
+        "symmetricFieldId": "flddkpUrQLcFRW8m7Qq"
+      },
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": true
+    },
+    {
+      "id": "flddhn3V2LkfVRWMXJB",
+      "name": "Estimate Date",
+      "dbFieldName": "Estimate_Date",
+      "type": "date",
+      "description": null,
+      "options": {
+        "formatting": {
+          "date": "YYYY-MM-DD",
+          "time": "None",
+          "timeZone": "America/Chicago"
+        }
+      },
+      "cellValueType": "dateTime",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldTH12qlne85JqkiFU",
+      "name": "Expiration Date",
+      "dbFieldName": "Expiration_Date",
+      "type": "date",
+      "description": null,
+      "options": {
+        "formatting": {
+          "date": "YYYY-MM-DD",
+          "time": "None",
+          "timeZone": "America/Chicago"
+        }
+      },
+      "cellValueType": "dateTime",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldMjDPMxPekGdU8JN0",
+      "name": "Estimate #",
+      "dbFieldName": "Estimate",
+      "type": "autoNumber",
+      "description": null,
+      "options": {
+        "expression": "AUTO_NUMBER()"
+      },
+      "cellValueType": "number",
+      "isLookup": null,
+      "isComputed": true,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldlDKjzCu1Ddh0yVwG",
+      "name": "Manager Approved By",
+      "dbFieldName": "Manager_Approved_By",
+      "type": "user",
+      "description": "Manager who manually confirmed customer approval.",
+      "options": {
+        "isMultiple": false,
+        "shouldNotify": false
+      },
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldoDzjl7FMxxCzWgvQ",
+      "name": "QBO Last Synced",
+      "dbFieldName": "QBO_Last_Synced",
+      "type": "date",
+      "description": "Timestamp of the latest successful QuickBooks estimate sync.",
+      "options": {
+        "formatting": {
+          "date": "YYYY-MM-DD",
+          "time": "hh:mm A",
+          "timeZone": "America/Chicago"
+        }
+      },
+      "cellValueType": "dateTime",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldnTZk1EKaaGVRsUeH",
+      "name": "QBO Sync Token",
+      "dbFieldName": "QBO_Sync_Token",
+      "type": "singleLineText",
+      "description": "Latest QuickBooks estimate sync token for idempotent updates.",
+      "options": {},
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldnJcGBTLKwjSyoOxL",
+      "name": "QBO Estimate ID",
+      "dbFieldName": "QBO_Estimate_ID",
+      "type": "singleLineText",
+      "description": "QuickBooks Online Estimate entity ID.",
+      "options": {},
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldr0LQd5WdgOUig5Db",
+      "name": "QBO Doc Number",
+      "dbFieldName": "QBO_Doc_Number",
+      "type": "singleLineText",
+      "description": "QuickBooks estimate document number.",
+      "options": {},
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldJPu823Kxo1pMcSbR",
+      "name": "QBO Sync Status",
+      "dbFieldName": "QBO_Sync_Status",
+      "type": "singleSelect",
+      "description": "Outbound QBO estimate queue state; draft creation remains disabled until credentials are configured.",
+      "options": [
+        "Not Synced",
+        "Queued for Draft",
+        "Pending in QBO",
+        "Error"
+      ],
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldOSjRcDsfAhk2KDSG",
+      "name": "Manager Approved At",
+      "dbFieldName": "Manager_Approved_At",
+      "type": "date",
+      "description": "Timestamp when a manager manually confirmed customer approval.",
+      "options": {
+        "formatting": {
+          "date": "YYYY-MM-DD",
+          "time": "hh:mm A",
+          "timeZone": "America/Chicago"
+        }
+      },
+      "cellValueType": "dateTime",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    }
+  ]
+}

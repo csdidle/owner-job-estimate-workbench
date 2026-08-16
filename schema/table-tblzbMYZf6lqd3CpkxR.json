@@ -1,0 +1,144 @@
+{
+  "id": "tblzbMYZf6lqd3CpkxR",
+  "name": "PC Line Items",
+  "description": null,
+  "dbTableName": "\"bse7bbdbrcd6YfA8YpU\".\"tblzbMYZf6lqd3CpkxR\"",
+  "fields": [
+    {
+      "id": "fldSuFgjebemF9mD0JW",
+      "name": "Total",
+      "dbFieldName": "Total",
+      "type": "formula",
+      "description": null,
+      "options": {
+        "expression": "{fldHiruBQezbC2IIkyE} * {fldFjaAMYZSABoJU1zC}",
+        "timeZone": "America/Chicago",
+        "formatting": {
+          "type": "decimal",
+          "precision": 2
+        }
+      },
+      "cellValueType": "number",
+      "isLookup": null,
+      "isComputed": true,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fld9xgdrWv5bzEKfUPJ",
+      "name": "Service",
+      "dbFieldName": "Service",
+      "type": "link",
+      "description": null,
+      "options": {
+        "relationship": "manyOne",
+        "foreignTableId": "tbl9zU4PkhGggW7Dc9R",
+        "lookupFieldId": "flddfje4aYOCjiJxvDy",
+        "isOneWay": false,
+        "fkHostTableName": "bse7bbdbrcd6YfA8YpU.tblzbMYZf6lqd3CpkxR",
+        "selfKeyName": "__id",
+        "foreignKeyName": "__fk_fld9xgdrWv5bzEKfUPJ",
+        "symmetricFieldId": "fldz4qRxCnT2TVV02zk"
+      },
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldvGfwizqG2xV6HDbz",
+      "name": "Line Item",
+      "dbFieldName": "Line_Item",
+      "type": "singleLineText",
+      "description": null,
+      "options": {},
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldFjaAMYZSABoJU1zC",
+      "name": "Unit Price",
+      "dbFieldName": "Unit_Price",
+      "type": "number",
+      "description": null,
+      "options": {
+        "formatting": {
+          "type": "decimal",
+          "precision": 2
+        }
+      },
+      "cellValueType": "number",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldHiruBQezbC2IIkyE",
+      "name": "Quantity",
+      "dbFieldName": "Quantity",
+      "type": "number",
+      "description": null,
+      "options": {
+        "formatting": {
+          "type": "decimal",
+          "precision": 2
+        }
+      },
+      "cellValueType": "number",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fld5YhTV4yUr9iIcRFy",
+      "name": "Description",
+      "dbFieldName": "Description",
+      "type": "longText",
+      "description": null,
+      "options": {},
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldFT3ZrdF2nXVIOvrD",
+      "name": "Pricing Calculator",
+      "dbFieldName": "Pricing_Calculator",
+      "type": "link",
+      "description": null,
+      "options": {
+        "relationship": "manyOne",
+        "foreignTableId": "tbl2rkKy5VQucVWwANM",
+        "lookupFieldId": "fldZiK5j84hal67rBbJ",
+        "isOneWay": false,
+        "fkHostTableName": "bse7bbdbrcd6YfA8YpU.tblzbMYZf6lqd3CpkxR",
+        "selfKeyName": "__id",
+        "foreignKeyName": "__fk_fldFT3ZrdF2nXVIOvrD",
+        "symmetricFieldId": "fldE7Bk98i5ilpmlAvc"
+      },
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
+      "id": "fldCzFThzQmQOgTLFt8",
+      "name": "Line Order",
+      "dbFieldName": "Line_Order",
+      "type": "number",
+      "description": "Stable display order copied into Estimate Line Items.",
+      "options": {
+        "formatting": {
+          "type": "decimal",
+          "precision": 0
+        }
+      },
+      "cellValueType": "number",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    }
+  ]
+}
