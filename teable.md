@@ -270,7 +270,6 @@ Available tables (id → name → schema file):
 - `tbl2rkKy5VQucVWwANM` → Pricing Calculator → `schema/table-tbl2rkKy5VQucVWwANM.json` (SQL: `"bse7bbdbrcd6YfA8YpU"."tbl2rkKy5VQucVWwANM"`)
 - `tblzbMYZf6lqd3CpkxR` → PC Line Items → `schema/table-tblzbMYZf6lqd3CpkxR.json` (SQL: `"bse7bbdbrcd6YfA8YpU"."tblzbMYZf6lqd3CpkxR"`)
 - `tbl2CoIQz96e2FG07Tc` → Estimate Responses → `schema/table-tbl2CoIQz96e2FG07Tc.json` (SQL: `"bse7bbdbrcd6YfA8YpU"."tbl2CoIQz96e2FG07Tc"`)
-- `tblaLeS289e7anPJCYo` → Projects → `schema/table-tblaLeS289e7anPJCYo.json` (SQL: `"bse7bbdbrcd6YfA8YpU"."tblaLeS289e7anPJCYo"`)
 - `tblyvNPV1bZb8B7ygaH` → Manual Payment Forecasts → `schema/table-tblyvNPV1bZb8B7ygaH.json` (SQL: `"bse7bbdbrcd6YfA8YpU"."tblyvNPV1bZb8B7ygaH"`)
 - `tbl04vMl52pc7cErYz6` → Stakeholder Users → `schema/table-tbl04vMl52pc7cErYz6.json` (SQL: `"bse7bbdbrcd6YfA8YpU"."tbl04vMl52pc7cErYz6"`)
 - `tblgzrgJT1g1lkaZodJ` → Billing Cycles → `schema/table-tblgzrgJT1g1lkaZodJ.json` (SQL: `"bse7bbdbrcd6YfA8YpU"."tblgzrgJT1g1lkaZodJ"`)
