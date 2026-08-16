@@ -19,6 +19,24 @@
       "isMultipleCellValue": false
     },
     {
+      "id": "fldTtmMToJWp2wL8BZM",
+      "name": "Start date",
+      "dbFieldName": "Start_date",
+      "type": "date",
+      "description": null,
+      "options": {
+        "formatting": {
+          "date": "M/D/YYYY",
+          "time": "None",
+          "timeZone": "America/Chicago"
+        }
+      },
+      "cellValueType": "dateTime",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
       "id": "fldTRE91nXokn2dZWDk",
       "name": "Completed Date",
       "dbFieldName": "Completed_Date",
@@ -805,6 +823,24 @@
       "isLookup": null,
       "isComputed": null,
       "isMultipleCellValue": true
+    },
+    {
+      "id": "fldHgIC7TUOw5v72DeQ",
+      "name": "End date",
+      "dbFieldName": "End_date",
+      "type": "date",
+      "description": null,
+      "options": {
+        "formatting": {
+          "date": "M/D/YYYY",
+          "time": "None",
+          "timeZone": "America/Chicago"
+        }
+      },
+      "cellValueType": "dateTime",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
     }
   ]
 }
