@@ -48,12 +48,12 @@ export interface ILinkCellValue {
 }
 
 export interface IAttachmentCellValue {
-  id: string;
+  id?: string;
   name: string;
   token: string;
-  path: string;
-  size: number;
-  mimetype: string;
+  path?: string;
+  size?: number;
+  mimetype?: string;
   presignedUrl?: string;
   width?: number;
   height?: number;

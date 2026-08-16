@@ -83,6 +83,18 @@ export type EstimateLine = {
   lineOrder: number;
 };
 
+export type EstimateMedia = {
+  id: string | null;
+  name: string;
+  token: string;
+  path: string;
+  mimetype: string;
+  size: number;
+  presignedUrl: string | null;
+  width: number | null;
+  height: number | null;
+};
+
 export type EstimateRecord = {
   id: string;
   number: number | null;
@@ -106,6 +118,7 @@ export type EstimateRecord = {
   qboDocNumber: string | null;
   qboSyncToken: string | null;
   qboLastSynced: string | null;
+  photoTokensToSend: string[];
   lines: EstimateLine[];
 };
 
@@ -138,10 +151,11 @@ export type PricingRecord = {
   jobId: string | null;
   estimateId: string | null;
   routedAt: string | null;
+  media: EstimateMedia[];
 };
 
 export type SectionErrors = Partial<
-  Record<"contacts" | "services" | "employees" | "pricing" | "jobs" | "estimates" | "estimateLines", string>
+  Record<"contacts" | "services" | "employees" | "pricing" | "jobs" | "estimates" | "estimateLines" | "media", string>
 >;
 
 export type WorkbenchData = {
@@ -212,6 +226,7 @@ export type EstimateSaveInput = {
   discount: number;
   taxPercent: number;
   queueQboDraft: boolean;
+  photoTokensToSend: string[];
   lines: EstimateLine[];
 };
 

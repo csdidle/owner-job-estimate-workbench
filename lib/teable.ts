@@ -98,7 +98,7 @@ export function safeParseJson(value: unknown): any {
 export async function signAttachments<T extends { path: string; token: string; mimetype?: string }>(
   baseId: string,
   attachments: T[]
-): Promise<Array<{ path: string; token: string; presignedUrl: string }>> {
+): Promise<Array<T & { presignedUrl: string }>> {
   if (!attachments || attachments.length === 0) return [];
 
   const response = await request<{ attachments: { token: string; url: string }[] }>(

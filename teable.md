@@ -117,6 +117,8 @@ SELECT * FROM "bseXXX"."tbl_tasks" WHERE "fld_members"::jsonb @> '[{"id":"usrXXX
 
 ## Attachments
 
+Estimate media uses `Pricing Calculator.Estimate Photos` (`fld1AHqEKV4wh3CD66b`) for all uploaded photos and videos. The checked customer-facing image subset is stored on `Estimates.Photos to Send` (`fldpygGut7ugki2OFqB`); videos stay internal.
+
 Batch ALL attachments in ONE request:
 
 ```typescript

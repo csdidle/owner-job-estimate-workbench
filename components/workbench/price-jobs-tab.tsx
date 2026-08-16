@@ -331,6 +331,7 @@ export function PriceJobsTab({ data, onRefresh }: { data: WorkbenchData; onRefre
             jobId: null,
             estimateId: null,
             routedAt: null,
+            media: [],
           },
           job: null,
           estimate: null,

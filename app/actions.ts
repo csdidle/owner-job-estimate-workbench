@@ -8,6 +8,7 @@ import {
   createRecords,
   deleteRecords,
   safeParseJson,
+  signAttachments,
   sqlQuery,
   updateRecord,
   updateRecords,
@@ -27,6 +28,7 @@ import {
   type ContactOption,
   type EmployeeOption,
   type EstimateLine,
+  type EstimateMedia,
   type EstimateRecord,
   type JobRecord,
   type PricingJobInput,
@@ -117,6 +119,7 @@ const FIELDS = {
     expirationDate: "fldTH12qlne85JqkiFU",
     createQboDraft: "fld7PWGNHhJRdLbThRi",
     qboSyncStatus: "fldJPu823Kxo1pMcSbR",
+    photosToSend: "fldpygGut7ugki2OFqB",
   },
   estimateLine: {
     name: "fldeCOcL8tAttZ52PZv",
@@ -203,6 +206,7 @@ const estimateInputSchema = z.object({
   discount: z.number().finite().nonnegative(),
   taxPercent: z.number().finite().min(0).max(100),
   queueQboDraft: z.boolean(),
+  photoTokensToSend: z.array(z.string().min(1).max(500)).max(50),
   lines: z.array(z.object({
     id: z.string().min(1),
     serviceId: recordIdSchema.nullable(),
@@ -258,6 +262,29 @@ function linkedIds(value: unknown): string[] {
   });
 }
 
+function attachmentValues(value: unknown): EstimateMedia[] {
+  const parsed = safeParseJson(value);
+  const attachments = Array.isArray(parsed) ? parsed : [];
+  return attachments.flatMap((attachment) => {
+    if (!attachment || typeof attachment !== "object") return [];
+    const item = attachment as Record<string, unknown>;
+    const token = stringValue(item.token);
+    const name = stringValue(item.name);
+    if (!token || !name) return [];
+    return [{
+      id: stringValue(item.id),
+      name,
+      token,
+      path: stringValue(item.path) || "",
+      mimetype: stringValue(item.mimetype) || "application/octet-stream",
+      size: numberValue(item.size),
+      presignedUrl: stringValue(item.presignedUrl),
+      width: item.width == null ? null : numberValue(item.width),
+      height: item.height == null ? null : numberValue(item.height),
+    }];
+  });
+}
+
 function nullableDate(date: string | null): string | null {
   return date ? `${date}T00:00:00.000Z` : null;
 }
@@ -302,7 +329,7 @@ function mapEmployee(row: Record<string, unknown>): EmployeeOption {
   };
 }
 
-function mapPricing(row: Record<string, unknown>): PricingRecord {
+function mapPricing(row: Record<string, unknown>, media = attachmentValues(row.Job_Photos)): PricingRecord {
   const status = stringValue(row.Routing_Status);
   const priority = stringValue(row.Priority);
   const jobType = stringValue(row.Job_Type);
@@ -327,6 +354,7 @@ function mapPricing(row: Record<string, unknown>): PricingRecord {
     jobId: stringValue(row.__fk_fldAVF8a8mk3RDa2FS1),
     estimateId: stringValue(row.__fk_fldEZjt8n8wfwgZ44dp),
     routedAt: stringValue(row.Routed_At),
+    media,
   };
 }
 
@@ -389,6 +417,7 @@ function mapEstimate(row: Record<string, unknown>, lines: EstimateLine[] = []): 
     qboDocNumber: stringValue(row.QBO_Doc_Number),
     qboSyncToken: stringValue(row.QBO_Sync_Token),
     qboLastSynced: stringValue(row.QBO_Last_Synced),
+    photoTokensToSend: attachmentValues(row.Photos_to_Send).map((photo) => photo.token),
     lines,
   };
 }
@@ -450,12 +479,12 @@ async function loadWorkbenchData(): Promise<WorkbenchData> {
     sqlQuery(BASE_ID, `
       SELECT "__id", "Estimate_Name", "Routing_Status", "Routing_Error", "Requires_Estimate",
         "Routed_At", "Assigned_Crew", "Scheduled_Date", "Priority", "Job_Type",
-        "Line_Items_Total", "Price_to_Quote", "__fk_fld7cKgjWVP8ODABgkS", "__fk_fldAVF8a8mk3RDa2FS1", "__fk_fldEZjt8n8wfwgZ44dp"
+        "Line_Items_Total", "Price_to_Quote", "Job_Photos", "__fk_fld7cKgjWVP8ODABgkS", "__fk_fldAVF8a8mk3RDa2FS1", "__fk_fldEZjt8n8wfwgZ44dp"
       FROM ${TABLES.pricing}
       WHERE "Routing_Status" IS NOT NULL
         AND COALESCE("Archive", false) = false
       ORDER BY "__created_time" DESC
-      LIMIT 20
+      LIMIT 100
     `),
     sqlQuery(BASE_ID, `
       SELECT "__id", "Job", "Job_Name", "Status", "__fk_fldUwIRjAWUMGs78YSp",
@@ -471,7 +500,7 @@ async function loadWorkbenchData(): Promise<WorkbenchData> {
         "__fk_fldOZubmmeu0J38nmpg", "Subtotal", "Discount", "Tax", "Tax_Amount", "Total",
         "Notes", "Internal_Notes", "Estimate_Date", "Expiration_Date", "Create_QBO_Draft",
         "QBO_Sync_Status", "QBO_Sync_Error", "QBO_Estimate_ID", "QBO_Doc_Number",
-        "QBO_Sync_Token", "QBO_Last_Synced"
+        "QBO_Sync_Token", "QBO_Last_Synced", "Photos_to_Send"
       FROM ${TABLES.estimates}
       ORDER BY "__created_time" DESC
       LIMIT 100
@@ -489,7 +518,7 @@ async function loadWorkbenchData(): Promise<WorkbenchData> {
   const contacts = resultRows(0, "contacts").map(mapContact);
   const services = resultRows(1, "services").map(mapService);
   const employees = resultRows(2, "employees").map(mapEmployee);
-  const recentPricing = resultRows(3, "pricing").map(mapPricing);
+  const pricingRows = resultRows(3, "pricing");
   const jobs = resultRows(4, "jobs").map(mapJob);
   const estimateRows = resultRows(5, "estimates");
   let lineRows: Record<string, unknown>[] = [];
@@ -529,6 +558,25 @@ async function loadWorkbenchData(): Promise<WorkbenchData> {
     const lines = (linesByEstimate.get(id) || []).sort((a, b) => a.lineOrder - b.lineOrder);
     return mapEstimate(row, lines);
   });
+
+  const mediaWithPricingId = pricingRows.flatMap((row) =>
+    attachmentValues(row.Job_Photos).map((media) => ({ ...media, pricingId: String(row.__id) }))
+  );
+  let signedMedia = mediaWithPricingId;
+  if (mediaWithPricingId.length > 0) {
+    try {
+      signedMedia = await signAttachments(BASE_ID, mediaWithPricingId);
+    } catch (error) {
+      errors.media = `Estimate media could not be loaded: ${errorMessage(error)}`;
+    }
+  }
+  const mediaByPricing = new Map<string, EstimateMedia[]>();
+  for (const media of signedMedia) {
+    const entries = mediaByPricing.get(media.pricingId) || [];
+    entries.push(media);
+    mediaByPricing.set(media.pricingId, entries);
+  }
+  const recentPricing = pricingRows.map((row) => mapPricing(row, mediaByPricing.get(String(row.__id)) || []));
 
   return {
     contacts,
@@ -908,6 +956,13 @@ export async function saveEstimate(rawInput: unknown): Promise<ActionResult> {
       WHERE "__fk_fldVUkcNMUDRAoc1KB1" = '${sqlString(input.estimateId)}'
       LIMIT 100
     `),
+    sqlQuery(BASE_ID, `
+      SELECT "__id", "Job_Photos"
+      FROM ${TABLES.pricing}
+      WHERE "__fk_fldEZjt8n8wfwgZ44dp" = '${sqlString(input.estimateId)}'
+      ORDER BY "__created_time" DESC
+      LIMIT 1
+    `),
   ]);
 
   if (!current[0].rows[0] || current[0].rows[0].Status !== "Draft") {
@@ -915,6 +970,14 @@ export async function saveEstimate(rawInput: unknown): Promise<ActionResult> {
   }
   if (!current[1].rows[0]) {
     return { ok: false, kind: "validation", message: "This draft estimate is no longer connected to a job awaiting approval" };
+  }
+
+  const availablePhotos = attachmentValues(current[3].rows[0]?.Job_Photos)
+    .filter((media) => media.mimetype.startsWith("image/"));
+  const photosByToken = new Map(availablePhotos.map((photo) => [photo.token, photo]));
+  const requestedPhotoTokens = [...new Set(input.photoTokensToSend)];
+  if (requestedPhotoTokens.some((token) => !photosByToken.has(token))) {
+    return { ok: false, kind: "validation", message: "One or more selected pictures are no longer attached to this estimate" };
   }
 
   const existingIds = new Set(current[2].rows.map((row) => String(row.__id)));
@@ -992,6 +1055,10 @@ export async function saveEstimate(rawInput: unknown): Promise<ActionResult> {
     [FIELDS.estimate.internalNotes]: input.internalNotes || null,
     [FIELDS.estimate.estimateDate]: nullableDate(input.estimateDate),
     [FIELDS.estimate.expirationDate]: nullableDate(input.expirationDate),
+    [FIELDS.estimate.photosToSend]: requestedPhotoTokens.map((token) => {
+      const photo = photosByToken.get(token)!;
+      return { ...(photo.id ? { id: photo.id } : {}), name: photo.name, token: photo.token };
+    }),
   };
   if (input.queueQboDraft) {
     headerFields[FIELDS.estimate.createQboDraft] = true;

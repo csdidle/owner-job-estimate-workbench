@@ -1,12 +1,13 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   AlertTriangle,
   ArrowDown,
   ArrowUp,
   ChevronDown,
   FileText,
+  ImagePlus,
   Loader2,
   PencilLine,
   Plus,
@@ -14,6 +15,7 @@ import {
   Save,
   SendToBack,
   Trash2,
+  Video,
 } from "lucide-react";
 import { toast } from "sonner";
 import { changeDraftEstimateStatus, deleteDraftEstimate, saveEstimate } from "@/app/actions";
@@ -30,6 +32,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -44,6 +47,7 @@ import {
   ESTIMATE_QUEUE_STATUSES,
   type ActionResult,
   type EstimateLine,
+  type EstimateMedia,
   type EstimateQueueStatus,
   type EstimateRecord,
   type ServiceOption,
@@ -117,17 +121,28 @@ export function EstimateBuilderTab({ data, onRefresh }: { data: WorkbenchData; o
   const [pendingStatus, setPendingStatus] = useState<EstimateQueueStatus | null>(null);
   const [result, setResult] = useState<ActionResult | null>(null);
   const [validation, setValidation] = useState<string[]>([]);
+  const [media, setMedia] = useState<EstimateMedia[]>(() => {
+    const initialEstimate = eligible[0];
+    return data.recentPricing.find((pricing) => pricing.estimateId === initialEstimate?.id)?.media || [];
+  });
+  const [uploadingMedia, setUploadingMedia] = useState(false);
+  const mediaInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     const current = eligible.find((estimate) => estimate.id === selectedId) || eligible[0] || null;
     if (current && current.id !== selectedId) setSelectedId(current.id);
     setDraft(current ? cloneEstimate(current) : null);
+    setMedia(data.recentPricing.find((pricing) => pricing.estimateId === current?.id)?.media || []);
     setResult(null);
     setValidation([]);
-  }, [selectedId, data.loadedAt, eligible]);
+  }, [selectedId, data.loadedAt, data.recentPricing, eligible]);
 
   const contact = draft ? data.contacts.find((item) => item.id === draft.contactId) || null : null;
   const linkedJob = draft ? data.jobs.find((job) => job.estimateId === draft.id && job.status === "Waiting for Estimate") || null : null;
+  const sourcePricing = draft ? data.recentPricing.find((pricing) => pricing.estimateId === draft.id) || null : null;
+  const selectedPhotos = draft
+    ? media.filter((item) => item.mimetype.startsWith("image/") && draft.photoTokensToSend.includes(item.token))
+    : [];
   const totals = useMemo(() => {
     const subtotal = draft?.lines.reduce((sum, line) => sum + line.quantity * line.unitPrice, 0) || 0;
     const discount = draft?.discount || 0;
@@ -147,6 +162,78 @@ export function EstimateBuilderTab({ data, onRefresh }: { data: WorkbenchData; o
         ? { ...line, ...patch, total: (patch.quantity ?? line.quantity) * (patch.unitPrice ?? line.unitPrice) }
         : line),
     } : current);
+  }
+
+  async function uploadMedia(files: FileList | null) {
+    if (!files?.length || !sourcePricing) return;
+    const selectedFiles = Array.from(files);
+    const invalid = selectedFiles.find((file) =>
+      (!file.type.startsWith("image/") && !file.type.startsWith("video/")) || file.size > 250 * 1024 * 1024
+    );
+    if (invalid) {
+      toast.error(`${invalid.name} is not a supported photo or video`);
+      if (mediaInputRef.current) mediaInputRef.current.value = "";
+      return;
+    }
+
+    setUploadingMedia(true);
+    let uploadedCount = 0;
+    try {
+      for (const file of selectedFiles) {
+        const signResponse = await fetch("/api/estimate-media", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            action: "sign",
+            pricingId: sourcePricing.id,
+            name: file.name,
+            type: file.type,
+            size: file.size,
+          }),
+        });
+        const signature = await signResponse.json();
+        if (!signResponse.ok) throw new Error(signature.message || `${file.name} could not be prepared`);
+
+        const uploadResponse = await fetch(signature.url, {
+          method: signature.uploadMethod,
+          headers: signature.requestHeaders,
+          body: file,
+        });
+        if (!uploadResponse.ok) throw new Error(`${file.name} could not be uploaded`);
+
+        const completeResponse = await fetch("/api/estimate-media", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            action: "complete",
+            pricingId: sourcePricing.id,
+            name: file.name,
+            token: signature.token,
+          }),
+        });
+        const completed = await completeResponse.json();
+        if (!completeResponse.ok) throw new Error(completed.message || `${file.name} could not be attached`);
+        setMedia((current) => current.some((item) => item.token === completed.attachment.token)
+          ? current
+          : [...current, completed.attachment]);
+        uploadedCount += 1;
+      }
+      toast.success(`${uploadedCount} file${uploadedCount === 1 ? "" : "s"} added`);
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Media upload failed");
+    } finally {
+      setUploadingMedia(false);
+      if (mediaInputRef.current) mediaInputRef.current.value = "";
+    }
+  }
+
+  function togglePhoto(token: string, include: boolean) {
+    if (!draft) return;
+    patchDraft({
+      photoTokensToSend: include
+        ? [...new Set([...draft.photoTokensToSend, token])]
+        : draft.photoTokensToSend.filter((item) => item !== token),
+    });
   }
 
   function selectService(id: string, serviceId: string) {
@@ -193,9 +280,22 @@ export function EstimateBuilderTab({ data, onRefresh }: { data: WorkbenchData; o
 
   async function changeStatus(status: EstimateQueueStatus) {
     if (!draft) return;
+    if (status === "Sent") {
+      const issues = validate();
+      setValidation(issues);
+      if (issues.length > 0) return;
+    }
     setActionPending("status");
     setResult(null);
     try {
+      if (status === "Sent") {
+        const saved = await saveEstimate(savePayload(false));
+        if (!saved.ok) {
+          setResult(saved);
+          toast.error(saved.message);
+          return;
+        }
+      }
       const response = await changeDraftEstimateStatus({ estimateId: draft.id, status });
       setResult(response);
       response.ok ? toast.success(response.message) : toast.error(response.message);
@@ -228,6 +328,23 @@ export function EstimateBuilderTab({ data, onRefresh }: { data: WorkbenchData; o
     }
   }
 
+  function savePayload(queueQboDraft: boolean) {
+    if (!draft) throw new Error("Select an estimate");
+    return {
+      estimateId: draft.id,
+      name: draft.name,
+      notes: draft.notes,
+      internalNotes: draft.internalNotes,
+      estimateDate: draft.estimateDate || today(),
+      expirationDate: draft.expirationDate || plusDays(today(), 30),
+      discount: draft.discount,
+      taxPercent: draft.taxPercent,
+      queueQboDraft,
+      photoTokensToSend: draft.photoTokensToSend,
+      lines: draft.lines.map((line, index) => ({ ...line, lineOrder: (index + 1) * 10 })),
+    };
+  }
+
   async function save(queueQboDraft: boolean) {
     if (!draft) return;
     const issues = validate();
@@ -236,18 +353,7 @@ export function EstimateBuilderTab({ data, onRefresh }: { data: WorkbenchData; o
     if (issues.length > 0) return;
     setSaving(true);
     try {
-      const response = await saveEstimate({
-        estimateId: draft.id,
-        name: draft.name,
-        notes: draft.notes,
-        internalNotes: draft.internalNotes,
-        estimateDate: draft.estimateDate || today(),
-        expirationDate: draft.expirationDate || plusDays(today(), 30),
-        discount: draft.discount,
-        taxPercent: draft.taxPercent,
-        queueQboDraft,
-        lines: draft.lines.map((line, index) => ({ ...line, lineOrder: (index + 1) * 10 })),
-      });
+      const response = await saveEstimate(savePayload(queueQboDraft));
       setResult(response);
       if (response.ok) {
         toast.success(response.message);
@@ -479,6 +585,22 @@ export function EstimateBuilderTab({ data, onRefresh }: { data: WorkbenchData; o
             <div className="space-y-4 p-4 text-xs">
               <div><p className="text-[10px] uppercase text-muted-foreground">Prepared for</p><p className="mt-1 font-semibold">{contact?.name || "Contact unavailable"}</p>{contact?.company && contact.company !== contact.name ? <p>{contact.company}</p> : null}<p className="text-muted-foreground">{[contact?.address, contact?.city, contact?.state, contact?.zip].filter(Boolean).join(", ")}</p><p className="text-muted-foreground">{contact?.email}</p></div>
               <div className="flex justify-between gap-4"><div><p className="text-[10px] uppercase text-muted-foreground">Estimate date</p><p>{dateLabel(draft.estimateDate)}</p></div><div className="text-right"><p className="text-[10px] uppercase text-muted-foreground">Expires</p><p>{dateLabel(draft.expirationDate)}</p></div></div>
+              {selectedPhotos.length > 0 ? (
+                <div>
+                  <p className="mb-2 text-[10px] uppercase text-muted-foreground">Included pictures</p>
+                  <div className="grid grid-cols-2 gap-2">
+                    {selectedPhotos.map((photo) => (
+                      <div key={photo.token} className="aspect-square overflow-hidden rounded border bg-muted">
+                        {photo.presignedUrl ? (
+                          // Attachment URLs are dynamic and cannot use a static Next image host allowlist.
+                          // eslint-disable-next-line @next/next/no-img-element
+                          <img src={photo.presignedUrl} alt={photo.name} className="size-full object-cover" />
+                        ) : null}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ) : null}
               <Separator />
               <div className="space-y-2">{draft.lines.map((line) => <div key={line.id} className="flex justify-between gap-3"><div className="min-w-0"><p className="font-medium">{line.name || "Untitled line"}</p><p className="line-clamp-2 text-[10px] text-muted-foreground">{line.description}</p><p className="text-[10px] text-muted-foreground">{line.quantity} x {money(line.unitPrice)}</p></div><p className="shrink-0 font-medium tabular-nums">{money(line.quantity * line.unitPrice)}</p></div>)}</div>
               <Separator />
@@ -487,6 +609,79 @@ export function EstimateBuilderTab({ data, onRefresh }: { data: WorkbenchData; o
             </div>
           </aside>
         </div>
+
+        <section className="overflow-hidden rounded-md border bg-background shadow-xs">
+          <div className="flex items-center justify-between gap-3 border-b bg-slate-50/80 px-3 py-2.5">
+            <div>
+              <h2 className="text-sm font-semibold">Estimate photos and videos</h2>
+              <p className="text-[11px] text-muted-foreground">{media.length} file{media.length === 1 ? "" : "s"} / {selectedPhotos.length} picture{selectedPhotos.length === 1 ? "" : "s"} included</p>
+            </div>
+            <input
+              ref={mediaInputRef}
+              type="file"
+              accept="image/*,video/*"
+              multiple
+              className="sr-only"
+              onChange={(event) => void uploadMedia(event.target.files)}
+            />
+            <Button
+              type="button"
+              size="sm"
+              variant="outline"
+              className="h-8 shrink-0 text-xs"
+              disabled={uploadingMedia || !sourcePricing || Boolean(data.errors.media)}
+              onClick={() => mediaInputRef.current?.click()}
+            >
+              {uploadingMedia ? <Loader2 className="size-3.5 animate-spin" /> : <ImagePlus className="size-3.5" />}
+              Add media
+            </Button>
+          </div>
+          {data.errors.media ? (
+            <div className="p-3"><SectionError title="Estimate media unavailable" message={data.errors.media} /></div>
+          ) : media.length === 0 ? (
+            <div className="flex min-h-28 items-center justify-center px-4 py-8 text-center text-xs text-muted-foreground">
+              No estimate media attached
+            </div>
+          ) : (
+            <div className="grid gap-3 p-3 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
+              {media.map((item) => {
+                const isImage = item.mimetype.startsWith("image/");
+                const included = isImage && draft.photoTokensToSend.includes(item.token);
+                return (
+                  <div key={item.token} className={`overflow-hidden rounded-md border bg-background ${included ? "border-blue-400 ring-1 ring-blue-200" : ""}`}>
+                    <div className="aspect-video overflow-hidden bg-slate-100">
+                      {item.presignedUrl && isImage ? (
+                        // Attachment URLs are dynamic and cannot use a static Next image host allowlist.
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img src={item.presignedUrl} alt={item.name} className="size-full object-cover" />
+                      ) : item.presignedUrl ? (
+                        <video src={item.presignedUrl} controls preload="metadata" className="size-full bg-black object-contain" />
+                      ) : (
+                        <div className="flex size-full items-center justify-center text-muted-foreground">
+                          {isImage ? <ImagePlus className="size-7" /> : <Video className="size-7" />}
+                        </div>
+                      )}
+                    </div>
+                    <div className="flex min-h-11 items-center gap-2 px-2.5 py-2">
+                      {isImage ? (
+                        <Checkbox
+                          id={`send-${item.token}`}
+                          checked={included}
+                          onCheckedChange={(checked) => togglePhoto(item.token, checked === true)}
+                          aria-label={`Include ${item.name} with estimate`}
+                        />
+                      ) : <Video className="size-3.5 shrink-0 text-muted-foreground" />}
+                      <label htmlFor={isImage ? `send-${item.token}` : undefined} className="min-w-0 flex-1 cursor-pointer">
+                        <span className="block truncate text-xs font-medium">{item.name}</span>
+                        <span className="block text-[10px] text-muted-foreground">{isImage ? included ? "Included with estimate" : "Internal only" : "Video / internal only"}</span>
+                      </label>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </section>
 
         <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_330px]">
           <section className="overflow-hidden rounded-md border bg-background shadow-xs">
