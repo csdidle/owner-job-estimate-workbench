@@ -184,9 +184,8 @@ export async function getSession(): Promise<AuthUser | null> {
     const { user } = await validateSessionToken(token);
     if (user) return user;
   } catch {
-    // Treat validation failures as an invalid session so stale access never survives refresh.
+    // Proxy or the next successful sign-in handles stale cookie replacement.
   }
-  await destroySession();
   return null;
 }
 

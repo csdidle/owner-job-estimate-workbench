@@ -1,6 +1,7 @@
 import type React from "react"
 import type { Metadata } from "next"
 import { Toaster } from "@/components/ui/sonner"
+import { TooltipProvider } from "@/components/ui/tooltip"
 import "./globals.css"
 import { ErrorReporter, ConsoleReporter, ReactErrorBoundary } from "@/components/error-reporter"
 import { AppAnalytics } from "@/components/app-analytics"
@@ -20,7 +21,7 @@ export default function RootLayout({
     <html lang="en">
       <body className="font-sans antialiased">
         <ReactErrorBoundary>
-          {children}
+          <TooltipProvider>{children}</TooltipProvider>
         </ReactErrorBoundary>
         <Toaster />
         <ErrorReporter />
