@@ -88,6 +88,7 @@ const FIELDS = {
     condition: "fld2rnEWSVRvmwWuGbf",
     season: "fld2EDcwlG33ManHWjH",
     category: "fldmol54RwBstoAZdPJ",
+    archive: "fldlYp01gCLvLnz0m4l",
     routingStatus: "fldTxirEHdWspVXx1vJ",
     routingError: "fldugMFE3Ti6kFpLpfV",
     routedAt: "fldrxL9msiBbG3guRod",
@@ -452,6 +453,7 @@ async function loadWorkbenchData(): Promise<WorkbenchData> {
         "Line_Items_Total", "Price_to_Quote", "__fk_fld7cKgjWVP8ODABgkS", "__fk_fldAVF8a8mk3RDa2FS1", "__fk_fldEZjt8n8wfwgZ44dp"
       FROM ${TABLES.pricing}
       WHERE "Routing_Status" IS NOT NULL
+        AND COALESCE("Archive", false) = false
       ORDER BY "__created_time" DESC
       LIMIT 20
     `),
@@ -769,6 +771,38 @@ export async function promoteSavedPricing(rawInput: PricingPromotionInput) {
       ? "Creating the estimate and job from saved pricing."
       : "Creating the job from saved pricing.",
   };
+}
+
+export async function archivePricing(pricingId: string): Promise<ActionResult> {
+  await requireOwner();
+  if (!recordIdSchema.safeParse(pricingId).success) {
+    return { ok: false, kind: "validation", message: "Invalid pricing record" };
+  }
+
+  const { rows } = await sqlQuery(BASE_ID, `
+    SELECT "__id", "Archive", "Routing_Status"
+    FROM ${TABLES.pricing}
+    WHERE "__id" = '${sqlString(pricingId)}'
+    LIMIT 1
+  `);
+  const pricing = rows[0];
+  if (!pricing) return { ok: false, kind: "validation", message: "Pricing record not found" };
+  if (booleanValue(pricing.Archive)) {
+    return { ok: false, kind: "validation", message: "Pricing is already archived" };
+  }
+  if (["Ready to Route", "Routing"].includes(stringValue(pricing.Routing_Status))) {
+    return { ok: false, kind: "validation", message: "Pricing cannot be archived while records are being created" };
+  }
+
+  try {
+    await updateRecord(TABLE_IDS.pricing, pricingId, {
+      [FIELDS.pricing.archive]: true,
+      [FIELDS.pricing.status]: "Closed",
+    });
+    return { ok: true, message: "Pricing archived. Linked work was kept." };
+  } catch (error) {
+    return { ok: false, kind: "error", message: `Pricing could not be archived: ${errorMessage(error)}` };
+  }
 }
 
 export async function getPricingResult(pricingId: string) {
@@ -1138,6 +1172,59 @@ export async function releaseJob(jobId: string): Promise<ActionResult> {
   } catch (error) {
     return { ok: false, kind: "error", message: `Approval could not be submitted: ${errorMessage(error)}` };
   }
+}
+
+export async function cancelJob(jobId: string): Promise<ActionResult> {
+  await requireOwner();
+  if (!recordIdSchema.safeParse(jobId).success) {
+    return { ok: false, kind: "validation", message: "Invalid job" };
+  }
+
+  const { rows } = await sqlQuery(BASE_ID, `
+    SELECT "__id", "Job", "Status", "__fk_fldZvoJFTUWqDWH3pzM"
+    FROM ${TABLES.jobs}
+    WHERE "__id" = '${sqlString(jobId)}'
+    LIMIT 1
+  `);
+  const job = rows[0];
+  if (!job) return { ok: false, kind: "validation", message: "Job not found" };
+  const previousStatus = stringValue(job.Status);
+  if (!["Active", "Waiting for Estimate"].includes(previousStatus)) {
+    return { ok: false, kind: "validation", message: "Only active or estimate-waiting jobs can be cancelled here" };
+  }
+
+  try {
+    await updateRecord(TABLE_IDS.jobs, jobId, {
+      [FIELDS.job.status]: "Cancelled",
+      [FIELDS.job.release]: false,
+    });
+  } catch (error) {
+    return { ok: false, kind: "error", message: `Job could not be cancelled: ${errorMessage(error)}` };
+  }
+
+  const estimateId = stringValue(job.__fk_fldZvoJFTUWqDWH3pzM);
+  if (previousStatus === "Waiting for Estimate" && estimateId) {
+    try {
+      const estimateResult = await sqlQuery(BASE_ID, `
+        SELECT "__id", "Status"
+        FROM ${TABLES.estimates}
+        WHERE "__id" = '${sqlString(estimateId)}'
+        LIMIT 1
+      `);
+      const estimate = estimateResult.rows[0];
+      if (estimate && ["Draft", "Sent", "Viewed"].includes(stringValue(estimate.Status))) {
+        await updateRecord(TABLE_IDS.estimates, estimateId, { [FIELDS.estimate.status]: "Declined" });
+      }
+    } catch (error) {
+      return {
+        ok: false,
+        kind: "partial",
+        message: `Job #${numberValue(job.Job)} was cancelled, but its estimate could not be marked declined: ${errorMessage(error)}`,
+      };
+    }
+  }
+
+  return { ok: true, message: `Job #${numberValue(job.Job)} cancelled` };
 }
 
 export async function getReleaseResult(jobId: string) {
