@@ -240,8 +240,6 @@ Keep `<ErrorReporter />` in `app/layout.tsx`.
 
 All Teable table schemas are stored as JSON files under the `schema/` directory of this project.
 
-The Pricing Calculator uses `Routing Status` to control downstream record creation. `Pricing Saved` is a terminal standalone-pricing state; only `Ready to Route` starts the Job and optional Estimate automation.
-
 Available tables (id → name → schema file):
 
 - `tbl1gyEIJuVKcV6pKR1` → Employees → `schema/table-tbl1gyEIJuVKcV6pKR1.json` (SQL: `"bse7bbdbrcd6YfA8YpU"."tbl1gyEIJuVKcV6pKR1"`)

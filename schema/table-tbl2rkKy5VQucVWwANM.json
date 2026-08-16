@@ -839,6 +839,23 @@
       "isMultipleCellValue": false
     },
     {
+      "id": "fld0F0ErwJNkErIHsAM",
+      "name": "Job Type",
+      "dbFieldName": "Job_Type",
+      "type": "singleSelect",
+      "description": "Job type copied to the routed job.",
+      "options": [
+        "One-Time",
+        "Recurring",
+        "Maintenance",
+        "Emergency"
+      ],
+      "cellValueType": "string",
+      "isLookup": null,
+      "isComputed": null,
+      "isMultipleCellValue": false
+    },
+    {
       "id": "fldTxirEHdWspVXx1vJ",
       "name": "Routing Status",
       "dbFieldName": "Routing_Status",
@@ -852,23 +869,6 @@
         "Waiting for Estimate",
         "Pricing Saved",
         "Error"
-      ],
-      "cellValueType": "string",
-      "isLookup": null,
-      "isComputed": null,
-      "isMultipleCellValue": false
-    },
-    {
-      "id": "fld0F0ErwJNkErIHsAM",
-      "name": "Job Type",
-      "dbFieldName": "Job_Type",
-      "type": "singleSelect",
-      "description": "Job type copied to the routed job.",
-      "options": [
-        "One-Time",
-        "Recurring",
-        "Maintenance",
-        "Emergency"
       ],
       "cellValueType": "string",
       "isLookup": null,
