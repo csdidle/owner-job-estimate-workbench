@@ -49,7 +49,7 @@ export function Workbench({ initialData }: { initialData: WorkbenchData }) {
     <Tabs value={activeStep} onValueChange={(value) => setActiveStep(value as WorkflowStep)} className="w-full gap-0">
       <div className="sticky top-0 z-20 border-b bg-slate-50/95 shadow-xs backdrop-blur">
         <div className="mx-auto max-w-[1600px] px-3 py-3 sm:px-5">
-          <TabsList className="grid h-auto w-full grid-cols-3 overflow-hidden rounded-md border bg-background p-0 shadow-xs">
+          <TabsList className="grid h-auto! w-full grid-cols-3 overflow-hidden rounded-md border bg-background p-0 shadow-xs">
             {workflowSteps.map((step) => {
               const StepIcon = step.icon;
               return (
