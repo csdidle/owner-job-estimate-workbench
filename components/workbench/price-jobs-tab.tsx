@@ -433,6 +433,51 @@ export function PriceJobsTab({ data, onRefresh }: { data: WorkbenchData; onRefre
       {data.errors.employees ? <SectionError title="Employees unavailable" message={data.errors.employees} /> : null}
 
       <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_320px]">
+        <section className="overflow-hidden rounded-md border bg-background shadow-xs">
+          <div className="border-b bg-slate-50/80 px-3 py-2.5">
+            <h2 className="text-sm font-semibold">Cost and pricing details</h2>
+          </div>
+          <div className="grid gap-3 p-3 sm:grid-cols-2 lg:grid-cols-4">
+            <Field label="Crew size"><NumericInput value={inputs.crewSize} step="1" onChange={(value) => setInputs({ ...inputs, crewSize: value })} /></Field>
+            <Field label="Estimated hours"><NumericInput value={inputs.estimatedHours} onChange={(value) => setInputs({ ...inputs, estimatedHours: value })} /></Field>
+            <Field label="Hourly labor rate per person"><NumericInput value={inputs.laborRate} onChange={(value) => setInputs({ ...inputs, laborRate: value })} /></Field>
+            <Field label="Equipment cost"><NumericInput value={inputs.equipmentCost} onChange={(value) => setInputs({ ...inputs, equipmentCost: value })} /></Field>
+            <Field label="Fuel / travel cost"><NumericInput value={inputs.fuelCost} onChange={(value) => setInputs({ ...inputs, fuelCost: value })} /></Field>
+            <Field label="Materials cost"><NumericInput value={inputs.materialsCost} onChange={(value) => setInputs({ ...inputs, materialsCost: value })} /></Field>
+            <Field label="Disposal / dump fees"><NumericInput value={inputs.disposalFees} onChange={(value) => setInputs({ ...inputs, disposalFees: value })} /></Field>
+            <Field label="Subcontractor cost"><NumericInput value={inputs.subcontractorCost} onChange={(value) => setInputs({ ...inputs, subcontractorCost: value })} /></Field>
+            <Field label="Target margin %"><NumericInput value={inputs.targetMargin} max={99.99} onChange={(value) => setInputs({ ...inputs, targetMargin: value })} /></Field>
+            <Field label="Final price (optional)"><NumericInput value={inputs.finalPriceOverride} onChange={(value) => setInputs({ ...inputs, finalPriceOverride: value })} /></Field>
+            <Field label="Acreage"><NumericInput value={inputs.acreage} onChange={(value) => setInputs({ ...inputs, acreage: value })} /></Field>
+            <Field label="Visits per season"><NumericInput value={inputs.visitsPerSeason} step="1" onChange={(value) => setInputs({ ...inputs, visitsPerSeason: value })} /></Field>
+            <Field label="Frequency"><NativeSelect value={inputs.frequency || ""} onChange={(event) => setInputs({ ...inputs, frequency: event.target.value || null })}><option value="">Not set</option>{FREQUENCIES.map((item) => <option key={item}>{item}</option>)}</NativeSelect></Field>
+            <Field label="Terrain"><NativeSelect value={inputs.terrain || ""} onChange={(event) => setInputs({ ...inputs, terrain: event.target.value || null })}><option value="">Not set</option>{TERRAIN_OPTIONS.map((item) => <option key={item}>{item}</option>)}</NativeSelect></Field>
+            <Field label="Condition"><NativeSelect value={inputs.condition || ""} onChange={(event) => setInputs({ ...inputs, condition: event.target.value || null })}><option value="">Not set</option>{CONDITION_OPTIONS.map((item) => <option key={item}>{item}</option>)}</NativeSelect></Field>
+            <Field label="Season"><NativeSelect value={inputs.season || ""} onChange={(event) => setInputs({ ...inputs, season: event.target.value || null })}><option value="">Not set</option>{SEASONS.map((item) => <option key={item}>{item}</option>)}</NativeSelect></Field>
+          </div>
+        </section>
+
+        <aside className="overflow-hidden rounded-md border border-emerald-200 bg-background shadow-xs">
+          <div className="border-b border-emerald-100 bg-emerald-50/70 px-3 py-2.5"><h2 className="text-sm font-semibold text-emerald-950">Pricing summary</h2></div>
+          <div className="space-y-2 p-3 text-xs">
+            <div className="flex justify-between"><span className="text-muted-foreground">Service costs</span><span className="tabular-nums">{money(totals.bookCost)}</span></div>
+            <div className="flex justify-between"><span className="text-muted-foreground">Other adjusted costs</span><span className="tabular-nums">{money(totals.adjustedDirect)}</span></div>
+            <div className="flex justify-between font-medium"><span>Total cost</span><span className="tabular-nums">{money(totals.totalCost)}</span></div>
+            <Separator />
+            <div className="flex justify-between"><span className="text-muted-foreground">Service line price</span><span className="tabular-nums">{money(totals.linePrice)}</span></div>
+            <div className="flex justify-between text-sm font-semibold"><span>Total price</span><span className="tabular-nums">{money(totals.totalPrice)}</span></div>
+            <div className="flex items-center justify-between"><span className="text-muted-foreground">Projected margin</span><Badge variant="outline" className={totals.margin >= 20 ? "border-emerald-200 bg-emerald-50 text-emerald-700" : "border-amber-200 bg-amber-50 text-amber-800"}>{totals.margin.toFixed(1)}%</Badge></div>
+          </div>
+          <div className="border-t p-3">
+            <Button className="h-10 w-full bg-emerald-700 font-semibold text-white shadow-sm hover:bg-emerald-800" onClick={submit} disabled={saving || polling}>
+              {saving ? <Loader2 className="size-4 animate-spin" /> : outcome === "pricing-only" ? <CircleDollarSign className="size-4" /> : outcome === "create-job" ? <BriefcaseBusiness className="size-4" /> : <FilePenLine className="size-4" />}
+              {outcome === "pricing-only" ? "Save pricing" : outcome === "create-job" ? "Save and create job" : "Save and create estimate"}
+            </Button>
+          </div>
+        </aside>
+      </div>
+
+      <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_320px]">
         <section className="min-w-0 overflow-hidden rounded-md border border-emerald-200/70 bg-background shadow-xs">
           <div className="grid gap-3 border-b border-emerald-100 bg-emerald-50/60 p-3 md:grid-cols-[minmax(220px,1fr)_minmax(220px,1fr)]">
             <Field label="Pricing name" required>
@@ -587,51 +632,6 @@ export function PriceJobsTab({ data, onRefresh }: { data: WorkbenchData; onRefre
               <Field label="Notes"><Textarea value={notes} onChange={(event) => setNotes(event.target.value)} className="min-h-16 resize-y text-xs" /></Field>
             </div>
           </section>
-        </aside>
-      </div>
-
-      <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_320px]">
-        <section className="overflow-hidden rounded-md border bg-background shadow-xs">
-          <div className="border-b bg-slate-50/80 px-3 py-2.5">
-            <h2 className="text-sm font-semibold">Cost and pricing details</h2>
-          </div>
-          <div className="grid gap-3 p-3 sm:grid-cols-2 lg:grid-cols-4">
-            <Field label="Crew size"><NumericInput value={inputs.crewSize} step="1" onChange={(value) => setInputs({ ...inputs, crewSize: value })} /></Field>
-            <Field label="Estimated hours"><NumericInput value={inputs.estimatedHours} onChange={(value) => setInputs({ ...inputs, estimatedHours: value })} /></Field>
-            <Field label="Hourly labor rate per person"><NumericInput value={inputs.laborRate} onChange={(value) => setInputs({ ...inputs, laborRate: value })} /></Field>
-            <Field label="Equipment cost"><NumericInput value={inputs.equipmentCost} onChange={(value) => setInputs({ ...inputs, equipmentCost: value })} /></Field>
-            <Field label="Fuel / travel cost"><NumericInput value={inputs.fuelCost} onChange={(value) => setInputs({ ...inputs, fuelCost: value })} /></Field>
-            <Field label="Materials cost"><NumericInput value={inputs.materialsCost} onChange={(value) => setInputs({ ...inputs, materialsCost: value })} /></Field>
-            <Field label="Disposal / dump fees"><NumericInput value={inputs.disposalFees} onChange={(value) => setInputs({ ...inputs, disposalFees: value })} /></Field>
-            <Field label="Subcontractor cost"><NumericInput value={inputs.subcontractorCost} onChange={(value) => setInputs({ ...inputs, subcontractorCost: value })} /></Field>
-            <Field label="Target margin %"><NumericInput value={inputs.targetMargin} max={99.99} onChange={(value) => setInputs({ ...inputs, targetMargin: value })} /></Field>
-            <Field label="Final price (optional)"><NumericInput value={inputs.finalPriceOverride} onChange={(value) => setInputs({ ...inputs, finalPriceOverride: value })} /></Field>
-            <Field label="Acreage"><NumericInput value={inputs.acreage} onChange={(value) => setInputs({ ...inputs, acreage: value })} /></Field>
-            <Field label="Visits per season"><NumericInput value={inputs.visitsPerSeason} step="1" onChange={(value) => setInputs({ ...inputs, visitsPerSeason: value })} /></Field>
-            <Field label="Frequency"><NativeSelect value={inputs.frequency || ""} onChange={(event) => setInputs({ ...inputs, frequency: event.target.value || null })}><option value="">Not set</option>{FREQUENCIES.map((item) => <option key={item}>{item}</option>)}</NativeSelect></Field>
-            <Field label="Terrain"><NativeSelect value={inputs.terrain || ""} onChange={(event) => setInputs({ ...inputs, terrain: event.target.value || null })}><option value="">Not set</option>{TERRAIN_OPTIONS.map((item) => <option key={item}>{item}</option>)}</NativeSelect></Field>
-            <Field label="Condition"><NativeSelect value={inputs.condition || ""} onChange={(event) => setInputs({ ...inputs, condition: event.target.value || null })}><option value="">Not set</option>{CONDITION_OPTIONS.map((item) => <option key={item}>{item}</option>)}</NativeSelect></Field>
-            <Field label="Season"><NativeSelect value={inputs.season || ""} onChange={(event) => setInputs({ ...inputs, season: event.target.value || null })}><option value="">Not set</option>{SEASONS.map((item) => <option key={item}>{item}</option>)}</NativeSelect></Field>
-          </div>
-        </section>
-
-        <aside className="overflow-hidden rounded-md border border-emerald-200 bg-background shadow-xs">
-          <div className="border-b border-emerald-100 bg-emerald-50/70 px-3 py-2.5"><h2 className="text-sm font-semibold text-emerald-950">Pricing summary</h2></div>
-          <div className="space-y-2 p-3 text-xs">
-            <div className="flex justify-between"><span className="text-muted-foreground">Service costs</span><span className="tabular-nums">{money(totals.bookCost)}</span></div>
-            <div className="flex justify-between"><span className="text-muted-foreground">Other adjusted costs</span><span className="tabular-nums">{money(totals.adjustedDirect)}</span></div>
-            <div className="flex justify-between font-medium"><span>Total cost</span><span className="tabular-nums">{money(totals.totalCost)}</span></div>
-            <Separator />
-            <div className="flex justify-between"><span className="text-muted-foreground">Service line price</span><span className="tabular-nums">{money(totals.linePrice)}</span></div>
-            <div className="flex justify-between text-sm font-semibold"><span>Total price</span><span className="tabular-nums">{money(totals.totalPrice)}</span></div>
-            <div className="flex items-center justify-between"><span className="text-muted-foreground">Projected margin</span><Badge variant="outline" className={totals.margin >= 20 ? "border-emerald-200 bg-emerald-50 text-emerald-700" : "border-amber-200 bg-amber-50 text-amber-800"}>{totals.margin.toFixed(1)}%</Badge></div>
-          </div>
-          <div className="border-t p-3">
-            <Button className="h-10 w-full bg-emerald-700 font-semibold text-white shadow-sm hover:bg-emerald-800" onClick={submit} disabled={saving || polling}>
-              {saving ? <Loader2 className="size-4 animate-spin" /> : outcome === "pricing-only" ? <CircleDollarSign className="size-4" /> : outcome === "create-job" ? <BriefcaseBusiness className="size-4" /> : <FilePenLine className="size-4" />}
-              {outcome === "pricing-only" ? "Save pricing" : outcome === "create-job" ? "Save and create job" : "Save and create estimate"}
-            </Button>
-          </div>
         </aside>
       </div>
 
