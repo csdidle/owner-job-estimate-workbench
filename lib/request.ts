@@ -22,9 +22,12 @@ export async function request<T>(endpoint: string, options: RequestOptions = {})
   if (params && Object.keys(params).length > 0) {
     const searchParams = new URLSearchParams();
     Object.entries(params).forEach(([key, value]) => {
-      if (value !== undefined && value !== null) {
-        searchParams.set(key, String(value));
+      if (value === undefined || value === null) return;
+      if (Array.isArray(value)) {
+        value.forEach((item) => searchParams.append(key, String(item)));
+        return;
       }
+      searchParams.set(key, String(value));
     });
     const qs = searchParams.toString();
     if (qs) url += `?${qs}`;

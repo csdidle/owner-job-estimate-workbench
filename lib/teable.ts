@@ -187,7 +187,7 @@ export async function deleteRecord(tableId: string, recordId: string): Promise<v
 export async function deleteRecords(tableId: string, recordIds: string[]): Promise<void> {
   await request(`/table/${tableId}/record`, {
     method: 'DELETE',
-    params: { recordIds: recordIds.join(',') },
+    params: { recordIds },
   });
 }
 

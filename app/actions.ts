@@ -933,7 +933,26 @@ export async function deleteDraftEstimate(estimateId: string): Promise<ActionRes
     return { ok: false, kind: "validation", message: "Only Draft estimates can be deleted from this queue" };
   }
 
-  const detachResults = await Promise.allSettled([
+  const lineIds = linesResult.rows.map((line) => String(line.__id));
+  if (lineIds.length > 0) {
+    try {
+      await deleteRecords(TABLE_IDS.estimateLines, lineIds);
+    } catch (error) {
+      return { ok: false, kind: "error", message: `Estimate lines could not be deleted: ${errorMessage(error)}` };
+    }
+  }
+
+  try {
+    await deleteRecords(TABLE_IDS.estimates, [estimateId]);
+  } catch (error) {
+    return {
+      ok: false,
+      kind: "partial",
+      message: `Estimate lines were deleted, but the estimate could not be deleted. It remains available to retry: ${errorMessage(error)}`,
+    };
+  }
+
+  const cleanupResults = await Promise.allSettled([
     jobsResult.rows.length > 0
       ? updateRecords(TABLE_IDS.jobs, jobsResult.rows.map((job) => ({
           id: String(job.__id),
@@ -950,34 +969,16 @@ export async function deleteDraftEstimate(estimateId: string): Promise<ActionRes
         })))
       : Promise.resolve([]),
   ]);
-  const detachErrors = detachResults.flatMap((result) => result.status === "rejected" ? [errorMessage(result.reason)] : []);
-  if (detachErrors.length > 0) {
-    return { ok: false, kind: "partial", message: `Estimate was not deleted because linked records could not be detached: ${detachErrors.join("; ")}` };
-  }
-
-  const lineIds = linesResult.rows.map((line) => String(line.__id));
-  if (lineIds.length > 0) {
-    try {
-      await deleteRecords(TABLE_IDS.estimateLines, lineIds);
-    } catch (error) {
-      return {
-        ok: false,
-        kind: "partial",
-        message: `Linked job moved On Hold, but estimate lines could not be deleted: ${errorMessage(error)}`,
-      };
-    }
-  }
-
-  try {
-    await deleteRecords(TABLE_IDS.estimates, [estimateId]);
-    return { ok: true, message: `Estimate #${numberValue(estimate.Estimate)} deleted` };
-  } catch (error) {
+  const cleanupErrors = cleanupResults.flatMap((result) => result.status === "rejected" ? [errorMessage(result.reason)] : []);
+  if (cleanupErrors.length > 0) {
     return {
       ok: false,
       kind: "partial",
-      message: `Linked job moved On Hold and estimate lines were deleted, but the estimate could not be deleted: ${errorMessage(error)}`,
+      message: `Estimate #${numberValue(estimate.Estimate)} was deleted, but linked records need review: ${cleanupErrors.join("; ")}`,
     };
   }
+
+  return { ok: true, message: `Estimate #${numberValue(estimate.Estimate)} deleted` };
 }
 
 export async function releaseJob(jobId: string): Promise<ActionResult> {

@@ -5,7 +5,6 @@ import { AlertCircle, Check, ChevronDown, Users } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
@@ -112,7 +111,9 @@ export function CrewPicker({ employees, value, onChange, disabled }: {
               onClick={() => onChange(checked ? value.filter((id) => id !== employee.id) : [...value, employee.id])}
               className="flex w-full items-center gap-2 rounded-sm px-2 py-1.5 text-left text-xs hover:bg-accent"
             >
-              <Checkbox checked={checked} tabIndex={-1} />
+              <span className="flex size-4 shrink-0 items-center justify-center rounded-[4px] border border-input" aria-hidden="true">
+                {checked ? <Check className="size-3" /> : null}
+              </span>
               <span className="min-w-0 flex-1 truncate">{employee.name}</span>
               {employee.role ? <span className="text-[10px] text-muted-foreground">{employee.role}</span> : null}
             </button>
