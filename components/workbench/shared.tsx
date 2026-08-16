@@ -45,7 +45,7 @@ export function NativeSelect({ className, children, ...props }: React.SelectHTML
   return (
     <select
       className={cn(
-        "h-9 w-full rounded-md border border-input bg-background px-2.5 text-xs shadow-xs outline-none transition-colors hover:border-slate-300 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/15 disabled:cursor-not-allowed disabled:opacity-50",
+        "h-10 w-full rounded-md border border-input bg-background px-2.5 text-xs shadow-xs outline-none transition-colors hover:border-slate-300 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/15 disabled:cursor-not-allowed disabled:opacity-50 xl:h-9",
         className
       )}
       {...props}
@@ -74,7 +74,7 @@ export function NumericInput({ value, onChange, min = 0, max, step = "0.01", cla
       disabled={disabled}
       onChange={(event) => onChange(event.target.value === "" ? null : Number(event.target.value))}
       className={cn(
-        "h-9 w-full rounded-md border border-input bg-background px-2.5 text-right text-xs tabular-nums shadow-xs outline-none transition-colors hover:border-slate-300 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/15 disabled:cursor-not-allowed disabled:opacity-50",
+        "h-10 w-full rounded-md border border-input bg-background px-2.5 text-right text-xs tabular-nums shadow-xs outline-none transition-colors hover:border-slate-300 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/15 disabled:cursor-not-allowed disabled:opacity-50 xl:h-9",
         className
       )}
     />
@@ -91,7 +91,7 @@ export function CrewPicker({ employees, value, onChange, disabled }: {
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <Button variant="outline" size="sm" className="h-9 w-full justify-between px-2.5 text-xs font-normal shadow-xs hover:border-slate-300 hover:bg-background" disabled={disabled}>
+        <Button variant="outline" size="sm" className="h-10 w-full justify-between px-2.5 text-xs font-normal shadow-xs hover:border-slate-300 hover:bg-background xl:h-9" disabled={disabled}>
           <span className="flex min-w-0 items-center gap-1.5">
             <Users className="size-3.5 shrink-0 text-muted-foreground" />
             <span className="truncate">{selectedNames.length ? selectedNames.join(", ") : "Unassigned"}</span>
@@ -99,7 +99,7 @@ export function CrewPicker({ employees, value, onChange, disabled }: {
           <ChevronDown className="size-3.5 shrink-0 text-muted-foreground" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent align="start" className="w-64 p-1">
+      <PopoverContent align="start" className="w-[min(18rem,calc(100vw-2rem))] p-1 sm:w-64">
         {employees.length === 0 ? (
           <p className="px-2 py-3 text-xs text-muted-foreground">No active employees</p>
         ) : employees.map((employee) => {
@@ -109,7 +109,7 @@ export function CrewPicker({ employees, value, onChange, disabled }: {
               type="button"
               key={employee.id}
               onClick={() => onChange(checked ? value.filter((id) => id !== employee.id) : [...value, employee.id])}
-              className="flex w-full items-center gap-2 rounded-sm px-2 py-1.5 text-left text-xs hover:bg-accent"
+              className="flex min-h-10 w-full items-center gap-2 rounded-sm px-2 py-2 text-left text-xs hover:bg-accent xl:min-h-8 xl:py-1.5"
             >
               <span className="flex size-4 shrink-0 items-center justify-center rounded-[4px] border border-input" aria-hidden="true">
                 {checked ? <Check className="size-3" /> : null}
@@ -205,7 +205,7 @@ export function IconButton({ label, children, className, ...props }: React.Compo
   return (
     <Tooltip>
       <TooltipTrigger asChild>
-        <Button variant="ghost" size="icon" className={cn("size-8", className)} {...props}>{children}</Button>
+        <Button variant="ghost" size="icon" className={cn("size-9 xl:size-8", className)} {...props}>{children}</Button>
       </TooltipTrigger>
       <TooltipContent>{label}</TooltipContent>
     </Tooltip>

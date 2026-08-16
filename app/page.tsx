@@ -11,18 +11,18 @@ export default async function HomePage() {
   return (
     <main className="min-h-screen bg-slate-50/80">
       <header className="border-b border-emerald-950/10 bg-background shadow-xs">
-        <div className="mx-auto flex h-16 max-w-[1600px] items-center gap-3 px-3 sm:px-5">
+        <div className="mx-auto flex h-16 max-w-[1600px] items-center gap-2 px-3 sm:gap-3 sm:px-5">
           <Image
             src="/main-logo-grey-moss.svg"
             alt="Harris & Sharp"
             width={190}
             height={38}
             loading="eager"
-            className="h-auto w-[160px] shrink-0 sm:w-[190px]"
+            className="h-auto w-[128px] shrink-0 sm:w-[170px] md:w-[190px]"
           />
-          <div className="hidden min-w-0 border-l border-emerald-950/15 pl-3 md:block">
-            <h1 className="truncate text-[15px] font-semibold">Owner Job &amp; Estimate Workbench</h1>
-            <p className="text-[11px] text-muted-foreground">Create, approve, and schedule work</p>
+          <div className="min-w-0 border-l border-emerald-950/15 pl-2 sm:pl-3">
+            <h1 className="truncate text-xs font-semibold sm:text-sm md:text-[15px]"><span className="md:hidden">Owner Workbench</span><span className="hidden md:inline">Owner Job &amp; Estimate Workbench</span></h1>
+            <p className="hidden text-[11px] text-muted-foreground md:block">Create, approve, and schedule work</p>
           </div>
           <div className="ml-auto"><UserMenu /></div>
         </div>

@@ -235,7 +235,44 @@ export function ApprovalAssignmentTab({ data, onRefresh }: { data: WorkbenchData
         {waitingJobs.length === 0 ? (
           <EmptyState icon={<ClipboardCheck className="size-8" />} title="No jobs awaiting approval" detail="Jobs that need an estimate will appear here until the estimate is approved." />
         ) : (
-          <div className="overflow-x-auto">
+          <>
+            <div className="divide-y xl:hidden">
+              {waitingJobs.map((job) => {
+                const estimate = data.estimates.find((item) => item.id === job.estimateId);
+                const contact = data.contacts.find((item) => item.id === job.contactId);
+                const isReleasing = releasingJobId === job.id;
+                return (
+                  <div key={job.id} className="space-y-3 p-3">
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="min-w-0">
+                        <p className="break-words text-sm font-semibold">Job #{job.number || "-"} {job.name}</p>
+                        <div className="mt-1"><StatusBadge status={job.status} /></div>
+                      </div>
+                      <p className="shrink-0 text-sm font-semibold tabular-nums">{money(estimate?.total || estimate?.subtotal || 0)}</p>
+                    </div>
+                    <div className="grid gap-3 border-y py-3 sm:grid-cols-2">
+                      <div><p className="text-[10px] font-semibold uppercase text-muted-foreground">Contact</p><p className="mt-1 text-xs font-medium">{contact?.name || "Contact unavailable"}</p>{contact?.company ? <p className="text-[10px] text-muted-foreground">{contact.company}</p> : null}</div>
+                      <div><p className="text-[10px] font-semibold uppercase text-muted-foreground">Schedule</p><p className="mt-1 text-xs">{dateLabel(job.scheduledDate)}</p><p className="text-[10px] text-muted-foreground">{job.priority || "Normal"} / {job.jobType || "One-Time"}</p></div>
+                      <div className="sm:col-span-2"><p className="text-[10px] font-semibold uppercase text-muted-foreground">Estimate</p><p className="mt-1 break-words text-xs font-medium">#{estimate?.number || "-"} {estimate?.name || "Estimate unavailable"}</p><div className="mt-1 flex flex-wrap gap-1.5"><StatusBadge status={estimate?.status || null} />{estimate?.qboSyncStatus ? <StatusBadge status={estimate.qboSyncStatus} /> : null}</div></div>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <AlertDialog>
+                        <AlertDialogTrigger asChild><Button className="h-10 flex-1 bg-blue-700 font-semibold text-white shadow-sm hover:bg-blue-800" disabled={isReleasing || cancellingJobId === job.id || !estimate}>{isReleasing ? <Loader2 className="size-3.5 animate-spin" /> : <Send className="size-3.5" />} Confirm approval</Button></AlertDialogTrigger>
+                        <AlertDialogContent>
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>Approve estimate and start this job?</AlertDialogTitle>
+                            <AlertDialogDescription>This approves estimate #{estimate?.number || "-"} and makes Job #{job.number || "-"} ready to schedule.</AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter><AlertDialogCancel>Cancel</AlertDialogCancel><AlertDialogAction onClick={() => void confirmRelease(job.id)}>Approve and start job</AlertDialogAction></AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
+                      {cancelControl(job)}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+            <div className="hidden overflow-x-auto xl:block">
             <table className="w-full min-w-[920px] text-xs">
               <thead><tr className="border-b bg-muted/20 text-left text-[10px] uppercase text-muted-foreground"><th className="px-3 py-2 font-medium">Job</th><th className="px-3 py-2 font-medium">Contact</th><th className="px-3 py-2 font-medium">Estimate</th><th className="px-3 py-2 font-medium">Amount</th><th className="px-3 py-2 font-medium">Schedule</th><th className="px-3 py-2 text-right font-medium">Action</th></tr></thead>
               <tbody>
@@ -270,7 +307,8 @@ export function ApprovalAssignmentTab({ data, onRefresh }: { data: WorkbenchData
                 })}
               </tbody>
             </table>
-          </div>
+            </div>
+          </>
         )}
       </section>
 
@@ -282,7 +320,36 @@ export function ApprovalAssignmentTab({ data, onRefresh }: { data: WorkbenchData
         {activeJobs.length === 0 ? (
           <EmptyState icon={<BriefcaseBusiness className="size-8" />} title="No jobs ready to schedule" detail="Approved jobs will appear here for crew assignment and scheduling." />
         ) : (
-          <div className="overflow-x-auto">
+          <>
+            <div className="divide-y xl:hidden">
+              {activeJobs.map((job) => {
+                const draft = assignments[job.id];
+                const contact = data.contacts.find((item) => item.id === job.contactId);
+                if (!draft) return null;
+                return (
+                  <div key={job.id} className="space-y-3 p-3">
+                    <div className="flex flex-wrap items-start justify-between gap-2">
+                      <div className="min-w-0">
+                        <p className="break-words text-sm font-semibold">Job #{job.number || "-"} {job.name}</p>
+                        <div className="mt-1"><StatusBadge status={job.status} /></div>
+                      </div>
+                      <div className="text-right"><p className="text-xs font-medium">{contact?.name || "Contact unavailable"}</p>{contact?.company ? <p className="text-[10px] text-muted-foreground">{contact.company}</p> : null}</div>
+                    </div>
+                    <div className="grid gap-3 border-y py-3 sm:grid-cols-2">
+                      <div className="sm:col-span-2"><p className="mb-1.5 text-[11px] font-semibold text-foreground/70">Assigned crew</p><CrewPicker employees={data.employees} value={draft.assignedCrewIds} onChange={(ids) => patchAssignment(job.id, { assignedCrewIds: ids })} /></div>
+                      <div><p className="mb-1.5 text-[11px] font-semibold text-foreground/70">Scheduled date</p><Input type="date" className="h-10 text-xs shadow-xs focus-visible:border-emerald-500 focus-visible:ring-emerald-500/15" value={draft.scheduledDate || ""} onChange={(event) => patchAssignment(job.id, { scheduledDate: event.target.value || null })} /></div>
+                      <div><p className="mb-1.5 text-[11px] font-semibold text-foreground/70">Priority</p><NativeSelect value={draft.priority} onChange={(event) => patchAssignment(job.id, { priority: event.target.value as JobPriority })}>{JOB_PRIORITIES.map((item) => <option key={item}>{item}</option>)}</NativeSelect></div>
+                      <div className="sm:col-span-2"><p className="mb-1.5 text-[11px] font-semibold text-foreground/70">Job type</p><NativeSelect value={draft.jobType} onChange={(event) => patchAssignment(job.id, { jobType: event.target.value as JobType })}>{JOB_TYPES.map((item) => <option key={item}>{item}</option>)}</NativeSelect></div>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Button className="h-10 flex-1 bg-emerald-700 font-semibold text-white hover:bg-emerald-800" disabled={savingJobId === job.id || cancellingJobId === job.id} onClick={() => void saveAssignment(job.id)}>{savingJobId === job.id ? <Loader2 className="size-3.5 animate-spin" /> : <Save className="size-3.5" />} Save assignment</Button>
+                      {cancelControl(job)}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+            <div className="hidden overflow-x-auto xl:block">
             <table className="w-full min-w-[980px] text-xs">
               <thead><tr className="border-b bg-muted/20 text-left text-[10px] uppercase text-muted-foreground"><th className="px-3 py-2 font-medium">Job</th><th className="px-3 py-2 font-medium">Contact</th><th className="px-3 py-2 font-medium">Assigned crew</th><th className="px-3 py-2 font-medium">Scheduled date</th><th className="px-3 py-2 font-medium">Priority</th><th className="px-3 py-2 font-medium">Job type</th><th className="px-3 py-2" /></tr></thead>
               <tbody>
@@ -304,7 +371,8 @@ export function ApprovalAssignmentTab({ data, onRefresh }: { data: WorkbenchData
                 })}
               </tbody>
             </table>
-          </div>
+            </div>
+          </>
         )}
       </section>
     </div>

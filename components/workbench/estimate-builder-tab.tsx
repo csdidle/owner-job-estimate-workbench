@@ -281,8 +281,25 @@ export function EstimateBuilderTab({ data, onRefresh }: { data: WorkbenchData; o
   if (!draft) return null;
 
   return (
-    <div className="grid min-h-[680px] gap-5 xl:grid-cols-[270px_minmax(0,1fr)]">
-      <aside className="overflow-hidden rounded-md border border-amber-200 bg-background shadow-xs">
+    <div className="grid min-h-0 gap-4 xl:min-h-[680px] xl:grid-cols-[270px_minmax(0,1fr)] xl:gap-5">
+      <section className="overflow-hidden rounded-md border border-amber-200 bg-background shadow-xs xl:hidden">
+        <div className="border-b border-amber-100 bg-amber-50/70 px-3 py-2.5">
+          <h2 className="text-sm font-semibold">Estimate to finish</h2>
+          <p className="text-[11px] text-muted-foreground">{eligible.length} estimate{eligible.length === 1 ? "" : "s"} available</p>
+        </div>
+        <div className="p-3">
+          <Field label="Selected estimate">
+            <NativeSelect value={selectedId} onChange={(event) => setSelectedId(event.target.value)}>
+              {eligible.map((estimate) => {
+                const job = data.jobs.find((item) => item.estimateId === estimate.id);
+                return <option key={estimate.id} value={estimate.id}>Job #{job?.number || "-"} / Estimate #{estimate.number || "-"} / {estimate.name}</option>;
+              })}
+            </NativeSelect>
+          </Field>
+        </div>
+      </section>
+
+      <aside className="hidden overflow-hidden rounded-md border border-amber-200 bg-background shadow-xs xl:block">
         <div className="border-b border-amber-100 bg-amber-50/70 px-3 py-2.5">
           <h2 className="text-sm font-semibold">Estimates to finish</h2>
           <p className="text-[11px] text-muted-foreground">{eligible.length} estimate{eligible.length === 1 ? "" : "s"}</p>
@@ -312,13 +329,13 @@ export function EstimateBuilderTab({ data, onRefresh }: { data: WorkbenchData; o
 
       <div className="min-w-0 space-y-5">
         <section className="overflow-hidden rounded-md border border-amber-200/80 bg-background shadow-xs">
-          <div className="flex flex-wrap items-center justify-between gap-2 border-b border-amber-100 bg-amber-50/70 px-3 py-2.5">
-            <div className="flex items-center gap-2">
+          <div className="flex flex-col gap-2 border-b border-amber-100 bg-amber-50/70 px-3 py-2.5 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex flex-wrap items-center gap-2">
               <ReceiptText className="size-4 text-muted-foreground" />
               <h2 className="text-sm font-semibold">Estimate #{draft.number || "-"}</h2>
               <StatusBadge status={draft.status} />
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center justify-between gap-2 sm:justify-end">
               <span className="text-[11px] text-muted-foreground">Job #{linkedJob?.number || "-"}</span>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
@@ -396,14 +413,41 @@ export function EstimateBuilderTab({ data, onRefresh }: { data: WorkbenchData; o
 
         <div className="grid gap-4 2xl:grid-cols-[minmax(0,1fr)_330px]">
           <section className="min-w-0 overflow-hidden rounded-md border bg-background shadow-xs">
-            <div className="flex flex-wrap items-center justify-between gap-2 border-b bg-slate-50/80 px-3 py-2.5">
+            <div className="flex flex-col gap-2 border-b bg-slate-50/80 px-3 py-2.5 sm:flex-row sm:items-center sm:justify-between">
               <div><h2 className="text-sm font-semibold">Services and pricing</h2><p className="text-[11px] text-muted-foreground">{draft.lines.length} service{draft.lines.length === 1 ? "" : "s"}</p></div>
-              <div className="flex items-center gap-2">
-                <Button size="sm" variant="outline" className="h-7 text-xs" disabled={!data.services[0]} onClick={() => data.services[0] && patchDraft({ lines: [...draft.lines, serviceLine(data.services[0], draft.lines.length)] })}><Plus className="size-3.5" /> Price Book</Button>
-                <Button size="sm" variant="outline" className="h-7 text-xs" onClick={() => patchDraft({ lines: [...draft.lines, customLine(draft.lines.length)] })}><PencilLine className="size-3.5" /> Custom service</Button>
+              <div className="grid w-full grid-cols-2 gap-2 sm:flex sm:w-auto sm:items-center">
+                <Button size="sm" variant="outline" className="h-9 text-xs sm:h-8 xl:h-7" disabled={!data.services[0]} onClick={() => data.services[0] && patchDraft({ lines: [...draft.lines, serviceLine(data.services[0], draft.lines.length)] })}><Plus className="size-3.5" /> Price Book</Button>
+                <Button size="sm" variant="outline" className="h-9 text-xs sm:h-8 xl:h-7" onClick={() => patchDraft({ lines: [...draft.lines, customLine(draft.lines.length)] })}><PencilLine className="size-3.5" /> Custom service</Button>
               </div>
             </div>
-            <div className="overflow-x-auto">
+            <div className="divide-y lg:hidden">
+              {draft.lines.map((line, index) => (
+                <div key={line.id} className="space-y-3 p-3">
+                  <div className="flex items-center justify-between gap-2">
+                    <div className="flex items-center gap-1">
+                      <span className="mr-1 text-[10px] font-semibold uppercase text-muted-foreground">Line {index + 1}</span>
+                      <IconButton label="Move up" disabled={index === 0} onClick={() => moveLine(index, -1)}><ArrowUp className="size-3.5" /></IconButton>
+                      <IconButton label="Move down" disabled={index === draft.lines.length - 1} onClick={() => moveLine(index, 1)}><ArrowDown className="size-3.5" /></IconButton>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <span className="mr-1 text-sm font-semibold tabular-nums">{money(line.quantity * line.unitPrice)}</span>
+                      <IconButton label="Remove line" className="text-muted-foreground hover:text-destructive" onClick={() => patchDraft({ lines: draft.lines.filter((item) => item.id !== line.id) })}><Trash2 className="size-3.5" /></IconButton>
+                    </div>
+                  </div>
+                  <Field label="Service">
+                    <NativeSelect value={line.serviceId || ""} onChange={(event) => selectService(line.id, event.target.value)}><option value="">Custom line</option>{data.services.map((service) => <option key={service.id} value={service.id}>{service.name}</option>)}</NativeSelect>
+                  </Field>
+                  <Field label="Line name"><Input value={line.name} onChange={(event) => updateLine(line.id, { name: event.target.value })} className="h-10 text-xs" /></Field>
+                  <div className="grid grid-cols-2 gap-3">
+                    <Field label="Quantity"><NumericInput value={line.quantity} min={0.01} onChange={(value) => updateLine(line.id, { quantity: value || 0 })} /></Field>
+                    <Field label="Unit price"><NumericInput value={line.unitPrice} onChange={(value) => updateLine(line.id, { unitPrice: value || 0 })} /></Field>
+                  </div>
+                  <Field label="Description"><Textarea value={line.description} onChange={(event) => updateLine(line.id, { description: event.target.value })} className="min-h-20 resize-y text-xs" /></Field>
+                </div>
+              ))}
+              {draft.lines.length === 0 ? <div className="p-8 text-center text-xs text-muted-foreground">No services</div> : null}
+            </div>
+            <div className="hidden overflow-x-auto lg:block">
               <div className="min-w-[800px]">
                 <div className="grid grid-cols-[60px_minmax(180px,1.2fr)_80px_110px_minmax(170px,1fr)_90px_36px] gap-2 border-b bg-muted/20 px-3 py-1.5 text-[10px] font-medium uppercase text-muted-foreground"><span>Order</span><span>Service / line</span><span className="text-right">Qty</span><span className="text-right">Unit price</span><span>Description</span><span className="text-right">Total</span><span /></div>
                 {draft.lines.map((line, index) => (
@@ -468,11 +512,11 @@ export function EstimateBuilderTab({ data, onRefresh }: { data: WorkbenchData; o
         {validation.length > 0 ? <Alert variant="destructive"><AlertTriangle className="size-4" /><AlertTitle>Check estimate</AlertTitle><AlertDescription>{validation.join(". ")}</AlertDescription></Alert> : null}
         {result && !result.ok ? <Alert variant="destructive"><AlertTriangle className="size-4" /><AlertTitle>{result.kind === "partial" ? "Some changes were saved" : result.kind === "validation" ? "Check required information" : "Could not save"}</AlertTitle><AlertDescription>{result.message}</AlertDescription></Alert> : null}
 
-        <div className="sticky bottom-3 flex flex-wrap items-center justify-end gap-2 rounded-md border bg-background/95 px-3 py-2.5 shadow-lg backdrop-blur">
-          <span className="mr-auto text-xs text-muted-foreground">Draft only / {draft.lines.length} lines / {money(totals.total)}</span>
-          <Button variant="outline" className="h-8" disabled={saving || actionPending !== null} onClick={() => void save(false)}>{saving ? <Loader2 className="size-4 animate-spin" /> : <Save className="size-4" />} Save draft</Button>
+        <div className="sticky bottom-0 flex flex-wrap items-center justify-end gap-2 rounded-md border bg-background/95 px-3 py-2.5 shadow-lg backdrop-blur sm:bottom-3">
+          <span className="w-full text-xs text-muted-foreground sm:mr-auto sm:w-auto">Draft only / {draft.lines.length} lines / {money(totals.total)}</span>
+          <Button variant="outline" className="h-10 flex-1 sm:h-8 sm:flex-none" disabled={saving || actionPending !== null} onClick={() => void save(false)}>{saving ? <Loader2 className="size-4 animate-spin" /> : <Save className="size-4" />} Save draft</Button>
           <AlertDialog>
-            <AlertDialogTrigger asChild><Button className="h-9 bg-blue-700 font-semibold text-white shadow-sm hover:bg-blue-800" disabled={saving || actionPending !== null || draft.qboSyncStatus === "Queued for Draft"}><SendToBack className="size-4" /> Save for QuickBooks</Button></AlertDialogTrigger>
+            <AlertDialogTrigger asChild><Button className="h-10 flex-1 bg-blue-700 font-semibold text-white shadow-sm hover:bg-blue-800 sm:h-9 sm:flex-none" disabled={saving || actionPending !== null || draft.qboSyncStatus === "Queued for Draft"}><SendToBack className="size-4" /> Save for QuickBooks</Button></AlertDialogTrigger>
             <AlertDialogContent>
               <AlertDialogHeader><AlertDialogTitle>Save this estimate for QuickBooks?</AlertDialogTitle><AlertDialogDescription>This saves the estimate and marks it to be created in QuickBooks when the connection is available. Nothing is sent now.</AlertDialogDescription></AlertDialogHeader>
               <AlertDialogFooter><AlertDialogCancel>Cancel</AlertDialogCancel><AlertDialogAction onClick={() => void save(true)}>Save for QuickBooks</AlertDialogAction></AlertDialogFooter>

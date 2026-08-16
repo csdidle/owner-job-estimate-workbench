@@ -432,12 +432,12 @@ export function PriceJobsTab({ data, onRefresh }: { data: WorkbenchData; onRefre
       {data.errors.services ? <SectionError title="Price Book unavailable" message={data.errors.services} /> : null}
       {data.errors.employees ? <SectionError title="Employees unavailable" message={data.errors.employees} /> : null}
 
-      <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_320px]">
+      <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_300px] xl:grid-cols-[minmax(0,1fr)_320px]">
         <section className="overflow-hidden rounded-md border bg-background shadow-xs">
           <div className="border-b bg-slate-50/80 px-3 py-2.5">
             <h2 className="text-sm font-semibold">Cost and pricing details</h2>
           </div>
-          <div className="grid gap-3 p-3 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="grid gap-3 p-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             <Field label="Crew size"><NumericInput value={inputs.crewSize} step="1" onChange={(value) => setInputs({ ...inputs, crewSize: value })} /></Field>
             <Field label="Estimated hours"><NumericInput value={inputs.estimatedHours} onChange={(value) => setInputs({ ...inputs, estimatedHours: value })} /></Field>
             <Field label="Hourly labor rate per person"><NumericInput value={inputs.laborRate} onChange={(value) => setInputs({ ...inputs, laborRate: value })} /></Field>
@@ -481,7 +481,7 @@ export function PriceJobsTab({ data, onRefresh }: { data: WorkbenchData; onRefre
         <section className="min-w-0 overflow-hidden rounded-md border border-emerald-200/70 bg-background shadow-xs">
           <div className="grid gap-3 border-b border-emerald-100 bg-emerald-50/60 p-3 md:grid-cols-[minmax(220px,1fr)_minmax(220px,1fr)]">
             <Field label="Pricing name" required>
-              <Input value={name} onChange={(event) => setName(event.target.value)} className="h-9 border-emerald-200 bg-background text-xs shadow-xs focus-visible:border-emerald-500 focus-visible:ring-emerald-500/15" placeholder="Property and scope" />
+              <Input value={name} onChange={(event) => setName(event.target.value)} className="h-10 border-emerald-200 bg-background text-xs shadow-xs focus-visible:border-emerald-500 focus-visible:ring-emerald-500/15 xl:h-9" placeholder="Property and scope" />
             </Field>
             <Field label="Contact" required={requiresJob}>
               <Popover open={contactPickerOpen} onOpenChange={setContactPickerOpen}>
@@ -491,7 +491,7 @@ export function PriceJobsTab({ data, onRefresh }: { data: WorkbenchData; onRefre
                     variant="outline"
                     role="combobox"
                     aria-expanded={contactPickerOpen}
-                    className="h-9 w-full justify-between border-emerald-200 bg-background px-2.5 text-xs font-normal shadow-xs hover:bg-background"
+                    className="h-10 w-full justify-between border-emerald-200 bg-background px-2.5 text-xs font-normal shadow-xs hover:bg-background xl:h-9"
                     disabled={data.contacts.length === 0}
                   >
                     <span className="truncate">
@@ -535,16 +535,16 @@ export function PriceJobsTab({ data, onRefresh }: { data: WorkbenchData; onRefre
             </Field>
           </div>
 
-          <div className="flex items-center justify-between border-b bg-slate-50/70 px-3 py-2.5">
+          <div className="flex flex-col gap-2 border-b bg-slate-50/70 px-3 py-2.5 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <h2 className="text-sm font-semibold">Service lines</h2>
               <p className="text-[11px] text-muted-foreground">{lines.length} line{lines.length === 1 ? "" : "s"}</p>
             </div>
-            <div className="flex items-center gap-2">
+            <div className="grid w-full grid-cols-2 gap-2 sm:flex sm:w-auto sm:items-center">
               <Button
                 size="sm"
                 variant="outline"
-                className="h-7 text-xs"
+                className="h-9 text-xs sm:h-8 xl:h-7"
                 disabled={!data.services[0]}
                 onClick={() => data.services[0] && setLines((current) => [...current, newLine(data.services[0], current.length)])}
               >
@@ -553,7 +553,7 @@ export function PriceJobsTab({ data, onRefresh }: { data: WorkbenchData; onRefre
               <Button
                 size="sm"
                 variant="outline"
-                className="h-7 text-xs"
+                className="h-9 text-xs sm:h-8 xl:h-7"
                 onClick={() => setLines((current) => [...current, newCustomLine(current.length)])}
               >
                 <PencilLine className="size-3.5" /> Custom service
@@ -561,7 +561,44 @@ export function PriceJobsTab({ data, onRefresh }: { data: WorkbenchData; onRefre
             </div>
           </div>
 
-          <div className="overflow-x-auto">
+          <div className="divide-y lg:hidden">
+            {lines.map((line, index) => (
+              <div key={line.clientId} className="space-y-3 p-3">
+                <div className="flex items-center justify-between gap-2">
+                  <div className="flex items-center gap-1">
+                    <span className="mr-1 text-[10px] font-semibold uppercase text-muted-foreground">Line {index + 1}</span>
+                    <IconButton label="Move up" disabled={index === 0} onClick={() => moveLine(index, -1)}><ArrowUp className="size-3.5" /></IconButton>
+                    <IconButton label="Move down" disabled={index === lines.length - 1} onClick={() => moveLine(index, 1)}><ArrowDown className="size-3.5" /></IconButton>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <span className="mr-1 text-sm font-semibold tabular-nums">{money(line.quantity * line.unitPrice)}</span>
+                    <IconButton label="Remove line" className="text-muted-foreground hover:text-destructive" onClick={() => setLines((current) => current.filter((item) => item.clientId !== line.clientId))}><Trash2 className="size-3.5" /></IconButton>
+                  </div>
+                </div>
+                <Field label="Service">
+                  <div className="grid gap-1.5">
+                    <NativeSelect value={line.serviceId || "__custom__"} onChange={(event) => selectService(line.clientId, event.target.value)}>
+                      <option value="__custom__">Custom service</option>
+                      {data.services.map((service) => <option key={service.id} value={service.id}>{service.name}</option>)}
+                    </NativeSelect>
+                    {line.serviceId ? (
+                      <span className="text-[10px] text-muted-foreground">{serviceMap.get(line.serviceId)?.category || "Other"} / {line.unit || "Unit not set"} / cost {money(line.cost)}</span>
+                    ) : (
+                      <Input value={line.name} onChange={(event) => updateLine(line.clientId, { name: event.target.value })} className="h-10 text-xs" placeholder="Custom service name" />
+                    )}
+                  </div>
+                </Field>
+                <div className="grid grid-cols-2 gap-3">
+                  <Field label="Quantity"><NumericInput value={line.quantity} min={0.01} onChange={(value) => updateLine(line.clientId, { quantity: value || 0 })} /></Field>
+                  <Field label="Unit price"><NumericInput value={line.unitPrice} onChange={(value) => updateLine(line.clientId, { unitPrice: value || 0 })} /></Field>
+                </div>
+                <Field label="Description"><Textarea value={line.description} onChange={(event) => updateLine(line.clientId, { description: event.target.value })} className="min-h-20 resize-y text-xs" /></Field>
+              </div>
+            ))}
+            {lines.length === 0 ? <div className="p-8 text-center text-xs text-muted-foreground">No service lines</div> : null}
+          </div>
+
+          <div className="hidden overflow-x-auto lg:block">
             <div className="min-w-[820px]">
               <div className="grid grid-cols-[56px_minmax(190px,1.4fr)_90px_120px_minmax(180px,1fr)_92px_40px] items-center gap-2 border-b bg-muted/20 px-3 py-1.5 text-[10px] font-medium uppercase text-muted-foreground">
                 <span>Order</span><span>Service</span><span className="text-right">Qty</span><span className="text-right">Unit price</span><span>Description</span><span className="text-right">Total</span><span />
@@ -603,7 +640,7 @@ export function PriceJobsTab({ data, onRefresh }: { data: WorkbenchData; onRefre
                 type="single"
                 value={outcome}
                 onValueChange={(value) => value && setOutcome(value as PricingOutcome)}
-                className="grid w-full gap-2"
+                className="grid w-full gap-2 sm:grid-cols-3 xl:grid-cols-1"
               >
                 <ToggleGroupItem value="pricing-only" aria-label="Save pricing only" className="h-auto w-full justify-start gap-2 border px-2.5 py-2 text-left data-[state=on]:border-emerald-500 data-[state=on]:bg-emerald-50">
                   <CircleDollarSign className="size-4 shrink-0" />
@@ -698,7 +735,60 @@ export function PriceJobsTab({ data, onRefresh }: { data: WorkbenchData; onRefre
         {data.errors.pricing ? <div className="p-3"><SectionError title="Recent pricing unavailable" message={data.errors.pricing} /></div> : data.recentPricing.length === 0 ? (
           <EmptyState icon={<Clock3 className="size-7" />} title="No saved pricing yet" detail="Completed calculations will appear here." />
         ) : (
-          <div className="overflow-x-auto">
+          <>
+            <div className="divide-y lg:hidden">
+              {data.recentPricing.map((item) => (
+              <div key={item.id} className="space-y-3 p-3">
+                <div className="flex items-start justify-between gap-3">
+                  <div className="min-w-0">
+                    <p className="break-words text-sm font-semibold">{item.name}</p>
+                    <p className="mt-0.5 font-mono text-[10px] text-muted-foreground">{item.id}</p>
+                  </div>
+                  <p className="shrink-0 text-sm font-semibold tabular-nums">{money(item.totalPrice)}</p>
+                </div>
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <StatusBadge status={item.routingStatus} />
+                  {item.routingStatus === "Error" ? (
+                    <span className="inline-flex items-center gap-1 text-xs text-red-700"><AlertTriangle className="size-3.5" /> Needs attention</span>
+                  ) : item.jobId || item.estimateId ? (
+                    <span className="inline-flex items-center gap-1 text-xs text-emerald-700"><CheckCircle2 className="size-3.5" /> Created</span>
+                  ) : item.routingStatus !== "Pricing Saved" ? (
+                    <span className="inline-flex items-center gap-1 text-xs text-muted-foreground"><Loader2 className="size-3.5 animate-spin" /> Creating</span>
+                  ) : null}
+                </div>
+                <div className="flex items-center gap-2 border-t pt-3">
+                  {item.routingStatus === "Pricing Saved" ? (
+                    <>
+                      <Button size="sm" variant="outline" className="h-9 flex-1 text-xs" onClick={() => openPromotion(item, "create-job")}><BriefcaseBusiness className="size-3.5" /> Job</Button>
+                      <Button size="sm" variant="outline" className="h-9 flex-1 text-xs" onClick={() => openPromotion(item, "create-estimate")}><FilePenLine className="size-3.5" /> Estimate</Button>
+                    </>
+                  ) : <span className="flex-1" />}
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <IconButton
+                        label="Archive pricing"
+                        className="text-muted-foreground hover:text-destructive"
+                        disabled={archivingId === item.id || ["Ready to Route", "Routing"].includes(item.routingStatus || "")}
+                      >
+                        {archivingId === item.id ? <Loader2 className="size-3.5 animate-spin" /> : <Archive className="size-3.5" />}
+                      </IconButton>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>Archive {item.name}?</AlertDialogTitle>
+                        <AlertDialogDescription>This removes the pricing from this workbench. Any linked Job or Estimate will be kept unchanged.</AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        <AlertDialogAction variant="destructive" onClick={() => void archiveSavedPricing(item.id)}>Archive pricing</AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
+                </div>
+              </div>
+              ))}
+            </div>
+            <div className="hidden overflow-x-auto lg:block">
             <table className="w-full min-w-[880px] text-xs">
               <thead>
                 <tr className="border-b bg-muted/20 text-left text-[10px] uppercase text-muted-foreground">
@@ -757,8 +847,9 @@ export function PriceJobsTab({ data, onRefresh }: { data: WorkbenchData; onRefre
                   </tr>
                 ))}
               </tbody>
-            </table>
-          </div>
+              </table>
+            </div>
+          </>
         )}
       </section>
 
@@ -778,7 +869,7 @@ export function PriceJobsTab({ data, onRefresh }: { data: WorkbenchData; onRefre
             </Field>
             <Field label="Assigned crew"><CrewPicker employees={data.employees} value={promotionCrewIds} onChange={setPromotionCrewIds} /></Field>
             <Field label="Scheduled date"><Input type="date" value={promotionDate || ""} onChange={(event) => setPromotionDate(event.target.value || null)} className="h-8 text-xs" /></Field>
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid gap-3 sm:grid-cols-2">
               <Field label="Priority"><NativeSelect value={promotionPriority} onChange={(event) => setPromotionPriority(event.target.value as typeof promotionPriority)}>{JOB_PRIORITIES.map((item) => <option key={item}>{item}</option>)}</NativeSelect></Field>
               <Field label="Job type"><NativeSelect value={promotionJobType} onChange={(event) => setPromotionJobType(event.target.value as typeof promotionJobType)}>{JOB_TYPES.map((item) => <option key={item}>{item}</option>)}</NativeSelect></Field>
             </div>
