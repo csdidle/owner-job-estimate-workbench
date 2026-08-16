@@ -1,6 +1,7 @@
 export const ROUTING_TERMINAL_STATUSES = [
   "Job Active",
   "Waiting for Estimate",
+  "Pricing Saved",
   "Error",
 ] as const;
 
@@ -11,6 +12,7 @@ export const ROUTING_STATUSES = [
   ...ROUTING_TERMINAL_STATUSES,
 ] as const;
 
+export const PRICING_OUTCOMES = ["pricing-only", "create-job", "create-estimate"] as const;
 export const JOB_PRIORITIES = ["Low", "Normal", "High", "Urgent"] as const;
 export const JOB_TYPES = ["One-Time", "Recurring", "Maintenance", "Emergency"] as const;
 export const ESTIMATE_QUEUE_STATUSES = ["Sent", "Viewed", "Declined", "Expired"] as const;
@@ -36,6 +38,7 @@ export const CONDITION_OPTIONS = [
 export const SEASONS = ["Spring", "Summer", "Fall", "Winter"] as const;
 
 export type RoutingStatus = (typeof ROUTING_STATUSES)[number];
+export type PricingOutcome = (typeof PRICING_OUTCOMES)[number];
 export type JobPriority = (typeof JOB_PRIORITIES)[number];
 export type JobType = (typeof JOB_TYPES)[number];
 export type EstimateQueueStatus = (typeof ESTIMATE_QUEUE_STATUSES)[number];
@@ -126,6 +129,12 @@ export type PricingRecord = {
   routingStatus: RoutingStatus | null;
   routingError: string | null;
   requiresEstimate: boolean;
+  contactId: string | null;
+  assignedCrewIds: string[];
+  scheduledDate: string | null;
+  priority: JobPriority | null;
+  jobType: JobType | null;
+  totalPrice: number;
   jobId: string | null;
   estimateId: string | null;
   routedAt: string | null;
@@ -157,9 +166,9 @@ export type PricingLineInput = {
 
 export type PricingJobInput = {
   name: string;
-  contactId: string;
+  contactId: string | null;
   lines: PricingLineInput[];
-  requiresEstimate: boolean;
+  outcome: PricingOutcome;
   assignedCrewIds: string[];
   scheduledDate: string | null;
   priority: JobPriority;
@@ -181,6 +190,16 @@ export type PricingJobInput = {
   terrain: string | null;
   condition: string | null;
   season: string | null;
+};
+
+export type PricingPromotionInput = {
+  pricingId: string;
+  outcome: Exclude<PricingOutcome, "pricing-only">;
+  contactId: string;
+  assignedCrewIds: string[];
+  scheduledDate: string | null;
+  priority: JobPriority;
+  jobType: JobType;
 };
 
 export type EstimateSaveInput = {

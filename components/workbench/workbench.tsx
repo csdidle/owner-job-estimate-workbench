@@ -24,12 +24,12 @@ export function Workbench({ initialData }: { initialData: WorkbenchData }) {
   const draftWaitingIds = new Set(data.jobs.filter((job) => job.status === "Waiting for Estimate").map((job) => job.estimateId));
   const drafts = data.estimates.filter((estimate) => estimate.status === "Draft" && draftWaitingIds.has(estimate.id)).length;
   const workflowSteps = [
-    { value: "price" as const, number: "1", title: "Create job", detail: "New request", icon: Calculator, count: null, activeClass: "data-[state=active]:border-emerald-200 data-[state=active]:bg-emerald-50 data-[state=active]:text-emerald-950", numberClass: "bg-emerald-100 text-emerald-800" },
+    { value: "price" as const, number: "1", title: "Price work", detail: "New calculation", icon: Calculator, count: null, activeClass: "data-[state=active]:border-emerald-200 data-[state=active]:bg-emerald-50 data-[state=active]:text-emerald-950", numberClass: "bg-emerald-100 text-emerald-800" },
     { value: "estimate" as const, number: "2", title: "Build estimates", detail: drafts === 1 ? "1 needs pricing" : `${drafts} need pricing`, icon: FilePenLine, count: drafts, activeClass: "data-[state=active]:border-amber-200 data-[state=active]:bg-amber-50 data-[state=active]:text-amber-950", numberClass: "bg-amber-100 text-amber-800" },
     { value: "approval" as const, number: "3", title: "Approve & schedule", detail: waiting === 1 ? "1 awaiting approval" : `${waiting} awaiting approval`, icon: ClipboardCheck, count: waiting, activeClass: "data-[state=active]:border-blue-200 data-[state=active]:bg-blue-50 data-[state=active]:text-blue-950", numberClass: "bg-blue-100 text-blue-800" },
   ];
   const stageStatus = activeStep === "price"
-    ? { label: "New job request", detail: "Ready for customer and service details", tone: "border-emerald-500", dot: "bg-emerald-600" }
+    ? { label: "Pricing calculator", detail: "Ready for services and cost details", tone: "border-emerald-500", dot: "bg-emerald-600" }
     : activeStep === "estimate"
       ? { label: "Estimate preparation", detail: drafts === 0 ? "No estimates need pricing" : `${drafts} estimate${drafts === 1 ? "" : "s"} need pricing`, tone: "border-amber-500", dot: "bg-amber-500" }
       : { label: "Approval and scheduling", detail: `${waiting} awaiting approval and ${active} ready to schedule`, tone: "border-blue-500", dot: "bg-blue-600" };

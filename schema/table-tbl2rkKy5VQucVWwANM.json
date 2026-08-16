@@ -850,6 +850,7 @@
         "Routing",
         "Job Active",
         "Waiting for Estimate",
+        "Pricing Saved",
         "Error"
       ],
       "cellValueType": "string",

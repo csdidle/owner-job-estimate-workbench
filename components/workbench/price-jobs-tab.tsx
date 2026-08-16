@@ -5,21 +5,22 @@ import {
   AlertTriangle,
   ArrowDown,
   ArrowUp,
+  BriefcaseBusiness,
   Check,
   CheckCircle2,
   ChevronsUpDown,
   CircleDollarSign,
   Clock3,
+  FilePenLine,
   Loader2,
   PencilLine,
   Plus,
   RefreshCw,
   ListChecks,
-  Send,
   Trash2,
 } from "lucide-react";
 import { toast } from "sonner";
-import { getPricingResult, savePricingJob } from "@/app/actions";
+import { getPricingResult, promoteSavedPricing, savePricingJob } from "@/app/actions";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -31,11 +32,19 @@ import {
   CommandItem,
   CommandList,
 } from "@/components/ui/command";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Separator } from "@/components/ui/separator";
-import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import {
   CONDITION_OPTIONS,
   FREQUENCIES,
@@ -46,6 +55,8 @@ import {
   type ActionResult,
   type PricingJobInput,
   type PricingLineInput,
+  type PricingOutcome,
+  type PricingPromotionInput,
   type PricingRecord,
   type ServiceOption,
   type WorkbenchData,
@@ -66,6 +77,11 @@ type DraftLine = PricingLineInput & {
   clientId: string;
   cost: number;
   unit: string | null;
+};
+
+type PromotionState = {
+  pricing: PricingRecord;
+  outcome: Exclude<PricingOutcome, "pricing-only">;
 };
 
 type RoutingOutcome = {
@@ -134,7 +150,7 @@ export function PriceJobsTab({ data, onRefresh }: { data: WorkbenchData; onRefre
   const [contactId, setContactId] = useState("");
   const [contactPickerOpen, setContactPickerOpen] = useState(false);
   const [lines, setLines] = useState<DraftLine[]>(() => data.services[0] ? [newLine(data.services[0], 0)] : []);
-  const [requiresEstimate, setRequiresEstimate] = useState(false);
+  const [outcome, setOutcome] = useState<PricingOutcome>("pricing-only");
   const [crewIds, setCrewIds] = useState<string[]>([]);
   const [scheduledDate, setScheduledDate] = useState<string | null>(null);
   const [priority, setPriority] = useState<(typeof JOB_PRIORITIES)[number]>("Normal");
@@ -146,7 +162,17 @@ export function PriceJobsTab({ data, onRefresh }: { data: WorkbenchData; onRefre
   const [routing, setRouting] = useState<RoutingOutcome | null>(null);
   const [saving, setSaving] = useState(false);
   const [polling, setPolling] = useState(false);
+  const [promotion, setPromotion] = useState<PromotionState | null>(null);
+  const [promotionContactId, setPromotionContactId] = useState("");
+  const [promotionCrewIds, setPromotionCrewIds] = useState<string[]>([]);
+  const [promotionDate, setPromotionDate] = useState<string | null>(null);
+  const [promotionPriority, setPromotionPriority] = useState<(typeof JOB_PRIORITIES)[number]>("Normal");
+  const [promotionJobType, setPromotionJobType] = useState<(typeof JOB_TYPES)[number]>("One-Time");
+  const [promotionError, setPromotionError] = useState("");
+  const [promoting, setPromoting] = useState(false);
 
+  const requiresJob = outcome !== "pricing-only";
+  const requiresEstimate = outcome === "create-estimate";
   const serviceMap = useMemo(() => new Map(data.services.map((service) => [service.id, service])), [data.services]);
   const selectedContact = useMemo(
     () => data.contacts.find((contact) => contact.id === contactId) || null,
@@ -211,8 +237,8 @@ export function PriceJobsTab({ data, onRefresh }: { data: WorkbenchData; onRefre
 
   function validate(): string[] {
     const issues: string[] = [];
-    if (name.trim().length < 2) issues.push("Job / estimate name is required");
-    if (!contactId) issues.push("Select a contact");
+    if (name.trim().length < 2) issues.push("Pricing name is required");
+    if (requiresJob && !contactId) issues.push("Select a contact before creating a job or estimate");
     if (lines.length === 0) issues.push("Add at least one service line");
     if (lines.some((line) => !line.name.trim() || line.quantity <= 0 || line.unitPrice < 0)) issues.push("Each service needs a name, positive quantity, and valid unit price");
     if (inputs.targetMargin != null && (inputs.targetMargin < 0 || inputs.targetMargin >= 100)) issues.push("Target margin must be between 0 and 99.99%");
@@ -252,7 +278,7 @@ export function PriceJobsTab({ data, onRefresh }: { data: WorkbenchData; onRefre
 
     const payload: PricingJobInput = {
       name: name.trim(),
-      contactId,
+      contactId: contactId || null,
       lines: lines.map((line, index) => ({
         serviceId: line.serviceId,
         name: line.name,
@@ -261,9 +287,9 @@ export function PriceJobsTab({ data, onRefresh }: { data: WorkbenchData; onRefre
         unitPrice: line.unitPrice,
         lineOrder: (index + 1) * 10,
       })),
-      requiresEstimate,
-      assignedCrewIds: crewIds,
-      scheduledDate,
+      outcome,
+      assignedCrewIds: requiresJob ? crewIds : [],
+      scheduledDate: requiresJob ? scheduledDate : null,
       priority,
       jobType,
       notes,
@@ -280,9 +306,15 @@ export function PriceJobsTab({ data, onRefresh }: { data: WorkbenchData; onRefre
           pricing: {
             id: response.pricingId,
             name: payload.name,
-            routingStatus: "Ready to Route",
+            routingStatus: response.routingStatus,
             routingError: null,
             requiresEstimate,
+            contactId: payload.contactId,
+            assignedCrewIds: payload.assignedCrewIds,
+            scheduledDate: requiresJob ? payload.scheduledDate : null,
+            priority: requiresJob ? payload.priority : null,
+            jobType: requiresJob ? payload.jobType : null,
+            totalPrice: totals.totalPrice,
             jobId: null,
             estimateId: null,
             routedAt: null,
@@ -291,7 +323,8 @@ export function PriceJobsTab({ data, onRefresh }: { data: WorkbenchData; onRefre
           estimate: null,
           relatedErrors: [],
         });
-        void pollRouting(response.pricingId);
+        if (response.routingStatus === "Pricing Saved") await onRefresh();
+        else void pollRouting(response.pricingId);
       } else if (!response.ok) {
         toast.error(response.message);
       }
@@ -304,6 +337,65 @@ export function PriceJobsTab({ data, onRefresh }: { data: WorkbenchData; onRefre
     }
   }
 
+  function openPromotion(pricing: PricingRecord, nextOutcome: PromotionState["outcome"]) {
+    setPromotion({ pricing, outcome: nextOutcome });
+    setPromotionContactId(pricing.contactId || "");
+    setPromotionCrewIds(pricing.assignedCrewIds);
+    setPromotionDate(pricing.scheduledDate);
+    setPromotionPriority(pricing.priority || "Normal");
+    setPromotionJobType(pricing.jobType || "One-Time");
+    setPromotionError("");
+  }
+
+  async function submitPromotion() {
+    if (!promotion) return;
+    if (!promotionContactId) {
+      setPromotionError("Select a contact");
+      return;
+    }
+
+    const payload: PricingPromotionInput = {
+      pricingId: promotion.pricing.id,
+      outcome: promotion.outcome,
+      contactId: promotionContactId,
+      assignedCrewIds: promotionCrewIds,
+      scheduledDate: promotionDate,
+      priority: promotionPriority,
+      jobType: promotionJobType,
+    };
+
+    setPromoting(true);
+    setPromotionError("");
+    try {
+      const response = await promoteSavedPricing(payload);
+      if (!response.ok || !("pricingId" in response)) {
+        setPromotionError(response.message);
+        return;
+      }
+
+      const promotedPricing: PricingRecord = {
+        ...promotion.pricing,
+        routingStatus: "Ready to Route",
+        routingError: null,
+        requiresEstimate: promotion.outcome === "create-estimate",
+        contactId: promotionContactId,
+        assignedCrewIds: promotionCrewIds,
+        scheduledDate: promotionDate,
+        priority: promotionPriority,
+        jobType: promotionJobType,
+      };
+      setRouting({ pricing: promotedPricing, job: null, estimate: null, relatedErrors: [] });
+      setResult(response);
+      setPromotion(null);
+      toast.success(response.message);
+      void pollRouting(response.pricingId);
+    } catch (error) {
+      setPromotionError(error instanceof Error ? error.message : "Saved pricing could not be promoted");
+    } finally {
+      setPromoting(false);
+    }
+  }
+
   return (
     <div className="space-y-5">
       {data.errors.contacts ? <SectionError title="Contacts unavailable" message={data.errors.contacts} /> : null}
@@ -313,10 +405,10 @@ export function PriceJobsTab({ data, onRefresh }: { data: WorkbenchData; onRefre
       <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_320px]">
         <section className="min-w-0 overflow-hidden rounded-md border border-emerald-200/70 bg-background shadow-xs">
           <div className="grid gap-3 border-b border-emerald-100 bg-emerald-50/60 p-3 md:grid-cols-[minmax(220px,1fr)_minmax(220px,1fr)]">
-            <Field label="Job / estimate name" required>
+            <Field label="Pricing name" required>
               <Input value={name} onChange={(event) => setName(event.target.value)} className="h-9 border-emerald-200 bg-background text-xs shadow-xs focus-visible:border-emerald-500 focus-visible:ring-emerald-500/15" placeholder="Property and scope" />
             </Field>
-            <Field label="Contact" required>
+            <Field label="Contact" required={requiresJob}>
               <Popover open={contactPickerOpen} onOpenChange={setContactPickerOpen}>
                 <PopoverTrigger asChild>
                   <Button
@@ -330,7 +422,7 @@ export function PriceJobsTab({ data, onRefresh }: { data: WorkbenchData; onRefre
                     <span className="truncate">
                       {selectedContact
                         ? `${selectedContact.name}${selectedContact.company && selectedContact.company !== selectedContact.name ? ` - ${selectedContact.company}` : ""}`
-                        : "Select contact"}
+                        : requiresJob ? "Select contact" : "Optional contact"}
                     </span>
                     <ChevronsUpDown className="size-3.5 shrink-0 text-muted-foreground" />
                   </Button>
@@ -430,21 +522,38 @@ export function PriceJobsTab({ data, onRefresh }: { data: WorkbenchData; onRefre
 
         <aside className="space-y-4">
           <section className="overflow-hidden rounded-md border border-emerald-200/70 bg-background shadow-xs">
-            <div className="border-b border-emerald-100 bg-emerald-50/60 px-3 py-2.5"><h2 className="text-sm font-semibold text-emerald-950">Job setup</h2></div>
-            <div className="grid gap-3 p-3 sm:grid-cols-2 xl:grid-cols-1">
-              <div className="flex items-center justify-between rounded-md border px-2.5 py-2">
-                <div>
-                  <p className="text-xs font-medium">Estimate required</p>
-                  <p className="text-[10px] text-muted-foreground">{requiresEstimate ? "Create an estimate first" : "Create the job now"}</p>
-                </div>
-                <Switch checked={requiresEstimate} onCheckedChange={setRequiresEstimate} />
-              </div>
-              <Field label="Assigned crew"><CrewPicker employees={data.employees} value={crewIds} onChange={setCrewIds} /></Field>
-              <Field label="Scheduled date"><Input type="date" value={scheduledDate || ""} onChange={(event) => setScheduledDate(event.target.value || null)} className="h-8 text-xs" /></Field>
-              <div className="grid grid-cols-2 gap-2">
-                <Field label="Priority"><NativeSelect value={priority} onChange={(event) => setPriority(event.target.value as typeof priority)}>{JOB_PRIORITIES.map((item) => <option key={item}>{item}</option>)}</NativeSelect></Field>
-                <Field label="Job type"><NativeSelect value={jobType} onChange={(event) => setJobType(event.target.value as typeof jobType)}>{JOB_TYPES.map((item) => <option key={item}>{item}</option>)}</NativeSelect></Field>
-              </div>
+            <div className="border-b border-emerald-100 bg-emerald-50/60 px-3 py-2.5"><h2 className="text-sm font-semibold text-emerald-950">After pricing</h2></div>
+            <div className="grid gap-3 p-3">
+              <ToggleGroup
+                type="single"
+                value={outcome}
+                onValueChange={(value) => value && setOutcome(value as PricingOutcome)}
+                className="grid gap-2"
+              >
+                <ToggleGroupItem value="pricing-only" aria-label="Save pricing only" className="h-auto justify-start gap-2 border px-2.5 py-2 text-left data-[state=on]:border-emerald-500 data-[state=on]:bg-emerald-50">
+                  <CircleDollarSign className="size-4 shrink-0" />
+                  <span><span className="block text-xs font-medium">Pricing only</span><span className="block text-[10px] font-normal text-muted-foreground">Save calculation</span></span>
+                </ToggleGroupItem>
+                <ToggleGroupItem value="create-job" aria-label="Create job" className="h-auto justify-start gap-2 border px-2.5 py-2 text-left data-[state=on]:border-emerald-500 data-[state=on]:bg-emerald-50">
+                  <BriefcaseBusiness className="size-4 shrink-0" />
+                  <span><span className="block text-xs font-medium">Create job</span><span className="block text-[10px] font-normal text-muted-foreground">Start active work</span></span>
+                </ToggleGroupItem>
+                <ToggleGroupItem value="create-estimate" aria-label="Create estimate" className="h-auto justify-start gap-2 border px-2.5 py-2 text-left data-[state=on]:border-emerald-500 data-[state=on]:bg-emerald-50">
+                  <FilePenLine className="size-4 shrink-0" />
+                  <span><span className="block text-xs font-medium">Create estimate</span><span className="block text-[10px] font-normal text-muted-foreground">Approval before work</span></span>
+                </ToggleGroupItem>
+              </ToggleGroup>
+              {requiresJob ? (
+                <>
+                  <Separator />
+                  <Field label="Assigned crew"><CrewPicker employees={data.employees} value={crewIds} onChange={setCrewIds} /></Field>
+                  <Field label="Scheduled date"><Input type="date" value={scheduledDate || ""} onChange={(event) => setScheduledDate(event.target.value || null)} className="h-8 text-xs" /></Field>
+                  <div className="grid grid-cols-2 gap-2">
+                    <Field label="Priority"><NativeSelect value={priority} onChange={(event) => setPriority(event.target.value as typeof priority)}>{JOB_PRIORITIES.map((item) => <option key={item}>{item}</option>)}</NativeSelect></Field>
+                    <Field label="Job type"><NativeSelect value={jobType} onChange={(event) => setJobType(event.target.value as typeof jobType)}>{JOB_TYPES.map((item) => <option key={item}>{item}</option>)}</NativeSelect></Field>
+                  </div>
+                </>
+              ) : null}
               <Field label="Notes"><Textarea value={notes} onChange={(event) => setNotes(event.target.value)} className="min-h-16 resize-y text-xs" /></Field>
             </div>
           </section>
@@ -489,8 +598,8 @@ export function PriceJobsTab({ data, onRefresh }: { data: WorkbenchData; onRefre
           </div>
           <div className="border-t p-3">
             <Button className="h-10 w-full bg-emerald-700 font-semibold text-white shadow-sm hover:bg-emerald-800" onClick={submit} disabled={saving || polling}>
-              {saving ? <Loader2 className="size-4 animate-spin" /> : <Send className="size-4" />}
-              Save and create
+              {saving ? <Loader2 className="size-4 animate-spin" /> : outcome === "pricing-only" ? <CircleDollarSign className="size-4" /> : outcome === "create-job" ? <BriefcaseBusiness className="size-4" /> : <FilePenLine className="size-4" />}
+              {outcome === "pricing-only" ? "Save pricing" : outcome === "create-job" ? "Save and create job" : "Save and create estimate"}
             </Button>
           </div>
         </aside>
@@ -517,24 +626,31 @@ export function PriceJobsTab({ data, onRefresh }: { data: WorkbenchData; onRefre
           <div className="flex flex-wrap items-center justify-between gap-2 border-b border-blue-100 bg-blue-50/70 px-3 py-2.5">
             <div className="flex items-center gap-2">
               <ListChecks className="size-4 text-muted-foreground" />
-              <h2 className="text-sm font-semibold">Request result</h2>
+              <h2 className="text-sm font-semibold">Pricing result</h2>
               <StatusBadge status={routing.pricing.routingStatus} pulse={polling} />
             </div>
-            {polling ? <span className="flex items-center gap-1.5 text-xs text-muted-foreground"><Loader2 className="size-3.5 animate-spin" /> Creating the job records</span> : null}
+            {polling ? (
+              <span className="flex items-center gap-1.5 text-xs text-muted-foreground"><Loader2 className="size-3.5 animate-spin" /> Creating records</span>
+            ) : routing.pricing.routingStatus === "Pricing Saved" ? (
+              <div className="flex flex-wrap items-center gap-2">
+                <Button size="sm" variant="outline" className="h-7 text-xs" onClick={() => openPromotion(routing.pricing, "create-job")}><BriefcaseBusiness className="size-3.5" /> Create job</Button>
+                <Button size="sm" variant="outline" className="h-7 text-xs" onClick={() => openPromotion(routing.pricing, "create-estimate")}><FilePenLine className="size-3.5" /> Create estimate</Button>
+              </div>
+            ) : null}
           </div>
           <div className="grid gap-3 p-3 md:grid-cols-3">
             <div className="border-l-2 border-slate-300 pl-3">
-              <p className="text-[10px] uppercase text-muted-foreground">Saved request</p>
+              <p className="text-[10px] uppercase text-muted-foreground">Saved pricing</p>
               <p className="mt-1 text-xs font-medium">{routing.pricing.name}</p>
-              <p className="mt-1 font-mono text-[10px] text-muted-foreground">{routing.pricing.id}</p>
+              <p className="mt-1 text-xs tabular-nums">{money(routing.pricing.totalPrice)}</p>
             </div>
             <div className="border-l-2 border-emerald-300 pl-3">
               <p className="text-[10px] uppercase text-muted-foreground">Job</p>
-              {routing.job ? <><p className="mt-1 text-xs font-medium">Job #{routing.job.number || "-"} {routing.job.name}</p><StatusBadge status={routing.job.status} /></> : <p className="mt-1 text-xs text-muted-foreground">Creating job...</p>}
+              {routing.job ? <><p className="mt-1 text-xs font-medium">Job #{routing.job.number || "-"} {routing.job.name}</p><StatusBadge status={routing.job.status} /></> : <p className="mt-1 text-xs text-muted-foreground">{routing.pricing.routingStatus === "Pricing Saved" ? "Not created" : "Creating job..."}</p>}
             </div>
             <div className="border-l-2 border-blue-300 pl-3">
               <p className="text-[10px] uppercase text-muted-foreground">Estimate</p>
-              {routing.estimate ? <><p className="mt-1 text-xs font-medium">Estimate #{routing.estimate.number || "-"} {routing.estimate.name}</p><div className="mt-1 flex items-center gap-2"><StatusBadge status={routing.estimate.status} /><span className="text-xs tabular-nums">{money(routing.estimate.total)}</span></div></> : <p className="mt-1 text-xs text-muted-foreground">{routing.pricing.requiresEstimate ? "Creating estimate..." : "No estimate needed"}</p>}
+              {routing.estimate ? <><p className="mt-1 text-xs font-medium">Estimate #{routing.estimate.number || "-"} {routing.estimate.name}</p><div className="mt-1 flex items-center gap-2"><StatusBadge status={routing.estimate.status} /><span className="text-xs tabular-nums">{money(routing.estimate.total)}</span></div></> : <p className="mt-1 text-xs text-muted-foreground">{routing.pricing.routingStatus === "Pricing Saved" ? "Not created" : routing.pricing.requiresEstimate ? "Creating estimate..." : "Not needed"}</p>}
             </div>
           </div>
           {routing.pricing.routingStatus === "Error" ? (
@@ -546,20 +662,80 @@ export function PriceJobsTab({ data, onRefresh }: { data: WorkbenchData; onRefre
 
       <section className="overflow-hidden rounded-md border bg-background shadow-xs">
         <div className="flex items-center justify-between border-b bg-slate-50/80 px-3 py-2.5">
-          <div><h2 className="text-sm font-semibold">Recent job requests</h2><p className="text-[11px] text-muted-foreground">Latest status for saved requests</p></div>
-          <IconButton label="Refresh requests" onClick={onRefresh}><RefreshCw className="size-3.5" /></IconButton>
+          <div><h2 className="text-sm font-semibold">Recent pricing</h2><p className="text-[11px] text-muted-foreground">Saved calculations and created work</p></div>
+          <IconButton label="Refresh pricing" onClick={onRefresh}><RefreshCw className="size-3.5" /></IconButton>
         </div>
-        {data.errors.pricing ? <div className="p-3"><SectionError title="Recent requests unavailable" message={data.errors.pricing} /></div> : data.recentPricing.length === 0 ? (
-          <EmptyState icon={<Clock3 className="size-7" />} title="No job requests yet" detail="Saved job and estimate requests will appear here." />
+        {data.errors.pricing ? <div className="p-3"><SectionError title="Recent pricing unavailable" message={data.errors.pricing} /></div> : data.recentPricing.length === 0 ? (
+          <EmptyState icon={<Clock3 className="size-7" />} title="No saved pricing yet" detail="Completed calculations will appear here." />
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full min-w-[680px] text-xs">
-              <thead><tr className="border-b bg-muted/20 text-left text-[10px] uppercase text-muted-foreground"><th className="px-3 py-2 font-medium">Request</th><th className="px-3 py-2 font-medium">Status</th><th className="px-3 py-2 font-medium">Estimate</th><th className="px-3 py-2 font-medium">Result</th></tr></thead>
-              <tbody>{data.recentPricing.map((item) => <tr key={item.id} className="border-b transition-colors last:border-0 hover:bg-slate-50/80"><td className="max-w-[360px] px-3 py-2"><p className="truncate font-medium">{item.name}</p><p className="font-mono text-[10px] text-muted-foreground">{item.id}</p></td><td className="px-3 py-2"><StatusBadge status={item.routingStatus} /></td><td className="px-3 py-2">{item.requiresEstimate ? "Create first" : "Not needed"}</td><td className="px-3 py-2">{item.routingStatus === "Error" ? <span className="inline-flex items-center gap-1 text-red-700"><AlertTriangle className="size-3.5" /> Needs attention</span> : item.jobId || item.estimateId ? <span className="inline-flex items-center gap-1 text-emerald-700"><CheckCircle2 className="size-3.5" /> Created</span> : <span className="inline-flex items-center gap-1 text-muted-foreground"><CircleDollarSign className="size-3.5" /> Still working</span>}</td></tr>)}</tbody>
+            <table className="w-full min-w-[880px] text-xs">
+              <thead>
+                <tr className="border-b bg-muted/20 text-left text-[10px] uppercase text-muted-foreground">
+                  <th className="px-3 py-2 font-medium">Pricing</th>
+                  <th className="px-3 py-2 text-right font-medium">Price</th>
+                  <th className="px-3 py-2 font-medium">Status</th>
+                  <th className="px-3 py-2 font-medium">Next step</th>
+                </tr>
+              </thead>
+              <tbody>
+                {data.recentPricing.map((item) => (
+                  <tr key={item.id} className="border-b transition-colors last:border-0 hover:bg-slate-50/80">
+                    <td className="max-w-[320px] px-3 py-2"><p className="truncate font-medium">{item.name}</p><p className="font-mono text-[10px] text-muted-foreground">{item.id}</p></td>
+                    <td className="px-3 py-2 text-right tabular-nums">{money(item.totalPrice)}</td>
+                    <td className="px-3 py-2"><StatusBadge status={item.routingStatus} /></td>
+                    <td className="px-3 py-2">
+                      {item.routingStatus === "Pricing Saved" ? (
+                        <div className="flex items-center gap-2">
+                          <Button size="sm" variant="outline" className="h-7 text-xs" onClick={() => openPromotion(item, "create-job")}><BriefcaseBusiness className="size-3.5" /> Job</Button>
+                          <Button size="sm" variant="outline" className="h-7 text-xs" onClick={() => openPromotion(item, "create-estimate")}><FilePenLine className="size-3.5" /> Estimate</Button>
+                        </div>
+                      ) : item.routingStatus === "Error" ? (
+                        <span className="inline-flex items-center gap-1 text-red-700"><AlertTriangle className="size-3.5" /> Needs attention</span>
+                      ) : item.jobId || item.estimateId ? (
+                        <span className="inline-flex items-center gap-1 text-emerald-700"><CheckCircle2 className="size-3.5" /> Created</span>
+                      ) : (
+                        <span className="inline-flex items-center gap-1 text-muted-foreground"><Loader2 className="size-3.5 animate-spin" /> Creating</span>
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
             </table>
           </div>
         )}
       </section>
+
+      <Dialog open={Boolean(promotion)} onOpenChange={(open) => !open && !promoting && setPromotion(null)}>
+        <DialogContent className="sm:max-w-lg">
+          <DialogHeader>
+            <DialogTitle>{promotion?.outcome === "create-estimate" ? "Create estimate from pricing" : "Create job from pricing"}</DialogTitle>
+            <DialogDescription>{promotion ? `${promotion.pricing.name} · ${money(promotion.pricing.totalPrice)}` : "Complete the job setup."}</DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4 py-2">
+            {promotionError ? <Alert variant="destructive"><AlertTriangle className="size-4" /><AlertDescription>{promotionError}</AlertDescription></Alert> : null}
+            <Field label="Contact" required>
+              <NativeSelect value={promotionContactId} onChange={(event) => setPromotionContactId(event.target.value)}>
+                <option value="">Select contact</option>
+                {data.contacts.map((contact) => <option key={contact.id} value={contact.id}>{contact.name}{contact.company && contact.company !== contact.name ? ` - ${contact.company}` : ""}</option>)}
+              </NativeSelect>
+            </Field>
+            <Field label="Assigned crew"><CrewPicker employees={data.employees} value={promotionCrewIds} onChange={setPromotionCrewIds} /></Field>
+            <Field label="Scheduled date"><Input type="date" value={promotionDate || ""} onChange={(event) => setPromotionDate(event.target.value || null)} className="h-8 text-xs" /></Field>
+            <div className="grid grid-cols-2 gap-3">
+              <Field label="Priority"><NativeSelect value={promotionPriority} onChange={(event) => setPromotionPriority(event.target.value as typeof promotionPriority)}>{JOB_PRIORITIES.map((item) => <option key={item}>{item}</option>)}</NativeSelect></Field>
+              <Field label="Job type"><NativeSelect value={promotionJobType} onChange={(event) => setPromotionJobType(event.target.value as typeof promotionJobType)}>{JOB_TYPES.map((item) => <option key={item}>{item}</option>)}</NativeSelect></Field>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button type="button" variant="outline" disabled={promoting} onClick={() => setPromotion(null)}>Cancel</Button>
+            <Button type="button" disabled={promoting || !promotionContactId} onClick={() => void submitPromotion()}>
+              {promoting ? <Loader2 className="size-4 animate-spin" /> : promotion?.outcome === "create-estimate" ? <FilePenLine className="size-4" /> : <BriefcaseBusiness className="size-4" />}
+              {promotion?.outcome === "create-estimate" ? "Create estimate" : "Create job"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

@@ -18,6 +18,7 @@ import {
   FREQUENCIES,
   JOB_PRIORITIES,
   JOB_TYPES,
+  PRICING_OUTCOMES,
   ROUTING_STATUSES,
   SEASONS,
   TERRAIN_OPTIONS,
@@ -28,6 +29,7 @@ import {
   type EstimateRecord,
   type JobRecord,
   type PricingJobInput,
+  type PricingPromotionInput,
   type PricingRecord,
   type ServiceOption,
   type WorkbenchData,
@@ -85,6 +87,8 @@ const FIELDS = {
     season: "fld2EDcwlG33ManHWjH",
     category: "fldmol54RwBstoAZdPJ",
     routingStatus: "fldTxirEHdWspVXx1vJ",
+    routingError: "fldugMFE3Ti6kFpLpfV",
+    routedAt: "fldrxL9msiBbG3guRod",
     estimate: "fldEZjt8n8wfwgZ44dp",
   },
   pricingLine: {
@@ -138,7 +142,7 @@ const nullableSelect = (values: readonly [string, ...string[]]) => z.enum(values
 
 const pricingInputSchema = z.object({
   name: z.string().trim().min(2).max(200),
-  contactId: recordIdSchema,
+  contactId: recordIdSchema.nullable(),
   lines: z.array(z.object({
     serviceId: recordIdSchema.nullable(),
     name: z.string().trim().min(1).max(200),
@@ -147,7 +151,7 @@ const pricingInputSchema = z.object({
     unitPrice: z.number().finite().nonnegative(),
     lineOrder: z.number().int().positive(),
   })).min(1).max(50),
-  requiresEstimate: z.boolean(),
+  outcome: z.enum(PRICING_OUTCOMES),
   assignedCrewIds: z.array(recordIdSchema).max(25),
   scheduledDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).nullable(),
   priority: z.enum(JOB_PRIORITIES),
@@ -169,6 +173,16 @@ const pricingInputSchema = z.object({
   terrain: nullableSelect(TERRAIN_OPTIONS),
   condition: nullableSelect(CONDITION_OPTIONS),
   season: nullableSelect(SEASONS),
+});
+
+const pricingPromotionSchema = z.object({
+  pricingId: recordIdSchema,
+  outcome: z.enum(["create-job", "create-estimate"]),
+  contactId: recordIdSchema,
+  assignedCrewIds: z.array(recordIdSchema).max(25),
+  scheduledDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).nullable(),
+  priority: z.enum(JOB_PRIORITIES),
+  jobType: z.enum(JOB_TYPES),
 });
 
 const estimateStatusSchema = z.object({
@@ -287,6 +301,8 @@ function mapEmployee(row: Record<string, unknown>): EmployeeOption {
 
 function mapPricing(row: Record<string, unknown>): PricingRecord {
   const status = stringValue(row.Routing_Status);
+  const priority = stringValue(row.Priority);
+  const jobType = stringValue(row.Job_Type);
   return {
     id: String(row.__id),
     name: stringValue(row.Estimate_Name) || "Untitled pricing request",
@@ -295,6 +311,16 @@ function mapPricing(row: Record<string, unknown>): PricingRecord {
       : null,
     routingError: stringValue(row.Routing_Error),
     requiresEstimate: booleanValue(row.Requires_Estimate),
+    contactId: stringValue(row.__fk_fld7cKgjWVP8ODABgkS),
+    assignedCrewIds: linkedIds(row.Assigned_Crew),
+    scheduledDate: dateValue(row.Scheduled_Date),
+    priority: JOB_PRIORITIES.includes(priority as (typeof JOB_PRIORITIES)[number])
+      ? priority as PricingRecord["priority"]
+      : null,
+    jobType: JOB_TYPES.includes(jobType as (typeof JOB_TYPES)[number])
+      ? jobType as PricingRecord["jobType"]
+      : null,
+    totalPrice: numberValue(row.Line_Items_Total) || numberValue(row.Price_to_Quote),
     jobId: stringValue(row.__fk_fldAVF8a8mk3RDa2FS1),
     estimateId: stringValue(row.__fk_fldEZjt8n8wfwgZ44dp),
     routedAt: stringValue(row.Routed_At),
@@ -416,7 +442,8 @@ export async function getWorkbenchData(): Promise<WorkbenchData> {
     `),
     sqlQuery(BASE_ID, `
       SELECT "__id", "Estimate_Name", "Routing_Status", "Routing_Error", "Requires_Estimate",
-        "Routed_At", "__fk_fldAVF8a8mk3RDa2FS1", "__fk_fldEZjt8n8wfwgZ44dp"
+        "Routed_At", "Assigned_Crew", "Scheduled_Date", "Priority", "Job_Type",
+        "Line_Items_Total", "Price_to_Quote", "__fk_fld7cKgjWVP8ODABgkS", "__fk_fldAVF8a8mk3RDa2FS1", "__fk_fldEZjt8n8wfwgZ44dp"
       FROM ${TABLES.pricing}
       WHERE "Routing_Status" IS NOT NULL
       ORDER BY "__created_time" DESC
@@ -508,14 +535,20 @@ export async function getWorkbenchData(): Promise<WorkbenchData> {
 }
 
 async function validatePricingReferences(input: PricingJobInput) {
+  if (input.outcome !== "pricing-only" && !input.contactId) {
+    throw new Error("Select an active contact before creating a job or estimate");
+  }
+
   const serviceIds = [...new Set(input.lines.flatMap((line) => line.serviceId ? [line.serviceId] : []))];
   const checks = await Promise.all([
-    sqlQuery(BASE_ID, `
-      SELECT "__id"
-      FROM ${TABLES.contacts}
-      WHERE "__id" = '${sqlString(input.contactId)}' AND "Status" = 'Active'
-      LIMIT 1
-    `),
+    input.contactId
+      ? sqlQuery(BASE_ID, `
+          SELECT "__id"
+          FROM ${TABLES.contacts}
+          WHERE "__id" = '${sqlString(input.contactId)}' AND "Status" = 'Active'
+          LIMIT 1
+        `)
+      : Promise.resolve({ rows: [] as Record<string, unknown>[] }),
     serviceIds.length > 0
       ? sqlQuery(BASE_ID, `
           SELECT "__id", "Category"
@@ -534,7 +567,7 @@ async function validatePricingReferences(input: PricingJobInput) {
       : Promise.resolve({ rows: [] as Record<string, unknown>[] }),
   ]);
 
-  if (checks[0].rows.length !== 1) throw new Error("Select an active contact");
+  if (input.contactId && checks[0].rows.length !== 1) throw new Error("Select an active contact");
   if (checks[1].rows.length !== serviceIds.length) throw new Error("One or more services are no longer active");
   if (checks[2].rows.length !== input.assignedCrewIds.length) throw new Error("One or more crew members are no longer active");
   return stringValue(checks[1].rows[0]?.Category) || "Other";
@@ -556,16 +589,17 @@ export async function savePricingJob(rawInput: PricingJobInput) {
   }
 
   const firstServiceId = input.lines.find((line) => line.serviceId)?.serviceId || null;
+  const requiresEstimate = input.outcome === "create-estimate";
   const headerFields: RecordFields = {
     [FIELDS.pricing.name]: input.name,
     [FIELDS.pricing.status]: "In Progress",
-    [FIELDS.pricing.contact]: [input.contactId],
+    [FIELDS.pricing.contact]: input.contactId ? [input.contactId] : null,
     [FIELDS.pricing.service]: firstServiceId ? [firstServiceId] : null,
-    [FIELDS.pricing.requiresEstimate]: input.requiresEstimate,
-    [FIELDS.pricing.crew]: input.assignedCrewIds,
-    [FIELDS.pricing.scheduledDate]: nullableDate(input.scheduledDate),
-    [FIELDS.pricing.priority]: input.priority,
-    [FIELDS.pricing.jobType]: input.jobType,
+    [FIELDS.pricing.requiresEstimate]: requiresEstimate,
+    [FIELDS.pricing.crew]: input.outcome === "pricing-only" ? [] : input.assignedCrewIds,
+    [FIELDS.pricing.scheduledDate]: input.outcome === "pricing-only" ? null : nullableDate(input.scheduledDate),
+    [FIELDS.pricing.priority]: input.outcome === "pricing-only" ? null : input.priority,
+    [FIELDS.pricing.jobType]: input.outcome === "pricing-only" ? null : input.jobType,
     [FIELDS.pricing.notes]: input.notes || null,
     [FIELDS.pricing.crewSize]: input.crewSize,
     [FIELDS.pricing.hours]: input.estimatedHours,
@@ -616,26 +650,101 @@ export async function savePricingJob(rawInput: PricingJobInput) {
     };
   }
 
+  const routingStatus: "Pricing Saved" | "Ready to Route" = input.outcome === "pricing-only" ? "Pricing Saved" : "Ready to Route";
   try {
     await updateRecord(TABLE_IDS.pricing, pricingId, {
-      [FIELDS.pricing.routingStatus]: "Ready to Route",
+      [FIELDS.pricing.routingStatus]: routingStatus,
     });
   } catch (error) {
     return {
       ok: false,
       kind: "partial" as const,
       pricingId,
-      message: `Pricing and services were saved, but the job creation step could not start: ${errorMessage(error)}`,
+      message: `Pricing and services were saved, but the selected next step could not be started: ${errorMessage(error)}`,
     };
   }
 
   return {
     ok: true,
     pricingId,
+    routingStatus,
+    message: input.outcome === "pricing-only"
+      ? "Pricing saved without creating a job or estimate."
+      : requiresEstimate
+        ? "Pricing saved. Creating the estimate and job."
+        : "Pricing saved. Creating the job.",
+  };
+}
+
+export async function promoteSavedPricing(rawInput: PricingPromotionInput) {
+  await requireOwner();
+  const parsed = pricingPromotionSchema.safeParse(rawInput);
+  if (!parsed.success) {
+    return { ok: false, kind: "validation" as const, message: parsed.error.issues[0]?.message || "Check the job setup" };
+  }
+  const input = parsed.data;
+
+  const [pricingResult, contactResult, crewResult] = await Promise.all([
+    sqlQuery(BASE_ID, `
+      SELECT "__id", "Routing_Status", "__fk_fldAVF8a8mk3RDa2FS1", "__fk_fldEZjt8n8wfwgZ44dp"
+      FROM ${TABLES.pricing}
+      WHERE "__id" = '${sqlString(input.pricingId)}'
+      LIMIT 1
+    `),
+    sqlQuery(BASE_ID, `
+      SELECT "__id"
+      FROM ${TABLES.contacts}
+      WHERE "__id" = '${sqlString(input.contactId)}' AND "Status" = 'Active'
+      LIMIT 1
+    `),
+    input.assignedCrewIds.length > 0
+      ? sqlQuery(BASE_ID, `
+          SELECT "__id"
+          FROM ${TABLES.employees}
+          WHERE "__id" IN (${sqlIdList(input.assignedCrewIds)}) AND "Status" = 'Active'
+          LIMIT 100
+        `)
+      : Promise.resolve({ rows: [] as Record<string, unknown>[] }),
+  ]);
+
+  const current = pricingResult.rows[0];
+  if (!current) return { ok: false, kind: "validation" as const, message: "Saved pricing was not found" };
+  if (current.Routing_Status !== "Pricing Saved") {
+    return { ok: false, kind: "validation" as const, message: "Only standalone saved pricing can be promoted" };
+  }
+  if (current.__fk_fldAVF8a8mk3RDa2FS1 || current.__fk_fldEZjt8n8wfwgZ44dp) {
+    return { ok: false, kind: "validation" as const, message: "This pricing is already connected to a job or estimate" };
+  }
+  if (contactResult.rows.length !== 1) {
+    return { ok: false, kind: "validation" as const, message: "Select an active contact" };
+  }
+  if (crewResult.rows.length !== input.assignedCrewIds.length) {
+    return { ok: false, kind: "validation" as const, message: "One or more crew members are no longer active" };
+  }
+
+  try {
+    await updateRecord(TABLE_IDS.pricing, input.pricingId, {
+      [FIELDS.pricing.contact]: [input.contactId],
+      [FIELDS.pricing.requiresEstimate]: input.outcome === "create-estimate",
+      [FIELDS.pricing.crew]: input.assignedCrewIds,
+      [FIELDS.pricing.scheduledDate]: nullableDate(input.scheduledDate),
+      [FIELDS.pricing.priority]: input.priority,
+      [FIELDS.pricing.jobType]: input.jobType,
+      [FIELDS.pricing.routingError]: null,
+      [FIELDS.pricing.routedAt]: null,
+      [FIELDS.pricing.routingStatus]: "Ready to Route",
+    });
+  } catch (error) {
+    return { ok: false, kind: "error" as const, message: `The saved pricing could not be promoted: ${errorMessage(error)}` };
+  }
+
+  return {
+    ok: true,
+    pricingId: input.pricingId,
     routingStatus: "Ready to Route" as const,
-    message: input.requiresEstimate
-      ? "Pricing saved. Creating the estimate and job."
-      : "Pricing saved. Creating the job.",
+    message: input.outcome === "create-estimate"
+      ? "Creating the estimate and job from saved pricing."
+      : "Creating the job from saved pricing.",
   };
 }
 
@@ -647,7 +756,8 @@ export async function getPricingResult(pricingId: string) {
 
   const { rows } = await sqlQuery(BASE_ID, `
     SELECT "__id", "Estimate_Name", "Routing_Status", "Routing_Error", "Requires_Estimate",
-      "Routed_At", "__fk_fldAVF8a8mk3RDa2FS1", "__fk_fldEZjt8n8wfwgZ44dp"
+      "Routed_At", "Assigned_Crew", "Scheduled_Date", "Priority", "Job_Type",
+      "Line_Items_Total", "Price_to_Quote", "__fk_fld7cKgjWVP8ODABgkS", "__fk_fldAVF8a8mk3RDa2FS1", "__fk_fldEZjt8n8wfwgZ44dp"
     FROM ${TABLES.pricing}
     WHERE "__id" = '${sqlString(pricingId)}'
     LIMIT 1
