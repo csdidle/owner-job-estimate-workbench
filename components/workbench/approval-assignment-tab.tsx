@@ -163,7 +163,7 @@ export function ApprovalAssignmentTab({ data, onRefresh }: { data: WorkbenchData
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-5">
       {result && !result.ok ? (
         <Alert variant="destructive">
           <AlertTriangle className="size-4" />
@@ -180,9 +180,9 @@ export function ApprovalAssignmentTab({ data, onRefresh }: { data: WorkbenchData
         </Alert>
       ) : null}
 
-      <section className="border-y bg-background">
-        <div className="flex items-center justify-between border-b bg-muted/30 px-3 py-2">
-          <div className="flex items-center gap-2"><ClipboardCheck className="size-4 text-muted-foreground" /><div><h2 className="text-sm font-semibold">Waiting for estimate approval</h2><p className="text-[11px] text-muted-foreground">{waitingJobs.length} job{waitingJobs.length === 1 ? "" : "s"}</p></div></div>
+      <section className="overflow-hidden rounded-md border border-amber-200 bg-background shadow-xs">
+        <div className="flex items-center justify-between border-b border-amber-100 bg-amber-50/70 px-3 py-2.5">
+          <div className="flex items-center gap-2"><ClipboardCheck className="size-4 text-amber-700" /><div><h2 className="text-sm font-semibold text-amber-950">Waiting for estimate approval</h2><p className="text-[11px] text-amber-800/70">{waitingJobs.length} job{waitingJobs.length === 1 ? "" : "s"}</p></div></div>
           <IconButton label="Refresh approvals" onClick={onRefresh}><RefreshCw className="size-3.5" /></IconButton>
         </div>
         {waitingJobs.length === 0 ? (
@@ -197,7 +197,7 @@ export function ApprovalAssignmentTab({ data, onRefresh }: { data: WorkbenchData
                   const contact = data.contacts.find((item) => item.id === job.contactId);
                   const isReleasing = releasingJobId === job.id;
                   return (
-                    <tr key={job.id} className="border-b last:border-0">
+                    <tr key={job.id} className="border-b transition-colors last:border-0 hover:bg-amber-50/40">
                       <td className="max-w-[240px] px-3 py-2"><p className="truncate font-medium">Job #{job.number || "-"} {job.name}</p><StatusBadge status={job.status} /></td>
                       <td className="px-3 py-2"><p className="font-medium">{contact?.name || "Contact unavailable"}</p><p className="text-[10px] text-muted-foreground">{contact?.company}</p></td>
                       <td className="max-w-[260px] px-3 py-2"><p className="truncate font-medium">#{estimate?.number || "-"} {estimate?.name || "Estimate unavailable"}</p><div className="mt-1 flex gap-1.5"><StatusBadge status={estimate?.status || null} />{estimate?.qboSyncStatus ? <StatusBadge status={estimate.qboSyncStatus} /> : null}</div></td>
@@ -205,7 +205,7 @@ export function ApprovalAssignmentTab({ data, onRefresh }: { data: WorkbenchData
                       <td className="px-3 py-2"><p>{dateLabel(job.scheduledDate)}</p><p className="text-[10px] text-muted-foreground">{job.priority || "Normal"} / {job.jobType || "One-Time"}</p></td>
                       <td className="px-3 py-2 text-right">
                         <AlertDialog>
-                          <AlertDialogTrigger asChild><Button size="sm" className="h-8" disabled={isReleasing || !estimate}>{isReleasing ? <Loader2 className="size-3.5 animate-spin" /> : <Send className="size-3.5" />} Confirm approval</Button></AlertDialogTrigger>
+                          <AlertDialogTrigger asChild><Button size="sm" className="h-9 bg-blue-700 font-semibold text-white shadow-sm hover:bg-blue-800" disabled={isReleasing || !estimate}>{isReleasing ? <Loader2 className="size-3.5 animate-spin" /> : <Send className="size-3.5" />} Confirm approval</Button></AlertDialogTrigger>
                           <AlertDialogContent>
                             <AlertDialogHeader>
                               <AlertDialogTitle>Approve estimate and start this job?</AlertDialogTitle>
@@ -224,9 +224,9 @@ export function ApprovalAssignmentTab({ data, onRefresh }: { data: WorkbenchData
         )}
       </section>
 
-      <section className="border-y bg-background">
-        <div className="flex items-center justify-between border-b bg-muted/30 px-3 py-2">
-          <div className="flex items-center gap-2"><BriefcaseBusiness className="size-4 text-muted-foreground" /><div><h2 className="text-sm font-semibold">Schedule and assign jobs</h2><p className="text-[11px] text-muted-foreground">{activeJobs.length} job{activeJobs.length === 1 ? "" : "s"} ready</p></div></div>
+      <section className="overflow-hidden rounded-md border border-emerald-200 bg-background shadow-xs">
+        <div className="flex items-center justify-between border-b border-emerald-100 bg-emerald-50/70 px-3 py-2.5">
+          <div className="flex items-center gap-2"><BriefcaseBusiness className="size-4 text-emerald-700" /><div><h2 className="text-sm font-semibold text-emerald-950">Schedule and assign jobs</h2><p className="text-[11px] text-emerald-800/70">{activeJobs.length} job{activeJobs.length === 1 ? "" : "s"} ready</p></div></div>
           <IconButton label="Refresh jobs" onClick={onRefresh}><RefreshCw className="size-3.5" /></IconButton>
         </div>
         {activeJobs.length === 0 ? (
@@ -241,14 +241,14 @@ export function ApprovalAssignmentTab({ data, onRefresh }: { data: WorkbenchData
                   const contact = data.contacts.find((item) => item.id === job.contactId);
                   if (!draft) return null;
                   return (
-                    <tr key={job.id} className="border-b last:border-0">
+                    <tr key={job.id} className="border-b transition-colors last:border-0 hover:bg-emerald-50/40">
                       <td className="max-w-[230px] px-3 py-2"><p className="truncate font-medium">Job #{job.number || "-"} {job.name}</p><StatusBadge status={job.status} /></td>
                       <td className="max-w-[180px] px-3 py-2"><p className="truncate">{contact?.name || "Contact unavailable"}</p><p className="truncate text-[10px] text-muted-foreground">{contact?.company}</p></td>
                       <td className="w-[230px] px-3 py-2"><CrewPicker employees={data.employees} value={draft.assignedCrewIds} onChange={(ids) => patchAssignment(job.id, { assignedCrewIds: ids })} /></td>
-                      <td className="w-[150px] px-3 py-2"><Input type="date" className="h-8 text-xs" value={draft.scheduledDate || ""} onChange={(event) => patchAssignment(job.id, { scheduledDate: event.target.value || null })} /></td>
+                      <td className="w-[150px] px-3 py-2"><Input type="date" className="h-9 text-xs shadow-xs focus-visible:border-emerald-500 focus-visible:ring-emerald-500/15" value={draft.scheduledDate || ""} onChange={(event) => patchAssignment(job.id, { scheduledDate: event.target.value || null })} /></td>
                       <td className="w-[120px] px-3 py-2"><NativeSelect value={draft.priority} onChange={(event) => patchAssignment(job.id, { priority: event.target.value as JobPriority })}>{JOB_PRIORITIES.map((item) => <option key={item}>{item}</option>)}</NativeSelect></td>
                       <td className="w-[140px] px-3 py-2"><NativeSelect value={draft.jobType} onChange={(event) => patchAssignment(job.id, { jobType: event.target.value as JobType })}>{JOB_TYPES.map((item) => <option key={item}>{item}</option>)}</NativeSelect></td>
-                      <td className="px-3 py-2 text-right"><IconButton label="Save assignment" disabled={savingJobId === job.id} onClick={() => void saveAssignment(job.id)}>{savingJobId === job.id ? <Loader2 className="size-3.5 animate-spin" /> : <Save className="size-3.5" />}</IconButton></td>
+                      <td className="px-3 py-2 text-right"><IconButton label="Save assignment" className="bg-emerald-50 text-emerald-700 hover:bg-emerald-100 hover:text-emerald-800" disabled={savingJobId === job.id} onClick={() => void saveAssignment(job.id)}>{savingJobId === job.id ? <Loader2 className="size-3.5 animate-spin" /> : <Save className="size-3.5" />}</IconButton></td>
                     </tr>
                   );
                 })}

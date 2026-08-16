@@ -33,7 +33,7 @@ export function Field({ label, children, className, required }: {
 }) {
   return (
     <div className={cn("grid gap-1.5", className)}>
-      <Label className="text-[11px] font-medium text-muted-foreground">
+      <Label className="text-[11px] font-semibold text-foreground/70">
         {label}{required ? <span className="text-destructive"> *</span> : null}
       </Label>
       {children}
@@ -45,7 +45,7 @@ export function NativeSelect({ className, children, ...props }: React.SelectHTML
   return (
     <select
       className={cn(
-        "h-8 w-full rounded-md border border-input bg-background px-2 text-xs shadow-xs outline-none focus:border-ring focus:ring-2 focus:ring-ring/20 disabled:cursor-not-allowed disabled:opacity-50",
+        "h-9 w-full rounded-md border border-input bg-background px-2.5 text-xs shadow-xs outline-none transition-colors hover:border-slate-300 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/15 disabled:cursor-not-allowed disabled:opacity-50",
         className
       )}
       {...props}
@@ -74,7 +74,7 @@ export function NumericInput({ value, onChange, min = 0, max, step = "0.01", cla
       disabled={disabled}
       onChange={(event) => onChange(event.target.value === "" ? null : Number(event.target.value))}
       className={cn(
-        "h-8 w-full rounded-md border border-input bg-background px-2 text-right text-xs tabular-nums shadow-xs outline-none focus:border-ring focus:ring-2 focus:ring-ring/20 disabled:cursor-not-allowed disabled:opacity-50",
+        "h-9 w-full rounded-md border border-input bg-background px-2.5 text-right text-xs tabular-nums shadow-xs outline-none transition-colors hover:border-slate-300 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/15 disabled:cursor-not-allowed disabled:opacity-50",
         className
       )}
     />
@@ -91,7 +91,7 @@ export function CrewPicker({ employees, value, onChange, disabled }: {
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <Button variant="outline" size="sm" className="h-8 w-full justify-between px-2 text-xs font-normal" disabled={disabled}>
+        <Button variant="outline" size="sm" className="h-9 w-full justify-between px-2.5 text-xs font-normal shadow-xs hover:border-slate-300 hover:bg-background" disabled={disabled}>
           <span className="flex min-w-0 items-center gap-1.5">
             <Users className="size-3.5 shrink-0 text-muted-foreground" />
             <span className="truncate">{selectedNames.length ? selectedNames.join(", ") : "Unassigned"}</span>
@@ -139,6 +139,21 @@ const statusTone: Record<string, string> = {
   "Not Synced": "border-slate-200 bg-slate-50 text-slate-700",
 };
 
+const statusDot: Record<string, string> = {
+  Draft: "bg-slate-500",
+  "Ready to Route": "bg-amber-500",
+  Routing: "bg-blue-500",
+  "Job Active": "bg-emerald-600",
+  "Waiting for Estimate": "bg-amber-500",
+  Error: "bg-red-600",
+  Active: "bg-emerald-600",
+  Accepted: "bg-emerald-600",
+  "Queued for Draft": "bg-blue-500",
+  "Pending in QBO": "bg-amber-500",
+  "Submitted to QBO": "bg-blue-500",
+  "Not Synced": "bg-slate-400",
+};
+
 const statusLabel: Record<string, string> = {
   "Ready to Route": "Waiting to be created",
   Routing: "Creating records",
@@ -156,7 +171,8 @@ export function StatusBadge({ status, pulse = false }: { status: string | null; 
   const value = status || "Not set";
   const label = statusLabel[value] || value;
   return (
-    <Badge variant="outline" className={cn("h-5 rounded px-1.5 text-[10px] font-medium", statusTone[value], pulse && "animate-pulse")}>
+    <Badge variant="outline" className={cn("h-6 gap-1.5 rounded-full px-2 text-[10px] font-semibold shadow-xs", statusTone[value], pulse && "animate-pulse")}>
+      <span className={cn("size-1.5 rounded-full", statusDot[value] || "bg-slate-400")} />
       {label}
     </Badge>
   );
@@ -164,7 +180,7 @@ export function StatusBadge({ status, pulse = false }: { status: string | null; 
 
 export function SectionError({ title, message }: { title: string; message: string }) {
   return (
-    <Alert variant="destructive" className="rounded-md py-2">
+    <Alert variant="destructive" className="border-l-4 py-2 shadow-xs">
       <AlertCircle className="size-4" />
       <AlertTitle className="text-xs">{title}</AlertTitle>
       <AlertDescription className="text-xs">{message}</AlertDescription>
@@ -174,8 +190,8 @@ export function SectionError({ title, message }: { title: string; message: strin
 
 export function EmptyState({ icon, title, detail }: { icon: ReactNode; title: string; detail: string }) {
   return (
-    <div className="flex min-h-48 flex-col items-center justify-center border-y border-dashed px-6 py-10 text-center">
-      <div className="mb-3 text-muted-foreground">{icon}</div>
+    <div className="flex min-h-48 flex-col items-center justify-center border-y border-dashed bg-slate-50/50 px-6 py-10 text-center">
+      <div className="mb-3 flex size-12 items-center justify-center rounded-full bg-background text-muted-foreground shadow-xs ring-1 ring-border">{icon}</div>
       <p className="text-sm font-medium">{title}</p>
       <p className="mt-1 max-w-md text-xs text-muted-foreground">{detail}</p>
     </div>
@@ -186,7 +202,7 @@ export function IconButton({ label, children, className, ...props }: React.Compo
   return (
     <Tooltip>
       <TooltipTrigger asChild>
-        <Button variant="ghost" size="icon" className={cn("size-7", className)} {...props}>{children}</Button>
+        <Button variant="ghost" size="icon" className={cn("size-8", className)} {...props}>{children}</Button>
       </TooltipTrigger>
       <TooltipContent>{label}</TooltipContent>
     </Tooltip>

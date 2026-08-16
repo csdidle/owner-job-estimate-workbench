@@ -281,9 +281,9 @@ export function EstimateBuilderTab({ data, onRefresh }: { data: WorkbenchData; o
   if (!draft) return null;
 
   return (
-    <div className="grid min-h-[680px] gap-4 xl:grid-cols-[260px_minmax(0,1fr)]">
-      <aside className="border-y bg-background">
-        <div className="border-b bg-muted/30 px-3 py-2">
+    <div className="grid min-h-[680px] gap-5 xl:grid-cols-[270px_minmax(0,1fr)]">
+      <aside className="overflow-hidden rounded-md border border-amber-200 bg-background shadow-xs">
+        <div className="border-b border-amber-100 bg-amber-50/70 px-3 py-2.5">
           <h2 className="text-sm font-semibold">Estimates to finish</h2>
           <p className="text-[11px] text-muted-foreground">{eligible.length} estimate{eligible.length === 1 ? "" : "s"}</p>
         </div>
@@ -296,7 +296,7 @@ export function EstimateBuilderTab({ data, onRefresh }: { data: WorkbenchData; o
                 type="button"
                 key={estimate.id}
                 onClick={() => setSelectedId(estimate.id)}
-                className={`w-full px-3 py-2.5 text-left hover:bg-accent ${active ? "border-l-2 border-foreground bg-muted/50 pl-2.5" : ""}`}
+                className={`w-full px-3 py-3 text-left transition-colors hover:bg-amber-50/50 ${active ? "border-l-4 border-amber-500 bg-amber-50 pl-2 text-amber-950" : ""}`}
               >
                 <div className="flex items-start justify-between gap-2">
                   <p className="line-clamp-2 text-xs font-medium">{estimate.name}</p>
@@ -310,9 +310,9 @@ export function EstimateBuilderTab({ data, onRefresh }: { data: WorkbenchData; o
         </div>
       </aside>
 
-      <div className="min-w-0 space-y-4">
-        <section className="border-y bg-background">
-          <div className="flex flex-wrap items-center justify-between gap-2 border-b bg-muted/30 px-3 py-2">
+      <div className="min-w-0 space-y-5">
+        <section className="overflow-hidden rounded-md border border-amber-200/80 bg-background shadow-xs">
+          <div className="flex flex-wrap items-center justify-between gap-2 border-b border-amber-100 bg-amber-50/70 px-3 py-2.5">
             <div className="flex items-center gap-2">
               <ReceiptText className="size-4 text-muted-foreground" />
               <h2 className="text-sm font-semibold">Estimate #{draft.number || "-"}</h2>
@@ -388,15 +388,15 @@ export function EstimateBuilderTab({ data, onRefresh }: { data: WorkbenchData; o
             </AlertDialogContent>
           </AlertDialog>
           <div className="grid gap-3 p-3 md:grid-cols-[minmax(240px,1fr)_160px_160px]">
-            <Field label="Estimate name" required><Input value={draft.name} onChange={(event) => patchDraft({ name: event.target.value })} className="h-8 text-xs" /></Field>
-            <Field label="Estimate date" required><Input type="date" value={draft.estimateDate || today()} onChange={(event) => patchDraft({ estimateDate: event.target.value })} className="h-8 text-xs" /></Field>
-            <Field label="Expiration date" required><Input type="date" value={draft.expirationDate || plusDays(draft.estimateDate || today(), 30)} onChange={(event) => patchDraft({ expirationDate: event.target.value })} className="h-8 text-xs" /></Field>
+            <Field label="Estimate name" required><Input value={draft.name} onChange={(event) => patchDraft({ name: event.target.value })} className="h-9 text-xs shadow-xs focus-visible:border-amber-500 focus-visible:ring-amber-500/15" /></Field>
+            <Field label="Estimate date" required><Input type="date" value={draft.estimateDate || today()} onChange={(event) => patchDraft({ estimateDate: event.target.value })} className="h-9 text-xs shadow-xs focus-visible:border-amber-500 focus-visible:ring-amber-500/15" /></Field>
+            <Field label="Expiration date" required><Input type="date" value={draft.expirationDate || plusDays(draft.estimateDate || today(), 30)} onChange={(event) => patchDraft({ expirationDate: event.target.value })} className="h-9 text-xs shadow-xs focus-visible:border-amber-500 focus-visible:ring-amber-500/15" /></Field>
           </div>
         </section>
 
         <div className="grid gap-4 2xl:grid-cols-[minmax(0,1fr)_330px]">
-          <section className="min-w-0 border-y bg-background">
-            <div className="flex flex-wrap items-center justify-between gap-2 border-b px-3 py-2">
+          <section className="min-w-0 overflow-hidden rounded-md border bg-background shadow-xs">
+            <div className="flex flex-wrap items-center justify-between gap-2 border-b bg-slate-50/80 px-3 py-2.5">
               <div><h2 className="text-sm font-semibold">Services and pricing</h2><p className="text-[11px] text-muted-foreground">{draft.lines.length} service{draft.lines.length === 1 ? "" : "s"}</p></div>
               <div className="flex items-center gap-2">
                 <Button size="sm" variant="outline" className="h-7 text-xs" disabled={!data.services[0]} onClick={() => data.services[0] && patchDraft({ lines: [...draft.lines, serviceLine(data.services[0], draft.lines.length)] })}><Plus className="size-3.5" /> Price Book</Button>
@@ -407,7 +407,7 @@ export function EstimateBuilderTab({ data, onRefresh }: { data: WorkbenchData; o
               <div className="min-w-[800px]">
                 <div className="grid grid-cols-[60px_minmax(180px,1.2fr)_80px_110px_minmax(170px,1fr)_90px_36px] gap-2 border-b bg-muted/20 px-3 py-1.5 text-[10px] font-medium uppercase text-muted-foreground"><span>Order</span><span>Service / line</span><span className="text-right">Qty</span><span className="text-right">Unit price</span><span>Description</span><span className="text-right">Total</span><span /></div>
                 {draft.lines.map((line, index) => (
-                  <div key={line.id} className="grid grid-cols-[60px_minmax(180px,1.2fr)_80px_110px_minmax(170px,1fr)_90px_36px] items-start gap-2 border-b px-3 py-2 last:border-0">
+                  <div key={line.id} className="grid grid-cols-[60px_minmax(180px,1.2fr)_80px_110px_minmax(170px,1fr)_90px_36px] items-start gap-2 border-b px-3 py-2 transition-colors last:border-0 hover:bg-slate-50/80">
                     <div className="flex items-center"><IconButton label="Move up" disabled={index === 0} onClick={() => moveLine(index, -1)}><ArrowUp className="size-3.5" /></IconButton><IconButton label="Move down" disabled={index === draft.lines.length - 1} onClick={() => moveLine(index, 1)}><ArrowDown className="size-3.5" /></IconButton></div>
                     <div className="grid gap-1">
                       <NativeSelect value={line.serviceId || ""} onChange={(event) => selectService(line.id, event.target.value)}><option value="">Custom line</option>{data.services.map((service) => <option key={service.id} value={service.id}>{service.name}</option>)}</NativeSelect>
@@ -430,8 +430,8 @@ export function EstimateBuilderTab({ data, onRefresh }: { data: WorkbenchData; o
             </div>
           </section>
 
-          <aside className="border-y bg-background">
-            <div className="border-b bg-muted/30 px-3 py-2"><h2 className="text-sm font-semibold">Customer preview</h2></div>
+          <aside className="overflow-hidden rounded-md border bg-background shadow-xs">
+            <div className="border-b bg-slate-50/80 px-3 py-2.5"><h2 className="text-sm font-semibold">Customer preview</h2></div>
             <div className="space-y-4 p-4 text-xs">
               <div><p className="text-[10px] uppercase text-muted-foreground">Prepared for</p><p className="mt-1 font-semibold">{contact?.name || "Contact unavailable"}</p>{contact?.company && contact.company !== contact.name ? <p>{contact.company}</p> : null}<p className="text-muted-foreground">{[contact?.address, contact?.city, contact?.state, contact?.zip].filter(Boolean).join(", ")}</p><p className="text-muted-foreground">{contact?.email}</p></div>
               <div className="flex justify-between gap-4"><div><p className="text-[10px] uppercase text-muted-foreground">Estimate date</p><p>{dateLabel(draft.estimateDate)}</p></div><div className="text-right"><p className="text-[10px] uppercase text-muted-foreground">Expires</p><p>{dateLabel(draft.expirationDate)}</p></div></div>
@@ -445,16 +445,16 @@ export function EstimateBuilderTab({ data, onRefresh }: { data: WorkbenchData; o
         </div>
 
         <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_330px]">
-          <section className="border-y bg-background">
-            <div className="border-b bg-muted/30 px-3 py-2"><h2 className="text-sm font-semibold">Estimate notes</h2></div>
+          <section className="overflow-hidden rounded-md border bg-background shadow-xs">
+            <div className="border-b bg-slate-50/80 px-3 py-2.5"><h2 className="text-sm font-semibold">Estimate notes</h2></div>
             <div className="grid gap-3 p-3 md:grid-cols-2">
               <Field label="Customer notes"><Textarea value={draft.notes} onChange={(event) => patchDraft({ notes: event.target.value })} className="min-h-24 text-xs" /></Field>
               <Field label="Internal notes"><Textarea value={draft.internalNotes} onChange={(event) => patchDraft({ internalNotes: event.target.value })} className="min-h-24 text-xs" /></Field>
             </div>
           </section>
 
-          <section className="border-y bg-background">
-            <div className="flex items-center justify-between border-b bg-muted/30 px-3 py-2"><h2 className="text-sm font-semibold">QuickBooks</h2><StatusBadge status={draft.qboSyncStatus || "Not Synced"} /></div>
+          <section className="overflow-hidden rounded-md border border-blue-200 bg-background shadow-xs">
+            <div className="flex items-center justify-between border-b border-blue-100 bg-blue-50/70 px-3 py-2.5"><h2 className="text-sm font-semibold text-blue-950">QuickBooks</h2><StatusBadge status={draft.qboSyncStatus || "Not Synced"} /></div>
             <div className="space-y-2 p-3 text-xs">
               <div className="flex justify-between gap-3"><span className="text-muted-foreground">Send to QuickBooks</span><span>{draft.createQboDraft ? "Requested" : "Not requested"}</span></div>
               <div className="flex justify-between gap-3"><span className="text-muted-foreground">QuickBooks estimate</span><span>{draft.qboDocNumber || "Not created"}</span></div>
@@ -468,11 +468,11 @@ export function EstimateBuilderTab({ data, onRefresh }: { data: WorkbenchData; o
         {validation.length > 0 ? <Alert variant="destructive"><AlertTriangle className="size-4" /><AlertTitle>Check estimate</AlertTitle><AlertDescription>{validation.join(". ")}</AlertDescription></Alert> : null}
         {result && !result.ok ? <Alert variant="destructive"><AlertTriangle className="size-4" /><AlertTitle>{result.kind === "partial" ? "Some changes were saved" : result.kind === "validation" ? "Check required information" : "Could not save"}</AlertTitle><AlertDescription>{result.message}</AlertDescription></Alert> : null}
 
-        <div className="sticky bottom-0 flex flex-wrap items-center justify-end gap-2 border-y bg-background/95 px-3 py-2 backdrop-blur">
+        <div className="sticky bottom-3 flex flex-wrap items-center justify-end gap-2 rounded-md border bg-background/95 px-3 py-2.5 shadow-lg backdrop-blur">
           <span className="mr-auto text-xs text-muted-foreground">Draft only / {draft.lines.length} lines / {money(totals.total)}</span>
           <Button variant="outline" className="h-8" disabled={saving || actionPending !== null} onClick={() => void save(false)}>{saving ? <Loader2 className="size-4 animate-spin" /> : <Save className="size-4" />} Save draft</Button>
           <AlertDialog>
-            <AlertDialogTrigger asChild><Button className="h-8" disabled={saving || actionPending !== null || draft.qboSyncStatus === "Queued for Draft"}><SendToBack className="size-4" /> Save for QuickBooks</Button></AlertDialogTrigger>
+            <AlertDialogTrigger asChild><Button className="h-9 bg-blue-700 font-semibold text-white shadow-sm hover:bg-blue-800" disabled={saving || actionPending !== null || draft.qboSyncStatus === "Queued for Draft"}><SendToBack className="size-4" /> Save for QuickBooks</Button></AlertDialogTrigger>
             <AlertDialogContent>
               <AlertDialogHeader><AlertDialogTitle>Save this estimate for QuickBooks?</AlertDialogTitle><AlertDialogDescription>This saves the estimate and marks it to be created in QuickBooks when the connection is available. Nothing is sent now.</AlertDialogDescription></AlertDialogHeader>
               <AlertDialogFooter><AlertDialogCancel>Cancel</AlertDialogCancel><AlertDialogAction onClick={() => void save(true)}>Save for QuickBooks</AlertDialogAction></AlertDialogFooter>

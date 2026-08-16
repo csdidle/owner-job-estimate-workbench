@@ -305,16 +305,16 @@ export function PriceJobsTab({ data, onRefresh }: { data: WorkbenchData; onRefre
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-5">
       {data.errors.contacts ? <SectionError title="Contacts unavailable" message={data.errors.contacts} /> : null}
       {data.errors.services ? <SectionError title="Price Book unavailable" message={data.errors.services} /> : null}
       {data.errors.employees ? <SectionError title="Employees unavailable" message={data.errors.employees} /> : null}
 
       <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_320px]">
-        <section className="min-w-0 border-y bg-background">
-          <div className="grid gap-3 border-b bg-muted/30 p-3 md:grid-cols-[minmax(220px,1fr)_minmax(220px,1fr)]">
+        <section className="min-w-0 overflow-hidden rounded-md border border-emerald-200/70 bg-background shadow-xs">
+          <div className="grid gap-3 border-b border-emerald-100 bg-emerald-50/60 p-3 md:grid-cols-[minmax(220px,1fr)_minmax(220px,1fr)]">
             <Field label="Job / estimate name" required>
-              <Input value={name} onChange={(event) => setName(event.target.value)} className="h-8 text-xs" placeholder="Property and scope" />
+              <Input value={name} onChange={(event) => setName(event.target.value)} className="h-9 border-emerald-200 bg-background text-xs shadow-xs focus-visible:border-emerald-500 focus-visible:ring-emerald-500/15" placeholder="Property and scope" />
             </Field>
             <Field label="Contact" required>
               <Popover open={contactPickerOpen} onOpenChange={setContactPickerOpen}>
@@ -324,7 +324,7 @@ export function PriceJobsTab({ data, onRefresh }: { data: WorkbenchData; onRefre
                     variant="outline"
                     role="combobox"
                     aria-expanded={contactPickerOpen}
-                    className="h-8 w-full justify-between px-2 text-xs font-normal"
+                    className="h-9 w-full justify-between border-emerald-200 bg-background px-2.5 text-xs font-normal shadow-xs hover:bg-background"
                     disabled={data.contacts.length === 0}
                   >
                     <span className="truncate">
@@ -368,7 +368,7 @@ export function PriceJobsTab({ data, onRefresh }: { data: WorkbenchData; onRefre
             </Field>
           </div>
 
-          <div className="flex items-center justify-between border-b px-3 py-2">
+          <div className="flex items-center justify-between border-b bg-slate-50/70 px-3 py-2.5">
             <div>
               <h2 className="text-sm font-semibold">Service lines</h2>
               <p className="text-[11px] text-muted-foreground">{lines.length} line{lines.length === 1 ? "" : "s"}</p>
@@ -400,7 +400,7 @@ export function PriceJobsTab({ data, onRefresh }: { data: WorkbenchData; onRefre
                 <span>Order</span><span>Service</span><span className="text-right">Qty</span><span className="text-right">Unit price</span><span>Description</span><span className="text-right">Total</span><span />
               </div>
               {lines.map((line, index) => (
-                <div key={line.clientId} className="grid grid-cols-[56px_minmax(190px,1.4fr)_90px_120px_minmax(180px,1fr)_92px_40px] items-start gap-2 border-b px-3 py-2 last:border-b-0">
+                <div key={line.clientId} className="grid grid-cols-[56px_minmax(190px,1.4fr)_90px_120px_minmax(180px,1fr)_92px_40px] items-start gap-2 border-b px-3 py-2 transition-colors last:border-b-0 hover:bg-slate-50/70">
                   <div className="flex items-center gap-0.5 pt-0.5">
                     <IconButton label="Move up" disabled={index === 0} onClick={() => moveLine(index, -1)}><ArrowUp className="size-3.5" /></IconButton>
                     <IconButton label="Move down" disabled={index === lines.length - 1} onClick={() => moveLine(index, 1)}><ArrowDown className="size-3.5" /></IconButton>
@@ -429,8 +429,8 @@ export function PriceJobsTab({ data, onRefresh }: { data: WorkbenchData; onRefre
         </section>
 
         <aside className="space-y-4">
-          <section className="border-y bg-background">
-            <div className="border-b bg-muted/30 px-3 py-2"><h2 className="text-sm font-semibold">Job setup</h2></div>
+          <section className="overflow-hidden rounded-md border border-emerald-200/70 bg-background shadow-xs">
+            <div className="border-b border-emerald-100 bg-emerald-50/60 px-3 py-2.5"><h2 className="text-sm font-semibold text-emerald-950">Job setup</h2></div>
             <div className="grid gap-3 p-3 sm:grid-cols-2 xl:grid-cols-1">
               <div className="flex items-center justify-between rounded-md border px-2.5 py-2">
                 <div>
@@ -452,8 +452,8 @@ export function PriceJobsTab({ data, onRefresh }: { data: WorkbenchData; onRefre
       </div>
 
       <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_320px]">
-        <section className="border-y bg-background">
-          <div className="border-b bg-muted/30 px-3 py-2">
+        <section className="overflow-hidden rounded-md border bg-background shadow-xs">
+          <div className="border-b bg-slate-50/80 px-3 py-2.5">
             <h2 className="text-sm font-semibold">Cost and pricing details</h2>
           </div>
           <div className="grid gap-3 p-3 sm:grid-cols-2 lg:grid-cols-4">
@@ -476,8 +476,8 @@ export function PriceJobsTab({ data, onRefresh }: { data: WorkbenchData; onRefre
           </div>
         </section>
 
-        <aside className="border-y bg-background">
-          <div className="border-b bg-muted/30 px-3 py-2"><h2 className="text-sm font-semibold">Pricing summary</h2></div>
+        <aside className="overflow-hidden rounded-md border border-emerald-200 bg-background shadow-xs">
+          <div className="border-b border-emerald-100 bg-emerald-50/70 px-3 py-2.5"><h2 className="text-sm font-semibold text-emerald-950">Pricing summary</h2></div>
           <div className="space-y-2 p-3 text-xs">
             <div className="flex justify-between"><span className="text-muted-foreground">Service costs</span><span className="tabular-nums">{money(totals.bookCost)}</span></div>
             <div className="flex justify-between"><span className="text-muted-foreground">Other adjusted costs</span><span className="tabular-nums">{money(totals.adjustedDirect)}</span></div>
@@ -488,7 +488,7 @@ export function PriceJobsTab({ data, onRefresh }: { data: WorkbenchData; onRefre
             <div className="flex items-center justify-between"><span className="text-muted-foreground">Projected margin</span><Badge variant="outline" className={totals.margin >= 20 ? "border-emerald-200 bg-emerald-50 text-emerald-700" : "border-amber-200 bg-amber-50 text-amber-800"}>{totals.margin.toFixed(1)}%</Badge></div>
           </div>
           <div className="border-t p-3">
-            <Button className="h-9 w-full" onClick={submit} disabled={saving || polling}>
+            <Button className="h-10 w-full bg-emerald-700 font-semibold text-white shadow-sm hover:bg-emerald-800" onClick={submit} disabled={saving || polling}>
               {saving ? <Loader2 className="size-4 animate-spin" /> : <Send className="size-4" />}
               Save and create
             </Button>
@@ -513,8 +513,8 @@ export function PriceJobsTab({ data, onRefresh }: { data: WorkbenchData; onRefre
       ) : null}
 
       {routing ? (
-        <section className="border-y bg-background">
-          <div className="flex flex-wrap items-center justify-between gap-2 border-b bg-muted/30 px-3 py-2">
+        <section className="overflow-hidden rounded-md border border-blue-200 bg-background shadow-xs">
+          <div className="flex flex-wrap items-center justify-between gap-2 border-b border-blue-100 bg-blue-50/70 px-3 py-2.5">
             <div className="flex items-center gap-2">
               <ListChecks className="size-4 text-muted-foreground" />
               <h2 className="text-sm font-semibold">Request result</h2>
@@ -544,8 +544,8 @@ export function PriceJobsTab({ data, onRefresh }: { data: WorkbenchData; onRefre
         </section>
       ) : null}
 
-      <section className="border-y bg-background">
-        <div className="flex items-center justify-between border-b bg-muted/30 px-3 py-2">
+      <section className="overflow-hidden rounded-md border bg-background shadow-xs">
+        <div className="flex items-center justify-between border-b bg-slate-50/80 px-3 py-2.5">
           <div><h2 className="text-sm font-semibold">Recent job requests</h2><p className="text-[11px] text-muted-foreground">Latest status for saved requests</p></div>
           <IconButton label="Refresh requests" onClick={onRefresh}><RefreshCw className="size-3.5" /></IconButton>
         </div>
@@ -555,7 +555,7 @@ export function PriceJobsTab({ data, onRefresh }: { data: WorkbenchData; onRefre
           <div className="overflow-x-auto">
             <table className="w-full min-w-[680px] text-xs">
               <thead><tr className="border-b bg-muted/20 text-left text-[10px] uppercase text-muted-foreground"><th className="px-3 py-2 font-medium">Request</th><th className="px-3 py-2 font-medium">Status</th><th className="px-3 py-2 font-medium">Estimate</th><th className="px-3 py-2 font-medium">Result</th></tr></thead>
-              <tbody>{data.recentPricing.map((item) => <tr key={item.id} className="border-b last:border-0"><td className="max-w-[360px] px-3 py-2"><p className="truncate font-medium">{item.name}</p><p className="font-mono text-[10px] text-muted-foreground">{item.id}</p></td><td className="px-3 py-2"><StatusBadge status={item.routingStatus} /></td><td className="px-3 py-2">{item.requiresEstimate ? "Create first" : "Not needed"}</td><td className="px-3 py-2">{item.routingStatus === "Error" ? <span className="inline-flex items-center gap-1 text-red-700"><AlertTriangle className="size-3.5" /> Needs attention</span> : item.jobId || item.estimateId ? <span className="inline-flex items-center gap-1 text-emerald-700"><CheckCircle2 className="size-3.5" /> Created</span> : <span className="inline-flex items-center gap-1 text-muted-foreground"><CircleDollarSign className="size-3.5" /> Still working</span>}</td></tr>)}</tbody>
+              <tbody>{data.recentPricing.map((item) => <tr key={item.id} className="border-b transition-colors last:border-0 hover:bg-slate-50/80"><td className="max-w-[360px] px-3 py-2"><p className="truncate font-medium">{item.name}</p><p className="font-mono text-[10px] text-muted-foreground">{item.id}</p></td><td className="px-3 py-2"><StatusBadge status={item.routingStatus} /></td><td className="px-3 py-2">{item.requiresEstimate ? "Create first" : "Not needed"}</td><td className="px-3 py-2">{item.routingStatus === "Error" ? <span className="inline-flex items-center gap-1 text-red-700"><AlertTriangle className="size-3.5" /> Needs attention</span> : item.jobId || item.estimateId ? <span className="inline-flex items-center gap-1 text-emerald-700"><CheckCircle2 className="size-3.5" /> Created</span> : <span className="inline-flex items-center gap-1 text-muted-foreground"><CircleDollarSign className="size-3.5" /> Still working</span>}</td></tr>)}</tbody>
             </table>
           </div>
         )}
