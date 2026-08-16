@@ -19,6 +19,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { changeDraftEstimateStatus, deleteDraftEstimate, saveEstimate } from "@/app/actions";
+import { isEstimateMediaFile, uploadEstimateMedia } from "@/lib/estimate-media-upload";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -167,9 +168,7 @@ export function EstimateBuilderTab({ data, onRefresh }: { data: WorkbenchData; o
   async function uploadMedia(files: FileList | null) {
     if (!files?.length || !sourcePricing) return;
     const selectedFiles = Array.from(files);
-    const invalid = selectedFiles.find((file) =>
-      (!file.type.startsWith("image/") && !file.type.startsWith("video/")) || file.size > 250 * 1024 * 1024
-    );
+    const invalid = selectedFiles.find((file) => !isEstimateMediaFile(file));
     if (invalid) {
       toast.error(`${invalid.name} is not a supported photo or video`);
       if (mediaInputRef.current) mediaInputRef.current.value = "";
@@ -180,42 +179,10 @@ export function EstimateBuilderTab({ data, onRefresh }: { data: WorkbenchData; o
     let uploadedCount = 0;
     try {
       for (const file of selectedFiles) {
-        const signResponse = await fetch("/api/estimate-media", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            action: "sign",
-            pricingId: sourcePricing.id,
-            name: file.name,
-            type: file.type,
-            size: file.size,
-          }),
-        });
-        const signature = await signResponse.json();
-        if (!signResponse.ok) throw new Error(signature.message || `${file.name} could not be prepared`);
-
-        const uploadResponse = await fetch(signature.url, {
-          method: signature.uploadMethod,
-          headers: signature.requestHeaders,
-          body: file,
-        });
-        if (!uploadResponse.ok) throw new Error(`${file.name} could not be uploaded`);
-
-        const completeResponse = await fetch("/api/estimate-media", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            action: "complete",
-            pricingId: sourcePricing.id,
-            name: file.name,
-            token: signature.token,
-          }),
-        });
-        const completed = await completeResponse.json();
-        if (!completeResponse.ok) throw new Error(completed.message || `${file.name} could not be attached`);
-        setMedia((current) => current.some((item) => item.token === completed.attachment.token)
+        const attachment = await uploadEstimateMedia(sourcePricing.id, file);
+        setMedia((current) => current.some((item) => item.token === attachment.token)
           ? current
-          : [...current, completed.attachment]);
+          : [...current, attachment]);
         uploadedCount += 1;
       }
       toast.success(`${uploadedCount} file${uploadedCount === 1 ? "" : "s"} added`);

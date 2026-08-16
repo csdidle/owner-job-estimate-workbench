@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   AlertTriangle,
   ArrowDown,
@@ -13,15 +13,18 @@ import {
   CircleDollarSign,
   Clock3,
   FilePenLine,
+  ImagePlus,
   Loader2,
   PencilLine,
   Plus,
   RefreshCw,
   ListChecks,
   Trash2,
+  Video,
 } from "lucide-react";
 import { toast } from "sonner";
 import { archivePricing, getPricingResult, promoteSavedPricing, savePricingJob } from "@/app/actions";
+import { isEstimateMediaFile, uploadEstimateMedia } from "@/lib/estimate-media-upload";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import {
   AlertDialog,
@@ -65,6 +68,7 @@ import {
   SEASONS,
   TERRAIN_OPTIONS,
   type ActionResult,
+  type EstimateMedia,
   type PricingJobInput,
   type PricingLineInput,
   type PricingOutcome,
@@ -89,6 +93,12 @@ type DraftLine = PricingLineInput & {
   clientId: string;
   cost: number;
   unit: string | null;
+};
+
+type PendingMedia = {
+  id: string;
+  file: File;
+  previewUrl: string;
 };
 
 type PromotionState = {
@@ -183,6 +193,13 @@ export function PriceJobsTab({ data, onRefresh }: { data: WorkbenchData; onRefre
   const [promotionError, setPromotionError] = useState("");
   const [promoting, setPromoting] = useState(false);
   const [archivingId, setArchivingId] = useState<string | null>(null);
+  const [pendingMedia, setPendingMedia] = useState<PendingMedia[]>([]);
+  const mediaInputRef = useRef<HTMLInputElement>(null);
+  const previewUrlsRef = useRef(new Set<string>());
+
+  useEffect(() => () => {
+    for (const url of previewUrlsRef.current) URL.revokeObjectURL(url);
+  }, []);
 
   const requiresJob = outcome !== "pricing-only";
   const requiresEstimate = outcome === "create-estimate";
@@ -248,6 +265,42 @@ export function PriceJobsTab({ data, onRefresh }: { data: WorkbenchData; onRefre
     });
   }
 
+  function queueMedia(files: FileList | null) {
+    if (!files?.length) return;
+    const selectedFiles = Array.from(files);
+    const invalid = selectedFiles.find((file) => !isEstimateMediaFile(file));
+    if (invalid) {
+      toast.error(`${invalid.name} is not a supported photo or video`);
+      if (mediaInputRef.current) mediaInputRef.current.value = "";
+      return;
+    }
+
+    setPendingMedia((current) => {
+      const existingIds = new Set(current.map((item) => item.id));
+      const additions = selectedFiles.flatMap((file) => {
+        const id = `${file.name}-${file.size}-${file.lastModified}`;
+        if (existingIds.has(id)) return [];
+        const previewUrl = URL.createObjectURL(file);
+        previewUrlsRef.current.add(previewUrl);
+        existingIds.add(id);
+        return [{ id, file, previewUrl }];
+      });
+      return [...current, ...additions];
+    });
+    if (mediaInputRef.current) mediaInputRef.current.value = "";
+  }
+
+  function removePendingMedia(id: string) {
+    setPendingMedia((current) => {
+      const removed = current.find((item) => item.id === id);
+      if (removed) {
+        URL.revokeObjectURL(removed.previewUrl);
+        previewUrlsRef.current.delete(removed.previewUrl);
+      }
+      return current.filter((item) => item.id !== id);
+    });
+  }
+
   function validate(): string[] {
     const issues: string[] = [];
     if (name.trim().length < 2) issues.push("Pricing name is required");
@@ -309,12 +362,45 @@ export function PriceJobsTab({ data, onRefresh }: { data: WorkbenchData; onRefre
       ...inputs,
     };
 
+    const queuedMedia = [...pendingMedia];
     setSaving(true);
     try {
       const response = await savePricingJob(payload);
       setResult(response);
       if (response.ok && "pricingId" in response) {
-        toast.success(response.message);
+        const uploadedMedia: EstimateMedia[] = [];
+        const failedMedia: PendingMedia[] = [];
+        for (const item of queuedMedia) {
+          try {
+            uploadedMedia.push(await uploadEstimateMedia(response.pricingId, item.file));
+          } catch {
+            failedMedia.push(item);
+          }
+        }
+
+        const successfulQueueItems = queuedMedia.filter((item) =>
+          !failedMedia.some((failed) => failed.id === item.id)
+        );
+        for (const item of successfulQueueItems) {
+          URL.revokeObjectURL(item.previewUrl);
+          previewUrlsRef.current.delete(item.previewUrl);
+        }
+        setPendingMedia(failedMedia);
+
+        if (failedMedia.length > 0) {
+          const partialResult: ActionResult = {
+            ok: false,
+            kind: "partial",
+            message: `Pricing was saved, but ${failedMedia.length} media file${failedMedia.length === 1 ? "" : "s"} could not be uploaded.`,
+          };
+          setResult(partialResult);
+          toast.error(partialResult.message);
+        } else {
+          toast.success(uploadedMedia.length > 0
+            ? `${response.message} ${uploadedMedia.length} media file${uploadedMedia.length === 1 ? "" : "s"} added.`
+            : response.message);
+        }
+
         setRouting({
           pricing: {
             id: response.pricingId,
@@ -331,7 +417,7 @@ export function PriceJobsTab({ data, onRefresh }: { data: WorkbenchData; onRefre
             jobId: null,
             estimateId: null,
             routedAt: null,
-            media: [],
+            media: uploadedMedia,
           },
           job: null,
           estimate: null,
@@ -630,6 +716,65 @@ export function PriceJobsTab({ data, onRefresh }: { data: WorkbenchData; onRefre
               ))}
               {lines.length === 0 ? <div className="p-8 text-center text-xs text-muted-foreground">No service lines</div> : null}
             </div>
+          </div>
+
+          <div className="border-t bg-slate-50/40">
+            <div className="flex items-center justify-between gap-3 px-3 py-2.5">
+              <div>
+                <h3 className="text-xs font-semibold">Estimate photos and videos</h3>
+                <p className="text-[10px] text-muted-foreground">{pendingMedia.length} selected</p>
+              </div>
+              <input
+                ref={mediaInputRef}
+                type="file"
+                accept="image/*,video/*"
+                multiple
+                className="sr-only"
+                onChange={(event) => queueMedia(event.target.files)}
+              />
+              <Button
+                type="button"
+                size="sm"
+                variant="outline"
+                className="h-8 shrink-0 bg-background text-xs"
+                disabled={saving}
+                onClick={() => mediaInputRef.current?.click()}
+              >
+                <ImagePlus className="size-3.5" /> Add media
+              </Button>
+            </div>
+            {pendingMedia.length > 0 ? (
+              <div className="grid gap-3 border-t p-3 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
+                {pendingMedia.map((item) => {
+                  const isImage = item.file.type.startsWith("image/");
+                  return (
+                    <div key={item.id} className="overflow-hidden rounded-md border bg-background">
+                      <div className="relative aspect-video overflow-hidden bg-slate-100">
+                        {isImage ? (
+                          // Local object URLs cannot use the Next image optimizer.
+                          // eslint-disable-next-line @next/next/no-img-element
+                          <img src={item.previewUrl} alt={item.file.name} className="size-full object-cover" />
+                        ) : (
+                          <video src={item.previewUrl} preload="metadata" muted className="size-full bg-black object-contain" />
+                        )}
+                        <IconButton
+                          label={`Remove ${item.file.name}`}
+                          className="absolute right-1.5 top-1.5 bg-background/90 text-muted-foreground shadow-sm hover:bg-background hover:text-destructive"
+                          disabled={saving}
+                          onClick={() => removePendingMedia(item.id)}
+                        >
+                          <Trash2 className="size-3.5" />
+                        </IconButton>
+                      </div>
+                      <div className="flex min-h-10 items-center gap-2 px-2.5 py-2">
+                        {isImage ? <ImagePlus className="size-3.5 shrink-0 text-muted-foreground" /> : <Video className="size-3.5 shrink-0 text-muted-foreground" />}
+                        <span className="truncate text-xs font-medium">{item.file.name}</span>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            ) : null}
           </div>
         </section>
 
