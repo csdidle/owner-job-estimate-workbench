@@ -520,21 +520,6 @@
       "isMultipleCellValue": false
     },
     {
-      "id": "fldlDKjzCu1Ddh0yVwG",
-      "name": "Manager Approved By",
-      "dbFieldName": "Manager_Approved_By",
-      "type": "user",
-      "description": "Manager who manually confirmed customer approval.",
-      "options": {
-        "isMultiple": false,
-        "shouldNotify": false
-      },
-      "cellValueType": "string",
-      "isLookup": null,
-      "isComputed": null,
-      "isMultipleCellValue": false
-    },
-    {
       "id": "fldpygGut7ugki2OFqB",
       "name": "Photos to Send",
       "dbFieldName": "Photos_to_Send",
