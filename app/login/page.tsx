@@ -2,6 +2,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Image from "next/image";
 import { Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -211,7 +212,15 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background p-4">
+    <div className="grid min-h-screen content-center justify-items-center gap-7 bg-background p-4">
+      <Image
+        src="/main-logo-grey-moss.svg"
+        alt="Harris & Sharp"
+        width={300}
+        height={61}
+        preload
+        className="h-auto w-[300px] max-w-[calc(100vw-4rem)]"
+      />
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
           <CardTitle className="text-2xl">Welcome</CardTitle>
