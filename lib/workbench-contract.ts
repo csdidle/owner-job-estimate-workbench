@@ -13,6 +13,7 @@ export const ROUTING_STATUSES = [
 
 export const JOB_PRIORITIES = ["Low", "Normal", "High", "Urgent"] as const;
 export const JOB_TYPES = ["One-Time", "Recurring", "Maintenance", "Emergency"] as const;
+export const ESTIMATE_QUEUE_STATUSES = ["Sent", "Viewed", "Declined", "Expired"] as const;
 export const FREQUENCIES = [
   "One-Time",
   "Weekly",
@@ -37,6 +38,7 @@ export const SEASONS = ["Spring", "Summer", "Fall", "Winter"] as const;
 export type RoutingStatus = (typeof ROUTING_STATUSES)[number];
 export type JobPriority = (typeof JOB_PRIORITIES)[number];
 export type JobType = (typeof JOB_TYPES)[number];
+export type EstimateQueueStatus = (typeof ESTIMATE_QUEUE_STATUSES)[number];
 
 export type ContactOption = {
   id: string;

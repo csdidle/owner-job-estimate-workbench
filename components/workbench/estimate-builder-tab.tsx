@@ -5,6 +5,7 @@ import {
   AlertTriangle,
   ArrowDown,
   ArrowUp,
+  ChevronDown,
   FileText,
   Loader2,
   PencilLine,
@@ -15,7 +16,7 @@ import {
   Trash2,
 } from "lucide-react";
 import { toast } from "sonner";
-import { saveEstimate } from "@/app/actions";
+import { changeDraftEstimateStatus, deleteDraftEstimate, saveEstimate } from "@/app/actions";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -29,10 +30,25 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
-import type { ActionResult, EstimateLine, EstimateRecord, ServiceOption, WorkbenchData } from "@/lib/workbench-contract";
+import {
+  ESTIMATE_QUEUE_STATUSES,
+  type ActionResult,
+  type EstimateLine,
+  type EstimateQueueStatus,
+  type EstimateRecord,
+  type ServiceOption,
+  type WorkbenchData,
+} from "@/lib/workbench-contract";
 import {
   EmptyState,
   Field,
@@ -97,6 +113,8 @@ export function EstimateBuilderTab({ data, onRefresh }: { data: WorkbenchData; o
   const [selectedId, setSelectedId] = useState<string>(eligible[0]?.id || "");
   const [draft, setDraft] = useState<EstimateRecord | null>(() => eligible[0] ? cloneEstimate(eligible[0]) : null);
   const [saving, setSaving] = useState(false);
+  const [actionPending, setActionPending] = useState<"status" | "delete" | null>(null);
+  const [pendingStatus, setPendingStatus] = useState<EstimateQueueStatus | null>(null);
   const [result, setResult] = useState<ActionResult | null>(null);
   const [validation, setValidation] = useState<string[]>([]);
 
@@ -171,6 +189,43 @@ export function EstimateBuilderTab({ data, onRefresh }: { data: WorkbenchData; o
     if (draft.discount < 0 || draft.discount > totals.subtotal) issues.push("Discount cannot exceed the subtotal");
     if (draft.taxPercent < 0 || draft.taxPercent > 100) issues.push("Tax must be between 0 and 100%");
     return issues;
+  }
+
+  async function changeStatus(status: EstimateQueueStatus) {
+    if (!draft) return;
+    setActionPending("status");
+    setResult(null);
+    try {
+      const response = await changeDraftEstimateStatus({ estimateId: draft.id, status });
+      setResult(response);
+      response.ok ? toast.success(response.message) : toast.error(response.message);
+      if (response.ok || response.kind === "partial") await onRefresh();
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Estimate status change failed";
+      setResult({ ok: false, kind: "error", message });
+      toast.error(message);
+    } finally {
+      setActionPending(null);
+      setPendingStatus(null);
+    }
+  }
+
+  async function removeEstimate() {
+    if (!draft) return;
+    setActionPending("delete");
+    setResult(null);
+    try {
+      const response = await deleteDraftEstimate(draft.id);
+      setResult(response);
+      response.ok ? toast.success(response.message) : toast.error(response.message);
+      if (response.ok || response.kind === "partial") await onRefresh();
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Estimate deletion failed";
+      setResult({ ok: false, kind: "error", message });
+      toast.error(message);
+    } finally {
+      setActionPending(null);
+    }
   }
 
   async function save(queueQboDraft: boolean) {
@@ -263,8 +318,75 @@ export function EstimateBuilderTab({ data, onRefresh }: { data: WorkbenchData; o
               <h2 className="text-sm font-semibold">Estimate #{draft.number || "-"}</h2>
               <StatusBadge status={draft.status} />
             </div>
-            <span className="text-[11px] text-muted-foreground">Linked job #{linkedJob?.number || "-"}</span>
+            <div className="flex items-center gap-2">
+              <span className="text-[11px] text-muted-foreground">Linked job #{linkedJob?.number || "-"}</span>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" size="sm" className="h-7 text-xs" disabled={actionPending !== null}>
+                    Change status <ChevronDown className="size-3.5" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuLabel className="text-xs">Move Draft to</DropdownMenuLabel>
+                  {ESTIMATE_QUEUE_STATUSES.map((status) => (
+                    <DropdownMenuItem key={status} className="text-xs" onSelect={() => setPendingStatus(status)}>
+                      {status}
+                    </DropdownMenuItem>
+                  ))}
+                </DropdownMenuContent>
+              </DropdownMenu>
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    className="size-7 text-destructive hover:text-destructive"
+                    aria-label="Delete estimate"
+                    title="Delete estimate"
+                    disabled={actionPending !== null}
+                  >
+                    <Trash2 className="size-3.5" />
+                  </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Delete estimate #{draft.number || "-"}?</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      This permanently deletes the estimate and its {draft.lines.length} line{draft.lines.length === 1 ? "" : "s"}. Linked job #{linkedJob?.number || "-"} will be moved On Hold and detached. This does not delete an estimate from QuickBooks.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogAction variant="destructive" onClick={() => void removeEstimate()}>
+                      Delete estimate
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+            </div>
           </div>
+
+          <AlertDialog open={pendingStatus !== null} onOpenChange={(open) => !open && setPendingStatus(null)}>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Mark estimate #{draft.number || "-"} {pendingStatus}?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  {pendingStatus === "Declined" || pendingStatus === "Expired"
+                    ? `The estimate will leave the Draft queue and linked job #${linkedJob?.number || "-"} will be moved On Hold.`
+                    : "The estimate will leave the Draft queue. Its linked job will remain waiting for estimate approval."}
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                <AlertDialogAction
+                  onClick={() => pendingStatus && void changeStatus(pendingStatus)}
+                  disabled={actionPending !== null}
+                >
+                  Confirm status
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
           <div className="grid gap-3 p-3 md:grid-cols-[minmax(240px,1fr)_160px_160px]">
             <Field label="Estimate name" required><Input value={draft.name} onChange={(event) => patchDraft({ name: event.target.value })} className="h-8 text-xs" /></Field>
             <Field label="Estimate date" required><Input type="date" value={draft.estimateDate || today()} onChange={(event) => patchDraft({ estimateDate: event.target.value })} className="h-8 text-xs" /></Field>
@@ -350,9 +472,9 @@ export function EstimateBuilderTab({ data, onRefresh }: { data: WorkbenchData; o
 
         <div className="sticky bottom-0 flex flex-wrap items-center justify-end gap-2 border-y bg-background/95 px-3 py-2 backdrop-blur">
           <span className="mr-auto text-xs text-muted-foreground">Draft only / {draft.lines.length} lines / {money(totals.total)}</span>
-          <Button variant="outline" className="h-8" disabled={saving} onClick={() => void save(false)}>{saving ? <Loader2 className="size-4 animate-spin" /> : <Save className="size-4" />} Save draft</Button>
+          <Button variant="outline" className="h-8" disabled={saving || actionPending !== null} onClick={() => void save(false)}>{saving ? <Loader2 className="size-4 animate-spin" /> : <Save className="size-4" />} Save draft</Button>
           <AlertDialog>
-            <AlertDialogTrigger asChild><Button className="h-8" disabled={saving || draft.qboSyncStatus === "Queued for Draft"}><SendToBack className="size-4" /> Save and queue QBO</Button></AlertDialogTrigger>
+            <AlertDialogTrigger asChild><Button className="h-8" disabled={saving || actionPending !== null || draft.qboSyncStatus === "Queued for Draft"}><SendToBack className="size-4" /> Save and queue QBO</Button></AlertDialogTrigger>
             <AlertDialogContent>
               <AlertDialogHeader><AlertDialogTitle>Queue QBO draft?</AlertDialogTitle><AlertDialogDescription>This saves the Draft estimate and sets Create QBO Draft to true with QBO Sync Status set to Queued for Draft. It does not create anything in QuickBooks.</AlertDialogDescription></AlertDialogHeader>
               <AlertDialogFooter><AlertDialogCancel>Cancel</AlertDialogCancel><AlertDialogAction onClick={() => void save(true)}>Confirm queue</AlertDialogAction></AlertDialogFooter>

@@ -14,6 +14,7 @@ import {
 } from "@/lib/teable";
 import {
   CONDITION_OPTIONS,
+  ESTIMATE_QUEUE_STATUSES,
   FREQUENCIES,
   JOB_PRIORITIES,
   JOB_TYPES,
@@ -84,6 +85,7 @@ const FIELDS = {
     season: "fld2EDcwlG33ManHWjH",
     category: "fldmol54RwBstoAZdPJ",
     routingStatus: "fldTxirEHdWspVXx1vJ",
+    estimate: "fldEZjt8n8wfwgZ44dp",
   },
   pricingLine: {
     name: "fldvGfwizqG2xV6HDbz",
@@ -96,6 +98,7 @@ const FIELDS = {
   },
   estimate: {
     name: "fld7yS1h1gM6PK5UK8e",
+    status: "fldrsrFhScdIOBZ8lCG",
     subtotal: "fldWNkEzYleX9U8S4rx",
     discount: "fldsosZJFjNsIzDx5tl",
     taxPercent: "fld0yR6850QegP1gC5A",
@@ -120,6 +123,8 @@ const FIELDS = {
   },
   job: {
     release: "fld0zjPt44GhGTkpqYP",
+    status: "fldQ6ZWSYprYZkDQtIO",
+    estimate: "fldZvoJFTUWqDWH3pzM",
     crew: "fldCFM0k913xpJZPCyl",
     scheduledDate: "fldZk6IuygPaD05sNVd",
     priority: "flddIJ21uKWGZkNSHCh",
@@ -164,6 +169,11 @@ const pricingInputSchema = z.object({
   terrain: nullableSelect(TERRAIN_OPTIONS),
   condition: nullableSelect(CONDITION_OPTIONS),
   season: nullableSelect(SEASONS),
+});
+
+const estimateStatusSchema = z.object({
+  estimateId: recordIdSchema,
+  status: z.enum(ESTIMATE_QUEUE_STATUSES),
 });
 
 const estimateInputSchema = z.object({
@@ -835,6 +845,139 @@ export async function saveEstimate(rawInput: unknown): Promise<ActionResult> {
       ? "Estimate saved and queued for a future QBO draft"
       : "Draft estimate saved",
   };
+}
+
+export async function changeDraftEstimateStatus(rawInput: unknown): Promise<ActionResult> {
+  await requireOwner();
+  const parsed = estimateStatusSchema.safeParse(rawInput);
+  if (!parsed.success) {
+    return { ok: false, kind: "validation", message: "Choose a valid estimate status" };
+  }
+  const { estimateId, status } = parsed.data;
+  const [estimateResult, jobsResult] = await Promise.all([
+    sqlQuery(BASE_ID, `
+      SELECT "__id", "Estimate", "Status"
+      FROM ${TABLES.estimates}
+      WHERE "__id" = '${sqlString(estimateId)}'
+      LIMIT 1
+    `),
+    sqlQuery(BASE_ID, `
+      SELECT "__id", "Status"
+      FROM ${TABLES.jobs}
+      WHERE "__fk_fldZvoJFTUWqDWH3pzM" = '${sqlString(estimateId)}'
+      LIMIT 100
+    `),
+  ]);
+  const estimate = estimateResult.rows[0];
+  if (!estimate || estimate.Status !== "Draft") {
+    return { ok: false, kind: "validation", message: "Only Draft estimates can be changed from this queue" };
+  }
+
+  try {
+    await updateRecord(TABLE_IDS.estimates, estimateId, { [FIELDS.estimate.status]: status });
+  } catch (error) {
+    return { ok: false, kind: "error", message: `Estimate status was not changed: ${errorMessage(error)}` };
+  }
+
+  if (["Declined", "Expired"].includes(status) && jobsResult.rows.length > 0) {
+    try {
+      await updateRecords(TABLE_IDS.jobs, jobsResult.rows.map((job) => ({
+        id: String(job.__id),
+        fields: { [FIELDS.job.status]: "On Hold" },
+      })));
+    } catch (error) {
+      return {
+        ok: false,
+        kind: "partial",
+        message: `Estimate marked ${status}, but the linked job could not be moved On Hold: ${errorMessage(error)}`,
+      };
+    }
+  }
+
+  return { ok: true, message: `Estimate marked ${status}` };
+}
+
+export async function deleteDraftEstimate(estimateId: string): Promise<ActionResult> {
+  await requireOwner();
+  if (!recordIdSchema.safeParse(estimateId).success) {
+    return { ok: false, kind: "validation", message: "Invalid estimate" };
+  }
+  const [estimateResult, linesResult, jobsResult, pricingResult] = await Promise.all([
+    sqlQuery(BASE_ID, `
+      SELECT "__id", "Estimate", "Status"
+      FROM ${TABLES.estimates}
+      WHERE "__id" = '${sqlString(estimateId)}'
+      LIMIT 1
+    `),
+    sqlQuery(BASE_ID, `
+      SELECT "__id"
+      FROM ${TABLES.estimateLines}
+      WHERE "__fk_fldVUkcNMUDRAoc1KB1" = '${sqlString(estimateId)}'
+      LIMIT 100
+    `),
+    sqlQuery(BASE_ID, `
+      SELECT "__id"
+      FROM ${TABLES.jobs}
+      WHERE "__fk_fldZvoJFTUWqDWH3pzM" = '${sqlString(estimateId)}'
+      LIMIT 100
+    `),
+    sqlQuery(BASE_ID, `
+      SELECT "__id"
+      FROM ${TABLES.pricing}
+      WHERE "__fk_fldEZjt8n8wfwgZ44dp" = '${sqlString(estimateId)}'
+      LIMIT 100
+    `),
+  ]);
+  const estimate = estimateResult.rows[0];
+  if (!estimate || estimate.Status !== "Draft") {
+    return { ok: false, kind: "validation", message: "Only Draft estimates can be deleted from this queue" };
+  }
+
+  const detachResults = await Promise.allSettled([
+    jobsResult.rows.length > 0
+      ? updateRecords(TABLE_IDS.jobs, jobsResult.rows.map((job) => ({
+          id: String(job.__id),
+          fields: {
+            [FIELDS.job.status]: "On Hold",
+            [FIELDS.job.estimate]: null,
+          },
+        })))
+      : Promise.resolve([]),
+    pricingResult.rows.length > 0
+      ? updateRecords(TABLE_IDS.pricing, pricingResult.rows.map((pricing) => ({
+          id: String(pricing.__id),
+          fields: { [FIELDS.pricing.estimate]: null },
+        })))
+      : Promise.resolve([]),
+  ]);
+  const detachErrors = detachResults.flatMap((result) => result.status === "rejected" ? [errorMessage(result.reason)] : []);
+  if (detachErrors.length > 0) {
+    return { ok: false, kind: "partial", message: `Estimate was not deleted because linked records could not be detached: ${detachErrors.join("; ")}` };
+  }
+
+  const lineIds = linesResult.rows.map((line) => String(line.__id));
+  if (lineIds.length > 0) {
+    try {
+      await deleteRecords(TABLE_IDS.estimateLines, lineIds);
+    } catch (error) {
+      return {
+        ok: false,
+        kind: "partial",
+        message: `Linked job moved On Hold, but estimate lines could not be deleted: ${errorMessage(error)}`,
+      };
+    }
+  }
+
+  try {
+    await deleteRecords(TABLE_IDS.estimates, [estimateId]);
+    return { ok: true, message: `Estimate #${numberValue(estimate.Estimate)} deleted` };
+  } catch (error) {
+    return {
+      ok: false,
+      kind: "partial",
+      message: `Linked job moved On Hold and estimate lines were deleted, but the estimate could not be deleted: ${errorMessage(error)}`,
+    };
+  }
 }
 
 export async function releaseJob(jobId: string): Promise<ActionResult> {
