@@ -676,7 +676,7 @@ export function PriceJobsTab({ data, onRefresh }: { data: WorkbenchData; onRefre
                   </div>
                 </Field>
                 <div className="grid grid-cols-2 gap-3">
-                  <Field label="Quantity"><NumericInput value={line.quantity} min={0.01} onChange={(value) => updateLine(line.clientId, { quantity: value || 0 })} /></Field>
+                  <Field label="Quantity"><NumericInput value={line.quantity} min={0.01} step="1" onChange={(value) => updateLine(line.clientId, { quantity: value || 0 })} /></Field>
                   <Field label="Unit price"><NumericInput value={line.unitPrice} onChange={(value) => updateLine(line.clientId, { unitPrice: value || 0 })} /></Field>
                 </div>
                 <Field label="Description"><Textarea value={line.description} onChange={(event) => updateLine(line.clientId, { description: event.target.value })} className="min-h-20 resize-y text-xs" /></Field>
@@ -707,7 +707,7 @@ export function PriceJobsTab({ data, onRefresh }: { data: WorkbenchData; onRefre
                       <Input value={line.name} onChange={(event) => updateLine(line.clientId, { name: event.target.value })} className="h-7 text-xs" placeholder="Custom service name" />
                     )}
                   </div>
-                  <NumericInput value={line.quantity} min={0.01} onChange={(value) => updateLine(line.clientId, { quantity: value || 0 })} />
+                  <NumericInput value={line.quantity} min={0.01} step="1" onChange={(value) => updateLine(line.clientId, { quantity: value || 0 })} />
                   <NumericInput value={line.unitPrice} onChange={(value) => updateLine(line.clientId, { unitPrice: value || 0 })} />
                   <Textarea value={line.description} onChange={(event) => updateLine(line.clientId, { description: event.target.value })} className="min-h-8 resize-none text-xs" rows={1} />
                   <div className="pt-2 text-right text-xs font-medium tabular-nums">{money(line.quantity * line.unitPrice)}</div>

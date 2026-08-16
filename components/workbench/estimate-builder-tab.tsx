@@ -512,7 +512,7 @@ export function EstimateBuilderTab({ data, onRefresh }: { data: WorkbenchData; o
                   </Field>
                   <Field label="Line name"><Input value={line.name} onChange={(event) => updateLine(line.id, { name: event.target.value })} className="h-10 text-xs" /></Field>
                   <div className="grid grid-cols-2 gap-3">
-                    <Field label="Quantity"><NumericInput value={line.quantity} min={0.01} onChange={(value) => updateLine(line.id, { quantity: value || 0 })} /></Field>
+                    <Field label="Quantity"><NumericInput value={line.quantity} min={0.01} step="1" onChange={(value) => updateLine(line.id, { quantity: value || 0 })} /></Field>
                     <Field label="Unit price"><NumericInput value={line.unitPrice} onChange={(value) => updateLine(line.id, { unitPrice: value || 0 })} /></Field>
                   </div>
                   <Field label="Description"><Textarea value={line.description} onChange={(event) => updateLine(line.id, { description: event.target.value })} className="min-h-20 resize-y text-xs" /></Field>
@@ -530,7 +530,7 @@ export function EstimateBuilderTab({ data, onRefresh }: { data: WorkbenchData; o
                       <NativeSelect value={line.serviceId || ""} onChange={(event) => selectService(line.id, event.target.value)}><option value="">Custom line</option>{data.services.map((service) => <option key={service.id} value={service.id}>{service.name}</option>)}</NativeSelect>
                       <Input value={line.name} onChange={(event) => updateLine(line.id, { name: event.target.value })} className="h-7 text-xs" />
                     </div>
-                    <NumericInput value={line.quantity} min={0.01} onChange={(value) => updateLine(line.id, { quantity: value || 0 })} />
+                    <NumericInput value={line.quantity} min={0.01} step="1" onChange={(value) => updateLine(line.id, { quantity: value || 0 })} />
                     <NumericInput value={line.unitPrice} onChange={(value) => updateLine(line.id, { unitPrice: value || 0 })} />
                     <Textarea value={line.description} onChange={(event) => updateLine(line.id, { description: event.target.value })} className="min-h-8 resize-none text-xs" rows={1} />
                     <p className="pt-2 text-right text-xs font-medium tabular-nums">{money(line.quantity * line.unitPrice)}</p>
