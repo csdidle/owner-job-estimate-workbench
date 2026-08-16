@@ -1,0 +1,339 @@
+"use client";
+
+import { useEffect, useMemo, useState } from "react";
+import {
+  AlertTriangle,
+  ArrowDown,
+  ArrowUp,
+  FileText,
+  Loader2,
+  Plus,
+  ReceiptText,
+  Save,
+  SendToBack,
+  Trash2,
+} from "lucide-react";
+import { toast } from "sonner";
+import { saveEstimate } from "@/app/actions";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Separator } from "@/components/ui/separator";
+import { Textarea } from "@/components/ui/textarea";
+import type { ActionResult, EstimateLine, EstimateRecord, ServiceOption, WorkbenchData } from "@/lib/workbench-contract";
+import {
+  EmptyState,
+  Field,
+  IconButton,
+  NativeSelect,
+  NumericInput,
+  SectionError,
+  StatusBadge,
+  dateLabel,
+  money,
+} from "./shared";
+
+function today(): string {
+  return new Date().toISOString().slice(0, 10);
+}
+
+function plusDays(value: string, days: number): string {
+  const date = new Date(`${value}T12:00:00`);
+  date.setDate(date.getDate() + days);
+  return date.toISOString().slice(0, 10);
+}
+
+function cloneEstimate(estimate: EstimateRecord): EstimateRecord {
+  return { ...estimate, lines: estimate.lines.map((line, index) => ({ ...line, lineOrder: line.lineOrder || (index + 1) * 10 })) };
+}
+
+function serviceLine(service: ServiceOption, index: number): EstimateLine {
+  return {
+    id: `new-${Date.now()}-${index}`,
+    serviceId: service.id,
+    name: service.name,
+    description: service.description || "",
+    quantity: 1,
+    unitPrice: service.unitPrice,
+    total: service.unitPrice,
+    lineOrder: (index + 1) * 10,
+  };
+}
+
+export function EstimateBuilderTab({ data, onRefresh }: { data: WorkbenchData; onRefresh: () => Promise<void> }) {
+  const waitingEstimateIds = useMemo(
+    () => new Set(data.jobs.filter((job) => job.status === "Waiting for Estimate" && job.estimateId).map((job) => job.estimateId as string)),
+    [data.jobs]
+  );
+  const eligible = useMemo(
+    () => data.estimates.filter((estimate) => estimate.status === "Draft" && waitingEstimateIds.has(estimate.id)),
+    [data.estimates, waitingEstimateIds]
+  );
+  const [selectedId, setSelectedId] = useState<string>(eligible[0]?.id || "");
+  const [draft, setDraft] = useState<EstimateRecord | null>(() => eligible[0] ? cloneEstimate(eligible[0]) : null);
+  const [saving, setSaving] = useState(false);
+  const [result, setResult] = useState<ActionResult | null>(null);
+  const [validation, setValidation] = useState<string[]>([]);
+
+  useEffect(() => {
+    const current = eligible.find((estimate) => estimate.id === selectedId) || eligible[0] || null;
+    if (current && current.id !== selectedId) setSelectedId(current.id);
+    setDraft(current ? cloneEstimate(current) : null);
+    setResult(null);
+    setValidation([]);
+  }, [selectedId, data.loadedAt, eligible]);
+
+  const contact = draft ? data.contacts.find((item) => item.id === draft.contactId) || null : null;
+  const linkedJob = draft ? data.jobs.find((job) => job.estimateId === draft.id && job.status === "Waiting for Estimate") || null : null;
+  const totals = useMemo(() => {
+    const subtotal = draft?.lines.reduce((sum, line) => sum + line.quantity * line.unitPrice, 0) || 0;
+    const discount = draft?.discount || 0;
+    const taxable = Math.max(0, subtotal - discount);
+    const taxAmount = taxable * ((draft?.taxPercent || 0) / 100);
+    return { subtotal, discount, taxAmount, total: taxable + taxAmount };
+  }, [draft]);
+
+  function patchDraft(patch: Partial<EstimateRecord>) {
+    setDraft((current) => current ? { ...current, ...patch } : current);
+  }
+
+  function updateLine(id: string, patch: Partial<EstimateLine>) {
+    setDraft((current) => current ? {
+      ...current,
+      lines: current.lines.map((line) => line.id === id
+        ? { ...line, ...patch, total: (patch.quantity ?? line.quantity) * (patch.unitPrice ?? line.unitPrice) }
+        : line),
+    } : current);
+  }
+
+  function selectService(id: string, serviceId: string) {
+    const service = data.services.find((item) => item.id === serviceId);
+    if (!service) return;
+    updateLine(id, {
+      serviceId: service.id,
+      name: service.name,
+      description: service.description || "",
+      unitPrice: service.unitPrice,
+    });
+  }
+
+  function moveLine(index: number, delta: number) {
+    if (!draft) return;
+    const target = index + delta;
+    if (target < 0 || target >= draft.lines.length) return;
+    const lines = [...draft.lines];
+    [lines[index], lines[target]] = [lines[target], lines[index]];
+    patchDraft({ lines: lines.map((line, lineIndex) => ({ ...line, lineOrder: (lineIndex + 1) * 10 })) });
+  }
+
+  function validate(): string[] {
+    if (!draft) return ["Select an estimate"];
+    const issues: string[] = [];
+    if (draft.name.trim().length < 2) issues.push("Estimate name is required");
+    if (draft.lines.length === 0) issues.push("Add at least one estimate line");
+    if (draft.lines.some((line) => !line.name.trim() || line.quantity <= 0 || line.unitPrice < 0)) issues.push("Each line needs a name, positive quantity, and valid unit price");
+    if (!draft.estimateDate || !draft.expirationDate) issues.push("Estimate and expiration dates are required");
+    if (draft.estimateDate && draft.expirationDate && draft.expirationDate < draft.estimateDate) issues.push("Expiration date must be on or after the estimate date");
+    if (draft.discount < 0 || draft.discount > totals.subtotal) issues.push("Discount cannot exceed the subtotal");
+    if (draft.taxPercent < 0 || draft.taxPercent > 100) issues.push("Tax must be between 0 and 100%");
+    return issues;
+  }
+
+  async function save(queueQboDraft: boolean) {
+    if (!draft) return;
+    const issues = validate();
+    setValidation(issues);
+    setResult(null);
+    if (issues.length > 0) return;
+    setSaving(true);
+    try {
+      const response = await saveEstimate({
+        estimateId: draft.id,
+        name: draft.name,
+        notes: draft.notes,
+        internalNotes: draft.internalNotes,
+        estimateDate: draft.estimateDate || today(),
+        expirationDate: draft.expirationDate || plusDays(today(), 30),
+        discount: draft.discount,
+        taxPercent: draft.taxPercent,
+        queueQboDraft,
+        lines: draft.lines.map((line, index) => ({ ...line, lineOrder: (index + 1) * 10 })),
+      });
+      setResult(response);
+      if (response.ok) {
+        toast.success(response.message);
+        await onRefresh();
+      } else {
+        toast.error(response.message);
+      }
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Estimate save failed";
+      setResult({ ok: false, kind: "error", message });
+      toast.error(message);
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  if (data.errors.estimates || data.errors.jobs || data.errors.estimateLines) {
+    return (
+      <div className="space-y-3">
+        {data.errors.jobs ? <SectionError title="Waiting jobs unavailable" message={data.errors.jobs} /> : null}
+        {data.errors.estimates ? <SectionError title="Estimates unavailable" message={data.errors.estimates} /> : null}
+        {data.errors.estimateLines ? <SectionError title="Estimate lines unavailable" message={data.errors.estimateLines} /> : null}
+      </div>
+    );
+  }
+
+  if (eligible.length === 0) {
+    return <EmptyState icon={<FileText className="size-8" />} title="No Draft estimates for waiting jobs" detail="The shared router will place estimate-gated work here after it creates and links the Draft estimate." />;
+  }
+
+  if (!draft) return null;
+
+  return (
+    <div className="grid min-h-[680px] gap-4 xl:grid-cols-[260px_minmax(0,1fr)]">
+      <aside className="border-y bg-background">
+        <div className="border-b bg-muted/30 px-3 py-2">
+          <h2 className="text-sm font-semibold">Draft queue</h2>
+          <p className="text-[11px] text-muted-foreground">{eligible.length} waiting estimate{eligible.length === 1 ? "" : "s"}</p>
+        </div>
+        <div className="divide-y">
+          {eligible.map((estimate) => {
+            const job = data.jobs.find((item) => item.estimateId === estimate.id);
+            const active = estimate.id === selectedId;
+            return (
+              <button
+                type="button"
+                key={estimate.id}
+                onClick={() => setSelectedId(estimate.id)}
+                className={`w-full px-3 py-2.5 text-left hover:bg-accent ${active ? "border-l-2 border-foreground bg-muted/50 pl-2.5" : ""}`}
+              >
+                <div className="flex items-start justify-between gap-2">
+                  <p className="line-clamp-2 text-xs font-medium">{estimate.name}</p>
+                  <StatusBadge status={estimate.status} />
+                </div>
+                <p className="mt-1 text-[10px] text-muted-foreground">Job #{job?.number || "-"} / Estimate #{estimate.number || "-"}</p>
+                <p className="mt-1 text-xs font-medium tabular-nums">{money(estimate.total || estimate.subtotal)}</p>
+              </button>
+            );
+          })}
+        </div>
+      </aside>
+
+      <div className="min-w-0 space-y-4">
+        <section className="border-y bg-background">
+          <div className="flex flex-wrap items-center justify-between gap-2 border-b bg-muted/30 px-3 py-2">
+            <div className="flex items-center gap-2">
+              <ReceiptText className="size-4 text-muted-foreground" />
+              <h2 className="text-sm font-semibold">Estimate #{draft.number || "-"}</h2>
+              <StatusBadge status={draft.status} />
+            </div>
+            <span className="text-[11px] text-muted-foreground">Linked job #{linkedJob?.number || "-"}</span>
+          </div>
+          <div className="grid gap-3 p-3 md:grid-cols-[minmax(240px,1fr)_160px_160px]">
+            <Field label="Estimate name" required><Input value={draft.name} onChange={(event) => patchDraft({ name: event.target.value })} className="h-8 text-xs" /></Field>
+            <Field label="Estimate date" required><Input type="date" value={draft.estimateDate || today()} onChange={(event) => patchDraft({ estimateDate: event.target.value })} className="h-8 text-xs" /></Field>
+            <Field label="Expiration date" required><Input type="date" value={draft.expirationDate || plusDays(draft.estimateDate || today(), 30)} onChange={(event) => patchDraft({ expirationDate: event.target.value })} className="h-8 text-xs" /></Field>
+          </div>
+        </section>
+
+        <div className="grid gap-4 2xl:grid-cols-[minmax(0,1fr)_330px]">
+          <section className="min-w-0 border-y bg-background">
+            <div className="flex items-center justify-between border-b px-3 py-2">
+              <div><h2 className="text-sm font-semibold">Line editor</h2><p className="text-[11px] text-muted-foreground">Stable order: 10, 20, 30</p></div>
+              <Button size="sm" variant="outline" className="h-7 text-xs" disabled={!data.services[0]} onClick={() => data.services[0] && patchDraft({ lines: [...draft.lines, serviceLine(data.services[0], draft.lines.length)] })}><Plus className="size-3.5" /> Add line</Button>
+            </div>
+            <div className="overflow-x-auto">
+              <div className="min-w-[800px]">
+                <div className="grid grid-cols-[60px_minmax(180px,1.2fr)_80px_110px_minmax(170px,1fr)_90px_36px] gap-2 border-b bg-muted/20 px-3 py-1.5 text-[10px] font-medium uppercase text-muted-foreground"><span>Order</span><span>Service / line</span><span className="text-right">Qty</span><span className="text-right">Unit price</span><span>Description</span><span className="text-right">Total</span><span /></div>
+                {draft.lines.map((line, index) => (
+                  <div key={line.id} className="grid grid-cols-[60px_minmax(180px,1.2fr)_80px_110px_minmax(170px,1fr)_90px_36px] items-start gap-2 border-b px-3 py-2 last:border-0">
+                    <div className="flex items-center"><IconButton label="Move up" disabled={index === 0} onClick={() => moveLine(index, -1)}><ArrowUp className="size-3.5" /></IconButton><IconButton label="Move down" disabled={index === draft.lines.length - 1} onClick={() => moveLine(index, 1)}><ArrowDown className="size-3.5" /></IconButton></div>
+                    <div className="grid gap-1">
+                      <NativeSelect value={line.serviceId || ""} onChange={(event) => selectService(line.id, event.target.value)}><option value="">Custom line</option>{data.services.map((service) => <option key={service.id} value={service.id}>{service.name}</option>)}</NativeSelect>
+                      <Input value={line.name} onChange={(event) => updateLine(line.id, { name: event.target.value })} className="h-7 text-xs" />
+                    </div>
+                    <NumericInput value={line.quantity} min={0.01} onChange={(value) => updateLine(line.id, { quantity: value || 0 })} />
+                    <NumericInput value={line.unitPrice} onChange={(value) => updateLine(line.id, { unitPrice: value || 0 })} />
+                    <Textarea value={line.description} onChange={(event) => updateLine(line.id, { description: event.target.value })} className="min-h-8 resize-none text-xs" rows={1} />
+                    <p className="pt-2 text-right text-xs font-medium tabular-nums">{money(line.quantity * line.unitPrice)}</p>
+                    <IconButton label="Remove line" className="text-muted-foreground hover:text-destructive" onClick={() => patchDraft({ lines: draft.lines.filter((item) => item.id !== line.id) })}><Trash2 className="size-3.5" /></IconButton>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div className="grid gap-3 border-t bg-muted/10 p-3 sm:grid-cols-2 lg:grid-cols-4">
+              <Field label="Subtotal"><div className="flex h-8 items-center justify-end rounded-md border bg-muted/30 px-2 text-xs font-medium tabular-nums">{money(totals.subtotal)}</div></Field>
+              <Field label="Discount"><NumericInput value={draft.discount} onChange={(value) => patchDraft({ discount: value || 0 })} /></Field>
+              <Field label="Tax %"><NumericInput value={draft.taxPercent} max={100} onChange={(value) => patchDraft({ taxPercent: value || 0 })} /></Field>
+              <Field label="Total"><div className="flex h-8 items-center justify-end rounded-md border bg-foreground px-2 text-xs font-semibold tabular-nums text-background">{money(totals.total)}</div></Field>
+            </div>
+          </section>
+
+          <aside className="border-y bg-background">
+            <div className="border-b bg-muted/30 px-3 py-2"><h2 className="text-sm font-semibold">Customer preview</h2></div>
+            <div className="space-y-4 p-4 text-xs">
+              <div><p className="text-[10px] uppercase text-muted-foreground">Prepared for</p><p className="mt-1 font-semibold">{contact?.name || "Contact unavailable"}</p>{contact?.company && contact.company !== contact.name ? <p>{contact.company}</p> : null}<p className="text-muted-foreground">{[contact?.address, contact?.city, contact?.state, contact?.zip].filter(Boolean).join(", ")}</p><p className="text-muted-foreground">{contact?.email}</p></div>
+              <div className="flex justify-between gap-4"><div><p className="text-[10px] uppercase text-muted-foreground">Estimate date</p><p>{dateLabel(draft.estimateDate)}</p></div><div className="text-right"><p className="text-[10px] uppercase text-muted-foreground">Expires</p><p>{dateLabel(draft.expirationDate)}</p></div></div>
+              <Separator />
+              <div className="space-y-2">{draft.lines.map((line) => <div key={line.id} className="flex justify-between gap-3"><div className="min-w-0"><p className="font-medium">{line.name || "Untitled line"}</p><p className="line-clamp-2 text-[10px] text-muted-foreground">{line.description}</p><p className="text-[10px] text-muted-foreground">{line.quantity} x {money(line.unitPrice)}</p></div><p className="shrink-0 font-medium tabular-nums">{money(line.quantity * line.unitPrice)}</p></div>)}</div>
+              <Separator />
+              <div className="space-y-1"><div className="flex justify-between"><span>Subtotal</span><span>{money(totals.subtotal)}</span></div><div className="flex justify-between text-muted-foreground"><span>Discount</span><span>-{money(totals.discount)}</span></div><div className="flex justify-between text-muted-foreground"><span>Tax</span><span>{money(totals.taxAmount)}</span></div><div className="flex justify-between pt-1 text-sm font-semibold"><span>Total</span><span>{money(totals.total)}</span></div></div>
+              {draft.notes ? <div className="border-t pt-3"><p className="text-[10px] uppercase text-muted-foreground">Notes</p><p className="mt-1 whitespace-pre-wrap text-muted-foreground">{draft.notes}</p></div> : null}
+            </div>
+          </aside>
+        </div>
+
+        <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_330px]">
+          <section className="border-y bg-background">
+            <div className="border-b bg-muted/30 px-3 py-2"><h2 className="text-sm font-semibold">Estimate notes</h2></div>
+            <div className="grid gap-3 p-3 md:grid-cols-2">
+              <Field label="Customer notes"><Textarea value={draft.notes} onChange={(event) => patchDraft({ notes: event.target.value })} className="min-h-24 text-xs" /></Field>
+              <Field label="Internal notes"><Textarea value={draft.internalNotes} onChange={(event) => patchDraft({ internalNotes: event.target.value })} className="min-h-24 text-xs" /></Field>
+            </div>
+          </section>
+
+          <section className="border-y bg-background">
+            <div className="flex items-center justify-between border-b bg-muted/30 px-3 py-2"><h2 className="text-sm font-semibold">QBO operations</h2><StatusBadge status={draft.qboSyncStatus || "Not Synced"} /></div>
+            <div className="space-y-2 p-3 text-xs">
+              <div className="flex justify-between gap-3"><span className="text-muted-foreground">Create QBO Draft</span><span>{draft.createQboDraft ? "Queued" : "No"}</span></div>
+              <div className="flex justify-between gap-3"><span className="text-muted-foreground">Estimate ID</span><span className="truncate font-mono text-[10px]">{draft.qboEstimateId || "Not assigned"}</span></div>
+              <div className="flex justify-between gap-3"><span className="text-muted-foreground">Doc number</span><span>{draft.qboDocNumber || "Not assigned"}</span></div>
+              <div className="flex justify-between gap-3"><span className="text-muted-foreground">Sync token</span><span className="truncate font-mono text-[10px]">{draft.qboSyncToken || "Not assigned"}</span></div>
+              <div className="flex justify-between gap-3"><span className="text-muted-foreground">Last synced</span><span>{draft.qboLastSynced ? new Date(draft.qboLastSynced).toLocaleString() : "Never"}</span></div>
+              {draft.qboSyncError ? <div className="rounded border border-red-200 bg-red-50 p-2 text-red-800">{draft.qboSyncError}</div> : null}
+              <p className="border-t pt-2 text-[10px] text-muted-foreground">Queue state only. QBO credentials are not configured.</p>
+            </div>
+          </section>
+        </div>
+
+        {validation.length > 0 ? <Alert variant="destructive"><AlertTriangle className="size-4" /><AlertTitle>Check estimate</AlertTitle><AlertDescription>{validation.join(". ")}</AlertDescription></Alert> : null}
+        {result && !result.ok ? <Alert variant="destructive"><AlertTriangle className="size-4" /><AlertTitle>{result.kind === "partial" ? "Partial save" : result.kind === "validation" ? "Validation" : "Save failed"}</AlertTitle><AlertDescription>{result.message}</AlertDescription></Alert> : null}
+
+        <div className="sticky bottom-0 flex flex-wrap items-center justify-end gap-2 border-y bg-background/95 px-3 py-2 backdrop-blur">
+          <span className="mr-auto text-xs text-muted-foreground">Draft only / {draft.lines.length} lines / {money(totals.total)}</span>
+          <Button variant="outline" className="h-8" disabled={saving} onClick={() => void save(false)}>{saving ? <Loader2 className="size-4 animate-spin" /> : <Save className="size-4" />} Save draft</Button>
+          <AlertDialog>
+            <AlertDialogTrigger asChild><Button className="h-8" disabled={saving || draft.qboSyncStatus === "Queued for Draft"}><SendToBack className="size-4" /> Save and queue QBO</Button></AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader><AlertDialogTitle>Queue QBO draft?</AlertDialogTitle><AlertDialogDescription>This saves the Draft estimate and sets Create QBO Draft to true with QBO Sync Status set to Queued for Draft. It does not create anything in QuickBooks.</AlertDialogDescription></AlertDialogHeader>
+              <AlertDialogFooter><AlertDialogCancel>Cancel</AlertDialogCancel><AlertDialogAction onClick={() => void save(true)}>Confirm queue</AlertDialogAction></AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+        </div>
+      </div>
+    </div>
+  );
+}
