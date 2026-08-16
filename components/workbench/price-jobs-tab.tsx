@@ -5,6 +5,7 @@ import {
   AlertTriangle,
   ArrowDown,
   ArrowUp,
+  Archive,
   BriefcaseBusiness,
   Check,
   CheckCircle2,
@@ -20,8 +21,19 @@ import {
   Trash2,
 } from "lucide-react";
 import { toast } from "sonner";
-import { getPricingResult, promoteSavedPricing, savePricingJob } from "@/app/actions";
+import { archivePricing, getPricingResult, promoteSavedPricing, savePricingJob } from "@/app/actions";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -170,6 +182,7 @@ export function PriceJobsTab({ data, onRefresh }: { data: WorkbenchData; onRefre
   const [promotionJobType, setPromotionJobType] = useState<(typeof JOB_TYPES)[number]>("One-Time");
   const [promotionError, setPromotionError] = useState("");
   const [promoting, setPromoting] = useState(false);
+  const [archivingId, setArchivingId] = useState<string | null>(null);
 
   const requiresJob = outcome !== "pricing-only";
   const requiresEstimate = outcome === "create-estimate";
@@ -334,6 +347,23 @@ export function PriceJobsTab({ data, onRefresh }: { data: WorkbenchData; onRefre
       toast.error(message);
     } finally {
       setSaving(false);
+    }
+  }
+
+  async function archiveSavedPricing(pricingId: string) {
+    setArchivingId(pricingId);
+    setResult(null);
+    try {
+      const response = await archivePricing(pricingId);
+      setResult(response);
+      response.ok ? toast.success(response.message) : toast.error(response.message);
+      if (response.ok) await onRefresh();
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Pricing could not be archived";
+      setResult({ ok: false, kind: "error", message });
+      toast.error(message);
+    } finally {
+      setArchivingId(null);
     }
   }
 
@@ -676,6 +706,7 @@ export function PriceJobsTab({ data, onRefresh }: { data: WorkbenchData; onRefre
                   <th className="px-3 py-2 text-right font-medium">Price</th>
                   <th className="px-3 py-2 font-medium">Status</th>
                   <th className="px-3 py-2 font-medium">Next step</th>
+                  <th className="px-3 py-2 text-right font-medium">Actions</th>
                 </tr>
               </thead>
               <tbody>
@@ -697,6 +728,31 @@ export function PriceJobsTab({ data, onRefresh }: { data: WorkbenchData; onRefre
                       ) : (
                         <span className="inline-flex items-center gap-1 text-muted-foreground"><Loader2 className="size-3.5 animate-spin" /> Creating</span>
                       )}
+                    </td>
+                    <td className="px-3 py-2 text-right">
+                      <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                          <IconButton
+                            label="Archive pricing"
+                            className="text-muted-foreground hover:text-destructive"
+                            disabled={archivingId === item.id || ["Ready to Route", "Routing"].includes(item.routingStatus || "")}
+                          >
+                            {archivingId === item.id ? <Loader2 className="size-3.5 animate-spin" /> : <Archive className="size-3.5" />}
+                          </IconButton>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>Archive {item.name}?</AlertDialogTitle>
+                            <AlertDialogDescription>
+                              This removes the pricing from this workbench. Any linked Job or Estimate will be kept unchanged.
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel>Cancel</AlertDialogCancel>
+                            <AlertDialogAction variant="destructive" onClick={() => void archiveSavedPricing(item.id)}>Archive pricing</AlertDialogAction>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
                     </td>
                   </tr>
                 ))}

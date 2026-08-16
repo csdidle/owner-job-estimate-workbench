@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import {
   AlertTriangle,
+  Ban,
   BriefcaseBusiness,
   CheckCircle2,
   ClipboardCheck,
@@ -12,7 +13,7 @@ import {
   Send,
 } from "lucide-react";
 import { toast } from "sonner";
-import { getReleaseResult, releaseJob, updateActiveJob } from "@/app/actions";
+import { cancelJob, getReleaseResult, releaseJob, updateActiveJob } from "@/app/actions";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -32,6 +33,7 @@ import {
   JOB_TYPES,
   type ActionResult,
   type JobPriority,
+  type JobRecord,
   type JobType,
   type WorkbenchData,
 } from "@/lib/workbench-contract";
@@ -65,6 +67,7 @@ export function ApprovalAssignmentTab({ data, onRefresh }: { data: WorkbenchData
   const [assignments, setAssignments] = useState<Record<string, AssignmentDraft>>({});
   const [savingJobId, setSavingJobId] = useState<string | null>(null);
   const [releasingJobId, setReleasingJobId] = useState<string | null>(null);
+  const [cancellingJobId, setCancellingJobId] = useState<string | null>(null);
   const [releaseOutcome, setReleaseOutcome] = useState<ReleaseOutcome | null>(null);
   const [result, setResult] = useState<ActionResult | null>(null);
 
@@ -150,6 +153,50 @@ export function ApprovalAssignmentTab({ data, onRefresh }: { data: WorkbenchData
     }
   }
 
+  async function cancelSelectedJob(jobId: string) {
+    setCancellingJobId(jobId);
+    setResult(null);
+    try {
+      const response = await cancelJob(jobId);
+      setResult(response);
+      response.ok ? toast.success(response.message) : toast.error(response.message);
+      if (response.ok || response.kind === "partial") await onRefresh();
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Job could not be cancelled";
+      setResult({ ok: false, kind: "error", message });
+      toast.error(message);
+    } finally {
+      setCancellingJobId(null);
+    }
+  }
+
+  function cancelControl(job: JobRecord) {
+    const isCancelling = cancellingJobId === job.id;
+    return (
+      <AlertDialog>
+        <AlertDialogTrigger asChild>
+          <IconButton label="Cancel job" className="text-muted-foreground hover:text-destructive" disabled={isCancelling || releasingJobId === job.id || savingJobId === job.id}>
+            {isCancelling ? <Loader2 className="size-3.5 animate-spin" /> : <Ban className="size-3.5" />}
+          </IconButton>
+        </AlertDialogTrigger>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Cancel Job #{job.number || "-"}?</AlertDialogTitle>
+            <AlertDialogDescription>
+              {job.status === "Waiting for Estimate"
+                ? "The Job will be marked Cancelled and its linked Estimate will be marked Declined. All records will be retained."
+                : "The Job will be marked Cancelled and retained for history. Linked Pricing and Estimates will not be changed."}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Keep job</AlertDialogCancel>
+            <AlertDialogAction variant="destructive" onClick={() => void cancelSelectedJob(job.id)}>Cancel job</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    );
+  }
+
   const fatalErrors = [data.errors.jobs, data.errors.estimates, data.errors.contacts, data.errors.employees].filter(Boolean);
   if (fatalErrors.length > 0) {
     return (
@@ -204,16 +251,19 @@ export function ApprovalAssignmentTab({ data, onRefresh }: { data: WorkbenchData
                       <td className="px-3 py-2 font-medium tabular-nums">{money(estimate?.total || estimate?.subtotal || 0)}</td>
                       <td className="px-3 py-2"><p>{dateLabel(job.scheduledDate)}</p><p className="text-[10px] text-muted-foreground">{job.priority || "Normal"} / {job.jobType || "One-Time"}</p></td>
                       <td className="px-3 py-2 text-right">
-                        <AlertDialog>
-                          <AlertDialogTrigger asChild><Button size="sm" className="h-9 bg-blue-700 font-semibold text-white shadow-sm hover:bg-blue-800" disabled={isReleasing || !estimate}>{isReleasing ? <Loader2 className="size-3.5 animate-spin" /> : <Send className="size-3.5" />} Confirm approval</Button></AlertDialogTrigger>
-                          <AlertDialogContent>
-                            <AlertDialogHeader>
-                              <AlertDialogTitle>Approve estimate and start this job?</AlertDialogTitle>
-                              <AlertDialogDescription>This approves estimate #{estimate?.number || "-"} and makes Job #{job.number || "-"} ready to schedule.</AlertDialogDescription>
-                            </AlertDialogHeader>
-                            <AlertDialogFooter><AlertDialogCancel>Cancel</AlertDialogCancel><AlertDialogAction onClick={() => void confirmRelease(job.id)}>Approve and start job</AlertDialogAction></AlertDialogFooter>
-                          </AlertDialogContent>
-                        </AlertDialog>
+                        <div className="flex items-center justify-end gap-1.5">
+                          <AlertDialog>
+                            <AlertDialogTrigger asChild><Button size="sm" className="h-9 bg-blue-700 font-semibold text-white shadow-sm hover:bg-blue-800" disabled={isReleasing || cancellingJobId === job.id || !estimate}>{isReleasing ? <Loader2 className="size-3.5 animate-spin" /> : <Send className="size-3.5" />} Confirm approval</Button></AlertDialogTrigger>
+                            <AlertDialogContent>
+                              <AlertDialogHeader>
+                                <AlertDialogTitle>Approve estimate and start this job?</AlertDialogTitle>
+                                <AlertDialogDescription>This approves estimate #{estimate?.number || "-"} and makes Job #{job.number || "-"} ready to schedule.</AlertDialogDescription>
+                              </AlertDialogHeader>
+                              <AlertDialogFooter><AlertDialogCancel>Cancel</AlertDialogCancel><AlertDialogAction onClick={() => void confirmRelease(job.id)}>Approve and start job</AlertDialogAction></AlertDialogFooter>
+                            </AlertDialogContent>
+                          </AlertDialog>
+                          {cancelControl(job)}
+                        </div>
                       </td>
                     </tr>
                   );
@@ -248,7 +298,7 @@ export function ApprovalAssignmentTab({ data, onRefresh }: { data: WorkbenchData
                       <td className="w-[150px] px-3 py-2"><Input type="date" className="h-9 text-xs shadow-xs focus-visible:border-emerald-500 focus-visible:ring-emerald-500/15" value={draft.scheduledDate || ""} onChange={(event) => patchAssignment(job.id, { scheduledDate: event.target.value || null })} /></td>
                       <td className="w-[120px] px-3 py-2"><NativeSelect value={draft.priority} onChange={(event) => patchAssignment(job.id, { priority: event.target.value as JobPriority })}>{JOB_PRIORITIES.map((item) => <option key={item}>{item}</option>)}</NativeSelect></td>
                       <td className="w-[140px] px-3 py-2"><NativeSelect value={draft.jobType} onChange={(event) => patchAssignment(job.id, { jobType: event.target.value as JobType })}>{JOB_TYPES.map((item) => <option key={item}>{item}</option>)}</NativeSelect></td>
-                      <td className="px-3 py-2 text-right"><IconButton label="Save assignment" className="bg-emerald-50 text-emerald-700 hover:bg-emerald-100 hover:text-emerald-800" disabled={savingJobId === job.id} onClick={() => void saveAssignment(job.id)}>{savingJobId === job.id ? <Loader2 className="size-3.5 animate-spin" /> : <Save className="size-3.5" />}</IconButton></td>
+                      <td className="px-3 py-2 text-right"><div className="flex items-center justify-end gap-1.5"><IconButton label="Save assignment" className="bg-emerald-50 text-emerald-700 hover:bg-emerald-100 hover:text-emerald-800" disabled={savingJobId === job.id || cancellingJobId === job.id} onClick={() => void saveAssignment(job.id)}>{savingJobId === job.id ? <Loader2 className="size-3.5 animate-spin" /> : <Save className="size-3.5" />}</IconButton>{cancelControl(job)}</div></td>
                     </tr>
                   );
                 })}
