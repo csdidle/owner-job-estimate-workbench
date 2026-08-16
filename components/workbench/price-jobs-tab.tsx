@@ -528,17 +528,17 @@ export function PriceJobsTab({ data, onRefresh }: { data: WorkbenchData; onRefre
                 type="single"
                 value={outcome}
                 onValueChange={(value) => value && setOutcome(value as PricingOutcome)}
-                className="grid gap-2"
+                className="grid w-full gap-2"
               >
-                <ToggleGroupItem value="pricing-only" aria-label="Save pricing only" className="h-auto justify-start gap-2 border px-2.5 py-2 text-left data-[state=on]:border-emerald-500 data-[state=on]:bg-emerald-50">
+                <ToggleGroupItem value="pricing-only" aria-label="Save pricing only" className="h-auto w-full justify-start gap-2 border px-2.5 py-2 text-left data-[state=on]:border-emerald-500 data-[state=on]:bg-emerald-50">
                   <CircleDollarSign className="size-4 shrink-0" />
                   <span><span className="block text-xs font-medium">Pricing only</span><span className="block text-[10px] font-normal text-muted-foreground">Save calculation</span></span>
                 </ToggleGroupItem>
-                <ToggleGroupItem value="create-job" aria-label="Create job" className="h-auto justify-start gap-2 border px-2.5 py-2 text-left data-[state=on]:border-emerald-500 data-[state=on]:bg-emerald-50">
+                <ToggleGroupItem value="create-job" aria-label="Create job" className="h-auto w-full justify-start gap-2 border px-2.5 py-2 text-left data-[state=on]:border-emerald-500 data-[state=on]:bg-emerald-50">
                   <BriefcaseBusiness className="size-4 shrink-0" />
                   <span><span className="block text-xs font-medium">Create job</span><span className="block text-[10px] font-normal text-muted-foreground">Start active work</span></span>
                 </ToggleGroupItem>
-                <ToggleGroupItem value="create-estimate" aria-label="Create estimate" className="h-auto justify-start gap-2 border px-2.5 py-2 text-left data-[state=on]:border-emerald-500 data-[state=on]:bg-emerald-50">
+                <ToggleGroupItem value="create-estimate" aria-label="Create estimate" className="h-auto w-full justify-start gap-2 border px-2.5 py-2 text-left data-[state=on]:border-emerald-500 data-[state=on]:bg-emerald-50">
                   <FilePenLine className="size-4 shrink-0" />
                   <span><span className="block text-xs font-medium">Create estimate</span><span className="block text-[10px] font-normal text-muted-foreground">Approval before work</span></span>
                 </ToggleGroupItem>
