@@ -22,11 +22,7 @@ export async function request<T>(endpoint: string, options: RequestOptions = {})
   if (params && Object.keys(params).length > 0) {
     const searchParams = new URLSearchParams();
     Object.entries(params).forEach(([key, value]) => {
-      if (Array.isArray(value)) {
-        value.forEach((item) => {
-          if (item !== undefined && item !== null) searchParams.append(key, String(item));
-        });
-      } else if (value !== undefined && value !== null) {
+      if (value !== undefined && value !== null) {
         searchParams.set(key, String(value));
       }
     });
