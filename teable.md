@@ -242,11 +242,11 @@ All Teable table schemas are stored as JSON files under the `schema/` directory 
 
 Available tables (id → name → schema file):
 
+- `tblYoERyR6AmuNXt9fK` → Job List → `schema/table-tblYoERyR6AmuNXt9fK.json` (SQL: `"bse7bbdbrcd6YfA8YpU"."tblYoERyR6AmuNXt9fK"`)
 - `tbl1gyEIJuVKcV6pKR1` → Employees → `schema/table-tbl1gyEIJuVKcV6pKR1.json` (SQL: `"bse7bbdbrcd6YfA8YpU"."tbl1gyEIJuVKcV6pKR1"`)
 - `tbl9zU4PkhGggW7Dc9R` → Price Book (Services) → `schema/table-tbl9zU4PkhGggW7Dc9R.json` (SQL: `"bse7bbdbrcd6YfA8YpU"."tbl9zU4PkhGggW7Dc9R"`)
 - `tblLu0d0Hn2YawgvFOI` → Estimates → `schema/table-tblLu0d0Hn2YawgvFOI.json` (SQL: `"bse7bbdbrcd6YfA8YpU"."tblLu0d0Hn2YawgvFOI"`)
 - `tblV7eqBBoDamQaaw8q` → Invoices → `schema/table-tblV7eqBBoDamQaaw8q.json` (SQL: `"bse7bbdbrcd6YfA8YpU"."tblV7eqBBoDamQaaw8q"`)
-- `tblYoERyR6AmuNXt9fK` → Job List → `schema/table-tblYoERyR6AmuNXt9fK.json` (SQL: `"bse7bbdbrcd6YfA8YpU"."tblYoERyR6AmuNXt9fK"`)
 - `tblazMSEuYQp2XBrf5S` → Expenses → `schema/table-tblazMSEuYQp2XBrf5S.json` (SQL: `"bse7bbdbrcd6YfA8YpU"."tblazMSEuYQp2XBrf5S"`)
 - `tblZpC5o2HPyo6ZamhV` → Pipelines → `schema/table-tblZpC5o2HPyo6ZamhV.json` (SQL: `"bse7bbdbrcd6YfA8YpU"."tblZpC5o2HPyo6ZamhV"`)
 - `tblXrFzojHs7RpKzs9y` → Reminders & Tasks → `schema/table-tblXrFzojHs7RpKzs9y.json` (SQL: `"bse7bbdbrcd6YfA8YpU"."tblXrFzojHs7RpKzs9y"`)

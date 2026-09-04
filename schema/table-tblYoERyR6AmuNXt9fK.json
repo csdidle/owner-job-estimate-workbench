@@ -370,7 +370,8 @@
         "Submitted to QBO",
         "Invoiced",
         "Billing Hold",
-        "Error"
+        "Error",
+        "Not Billable"
       ],
       "cellValueType": "string",
       "isLookup": null,
