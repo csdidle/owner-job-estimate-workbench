@@ -133,6 +133,11 @@ const statusTone: Record<string, string> = {
   "Pricing Saved": "border-teal-200 bg-teal-50 text-teal-800",
   Error: "border-red-200 bg-red-50 text-red-700",
   Active: "border-emerald-200 bg-emerald-50 text-emerald-700",
+  Scheduled: "border-blue-200 bg-blue-50 text-blue-700",
+  "In Progress": "border-amber-200 bg-amber-50 text-amber-800",
+  Completed: "border-emerald-200 bg-emerald-50 text-emerald-700",
+  "Ready for Review": "border-blue-200 bg-blue-50 text-blue-700",
+  "Billing Hold": "border-amber-200 bg-amber-50 text-amber-800",
   Accepted: "border-emerald-200 bg-emerald-50 text-emerald-700",
   "Queued for Draft": "border-blue-200 bg-blue-50 text-blue-700",
   "Pending in QBO": "border-amber-200 bg-amber-50 text-amber-800",
@@ -149,6 +154,11 @@ const statusDot: Record<string, string> = {
   "Pricing Saved": "bg-teal-600",
   Error: "bg-red-600",
   Active: "bg-emerald-600",
+  Scheduled: "bg-blue-500",
+  "In Progress": "bg-amber-500",
+  Completed: "bg-emerald-600",
+  "Ready for Review": "bg-blue-500",
+  "Billing Hold": "bg-amber-500",
   Accepted: "bg-emerald-600",
   "Queued for Draft": "bg-blue-500",
   "Pending in QBO": "bg-amber-500",
@@ -205,7 +215,7 @@ export function IconButton({ label, children, className, ...props }: React.Compo
   return (
     <Tooltip>
       <TooltipTrigger asChild>
-        <Button variant="ghost" size="icon" className={cn("size-9 xl:size-8", className)} {...props}>{children}</Button>
+        <Button variant="ghost" size="icon" aria-label={label} className={cn("size-9 xl:size-8", className)} {...props}>{children}</Button>
       </TooltipTrigger>
       <TooltipContent>{label}</TooltipContent>
     </Tooltip>

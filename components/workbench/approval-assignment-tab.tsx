@@ -1,11 +1,12 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, type FormEvent } from "react";
 import {
   AlertTriangle,
   Ban,
   BriefcaseBusiness,
   CheckCircle2,
+  CircleCheckBig,
   ClipboardCheck,
   Loader2,
   RefreshCw,
@@ -13,7 +14,13 @@ import {
   Send,
 } from "lucide-react";
 import { toast } from "sonner";
-import { cancelJob, getReleaseResult, releaseJob, updateActiveJob } from "@/app/actions";
+import {
+  cancelJob,
+  completeJobAndSendToBilling,
+  getReleaseResult,
+  releaseJob,
+  updateActiveJob,
+} from "@/app/actions";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -27,11 +34,25 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  BILLING_DISPOSITIONS,
   JOB_PRIORITIES,
   JOB_TYPES,
+  OPERATIONAL_JOB_STATUSES,
   type ActionResult,
+  type BillingDisposition,
+  type JobCompletionInput,
   type JobPriority,
   type JobRecord,
   type JobType,
@@ -40,6 +61,7 @@ import {
 import {
   CrewPicker,
   EmptyState,
+  Field,
   IconButton,
   NativeSelect,
   SectionError,
@@ -61,24 +83,189 @@ type ReleaseOutcome = {
   estimateStatus: string | null;
 };
 
+function todayInChicago(): string {
+  const parts = new Intl.DateTimeFormat("en-US", {
+    timeZone: "America/Chicago",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).formatToParts(new Date());
+  const value = Object.fromEntries(parts.map((part) => [part.type, part.value]));
+  return `${value.year}-${value.month}-${value.day}`;
+}
+
+function CompletionControl({
+  job,
+  compact,
+  disabled,
+  onComplete,
+}: {
+  job: JobRecord;
+  compact?: boolean;
+  disabled: boolean;
+  onComplete: (input: JobCompletionInput) => Promise<ActionResult>;
+}) {
+  const [open, setOpen] = useState(false);
+  const [completedDate, setCompletedDate] = useState(todayInChicago);
+  const [completionNotes, setCompletionNotes] = useState("");
+  const [proposedInvoiceAmount, setProposedInvoiceAmount] = useState("");
+  const [billingDisposition, setBillingDisposition] = useState<BillingDisposition>("Ready for Review");
+  const [billingHoldReason, setBillingHoldReason] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  function resetForm() {
+    setCompletedDate(todayInChicago());
+    setCompletionNotes("");
+    setProposedInvoiceAmount("");
+    setBillingDisposition("Ready for Review");
+    setBillingHoldReason("");
+    setError(null);
+  }
+
+  function changeOpen(nextOpen: boolean) {
+    if (submitting) return;
+    if (nextOpen) resetForm();
+    setOpen(nextOpen);
+  }
+
+  async function submitCompletion(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setError(null);
+    if (!completedDate) {
+      setError("Completed Date is required");
+      return;
+    }
+    const amount = proposedInvoiceAmount.trim() === "" ? null : Number(proposedInvoiceAmount);
+    if (amount !== null && (!Number.isFinite(amount) || amount < 0)) {
+      setError("Proposed Invoice Amount must be zero or greater");
+      return;
+    }
+    if (billingDisposition === "Billing Hold" && billingHoldReason.trim().length === 0) {
+      setError("Billing Hold Reason is required when Billing Hold is selected");
+      return;
+    }
+
+    setSubmitting(true);
+    try {
+      const response = await onComplete({
+        jobId: job.id,
+        completedDate,
+        completionNotes,
+        proposedInvoiceAmount: amount,
+        billingDisposition,
+        billingHoldReason,
+      });
+      if (!response.ok) {
+        setError(response.message);
+        return;
+      }
+      setOpen(false);
+    } finally {
+      setSubmitting(false);
+    }
+  }
+
+  const trigger = compact ? (
+    <IconButton label="Complete & Send to Billing" className="bg-blue-50 text-blue-700 hover:bg-blue-100 hover:text-blue-800" disabled={disabled}>
+      <CircleCheckBig className="size-3.5" />
+    </IconButton>
+  ) : (
+    <Button variant="outline" className="h-10 flex-1 border-blue-200 bg-blue-50 font-semibold text-blue-800 hover:bg-blue-100 hover:text-blue-900" disabled={disabled}>
+      <CircleCheckBig className="size-3.5" /> Complete &amp; Send to Billing
+    </Button>
+  );
+
+  return (
+    <Dialog open={open} onOpenChange={changeOpen}>
+      <DialogTrigger asChild>{trigger}</DialogTrigger>
+      <DialogContent className="max-h-[calc(100dvh-2rem)] gap-0 overflow-y-auto p-0 sm:max-w-lg" showCloseButton={!submitting}>
+        <DialogHeader className="border-b px-4 py-4 pr-12 text-left">
+          <DialogTitle className="text-base">Complete Job #{job.number || "-"}</DialogTitle>
+          <DialogDescription className="text-xs">
+            Complete this job occurrence and release it to billing review. No invoice will be created.
+          </DialogDescription>
+        </DialogHeader>
+        <form onSubmit={submitCompletion}>
+          <div className="grid gap-4 px-4 py-4">
+            {error ? (
+              <Alert variant="destructive" className="py-2">
+                <AlertTriangle className="size-4" />
+                <AlertTitle className="text-xs">Could not complete job</AlertTitle>
+                <AlertDescription className="text-xs">{error}</AlertDescription>
+              </Alert>
+            ) : null}
+            <Field label="Completed Date" required>
+              <Input type="date" value={completedDate} onChange={(event) => setCompletedDate(event.target.value)} disabled={submitting} required className="h-10 text-xs" />
+            </Field>
+            <Field label="Completion Notes">
+              <Textarea value={completionNotes} onChange={(event) => setCompletionNotes(event.target.value)} disabled={submitting} maxLength={10000} className="min-h-20 resize-y text-xs" placeholder="Work completed, site condition, or follow-up details" />
+            </Field>
+            <Field label="Proposed Invoice Amount">
+              <Input type="number" inputMode="decimal" min="0" step="0.01" value={proposedInvoiceAmount} onChange={(event) => setProposedInvoiceAmount(event.target.value)} disabled={submitting} className="h-10 text-right text-xs tabular-nums" placeholder="Optional" />
+            </Field>
+            <Field label="Billing disposition" required>
+              <div className="grid grid-cols-2 rounded-md border bg-muted/30 p-1" role="radiogroup" aria-label="Billing disposition">
+                {BILLING_DISPOSITIONS.map((disposition) => {
+                  const selected = billingDisposition === disposition;
+                  return (
+                    <Button
+                      key={disposition}
+                      type="button"
+                      variant="ghost"
+                      role="radio"
+                      aria-checked={selected}
+                      disabled={submitting}
+                      onClick={() => setBillingDisposition(disposition)}
+                      className={selected ? "h-9 bg-background text-xs font-semibold shadow-xs hover:bg-background" : "h-9 text-xs text-muted-foreground"}
+                    >
+                      {disposition}
+                    </Button>
+                  );
+                })}
+              </div>
+            </Field>
+            {billingDisposition === "Billing Hold" ? (
+              <Field label="Billing Hold Reason" required>
+                <Textarea value={billingHoldReason} onChange={(event) => setBillingHoldReason(event.target.value)} disabled={submitting} maxLength={10000} required className="min-h-20 resize-y text-xs" placeholder="Explain what billing needs before review" />
+              </Field>
+            ) : null}
+          </div>
+          <DialogFooter className="border-t bg-slate-50/70 px-4 py-3 sm:items-center">
+            <Button type="button" variant="outline" onClick={() => changeOpen(false)} disabled={submitting}>Cancel</Button>
+            <Button type="submit" className="bg-blue-700 font-semibold text-white hover:bg-blue-800" disabled={submitting}>
+              {submitting ? <Loader2 className="size-4 animate-spin" /> : <CircleCheckBig className="size-4" />}
+              {submitting ? "Sending to billing..." : "Complete & Send to Billing"}
+            </Button>
+          </DialogFooter>
+        </form>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
 export function ApprovalAssignmentTab({ data, onRefresh }: { data: WorkbenchData; onRefresh: () => Promise<void> }) {
   const waitingJobs = useMemo(() => data.jobs.filter((job) => job.status === "Waiting for Estimate"), [data.jobs]);
-  const activeJobs = useMemo(() => data.jobs.filter((job) => job.status === "Active"), [data.jobs]);
+  const operationalJobs = useMemo(
+    () => data.jobs.filter((job) => OPERATIONAL_JOB_STATUSES.includes(job.status as (typeof OPERATIONAL_JOB_STATUSES)[number])),
+    [data.jobs]
+  );
   const [assignments, setAssignments] = useState<Record<string, AssignmentDraft>>({});
   const [savingJobId, setSavingJobId] = useState<string | null>(null);
   const [releasingJobId, setReleasingJobId] = useState<string | null>(null);
   const [cancellingJobId, setCancellingJobId] = useState<string | null>(null);
+  const [completingJobId, setCompletingJobId] = useState<string | null>(null);
   const [releaseOutcome, setReleaseOutcome] = useState<ReleaseOutcome | null>(null);
   const [result, setResult] = useState<ActionResult | null>(null);
 
   useEffect(() => {
-    setAssignments(Object.fromEntries(activeJobs.map((job) => [job.id, {
+    setAssignments(Object.fromEntries(operationalJobs.map((job) => [job.id, {
       assignedCrewIds: job.assignedCrewIds,
       scheduledDate: job.scheduledDate,
       priority: job.priority || "Normal",
       jobType: job.jobType || "One-Time",
     }])));
-  }, [activeJobs, data.loadedAt]);
+  }, [operationalJobs, data.loadedAt]);
 
   function patchAssignment(jobId: string, patch: Partial<AssignmentDraft>) {
     setAssignments((current) => ({ ...current, [jobId]: { ...current[jobId], ...patch } }));
@@ -153,6 +340,26 @@ export function ApprovalAssignmentTab({ data, onRefresh }: { data: WorkbenchData
     }
   }
 
+  async function completeSelectedJob(input: JobCompletionInput): Promise<ActionResult> {
+    setCompletingJobId(input.jobId);
+    setResult(null);
+    try {
+      const response = await completeJobAndSendToBilling(input);
+      setResult(response);
+      response.ok ? toast.success(response.message) : toast.error(response.message);
+      if (response.ok) await onRefresh();
+      return response;
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Job could not be sent to billing";
+      const response: ActionResult = { ok: false, kind: "error", message };
+      setResult(response);
+      toast.error(message);
+      return response;
+    } finally {
+      setCompletingJobId(null);
+    }
+  }
+
   async function cancelSelectedJob(jobId: string) {
     setCancellingJobId(jobId);
     setResult(null);
@@ -175,7 +382,7 @@ export function ApprovalAssignmentTab({ data, onRefresh }: { data: WorkbenchData
     return (
       <AlertDialog>
         <AlertDialogTrigger asChild>
-          <IconButton label="Cancel job" className="text-muted-foreground hover:text-destructive" disabled={isCancelling || releasingJobId === job.id || savingJobId === job.id}>
+          <IconButton label="Cancel job" className="text-muted-foreground hover:text-destructive" disabled={isCancelling || releasingJobId === job.id || savingJobId === job.id || completingJobId === job.id}>
             {isCancelling ? <Loader2 className="size-3.5 animate-spin" /> : <Ban className="size-3.5" />}
           </IconButton>
         </AlertDialogTrigger>
@@ -314,17 +521,18 @@ export function ApprovalAssignmentTab({ data, onRefresh }: { data: WorkbenchData
 
       <section className="overflow-hidden rounded-md border border-emerald-200 bg-background shadow-xs">
         <div className="flex items-center justify-between border-b border-emerald-100 bg-emerald-50/70 px-3 py-2.5">
-          <div className="flex items-center gap-2"><BriefcaseBusiness className="size-4 text-emerald-700" /><div><h2 className="text-sm font-semibold text-emerald-950">Schedule and assign jobs</h2><p className="text-[11px] text-emerald-800/70">{activeJobs.length} job{activeJobs.length === 1 ? "" : "s"} ready</p></div></div>
+          <div className="flex items-center gap-2"><BriefcaseBusiness className="size-4 text-emerald-700" /><div><h2 className="text-sm font-semibold text-emerald-950">Manage operational jobs</h2><p className="text-[11px] text-emerald-800/70">{operationalJobs.length} active, scheduled, or in progress</p></div></div>
           <IconButton label="Refresh jobs" onClick={onRefresh}><RefreshCw className="size-3.5" /></IconButton>
         </div>
-        {activeJobs.length === 0 ? (
-          <EmptyState icon={<BriefcaseBusiness className="size-8" />} title="No jobs ready to schedule" detail="Approved jobs will appear here for crew assignment and scheduling." />
+        {operationalJobs.length === 0 ? (
+          <EmptyState icon={<BriefcaseBusiness className="size-8" />} title="No operational jobs" detail="Active, scheduled, and in-progress jobs will appear here for assignment and completion." />
         ) : (
           <>
             <div className="divide-y xl:hidden">
-              {activeJobs.map((job) => {
+              {operationalJobs.map((job) => {
                 const draft = assignments[job.id];
                 const contact = data.contacts.find((item) => item.id === job.contactId);
+                const rowBusy = savingJobId === job.id || cancellingJobId === job.id || completingJobId === job.id;
                 if (!draft) return null;
                 return (
                   <div key={job.id} className="space-y-3 p-3">
@@ -336,36 +544,40 @@ export function ApprovalAssignmentTab({ data, onRefresh }: { data: WorkbenchData
                       <div className="text-right"><p className="text-xs font-medium">{contact?.name || "Contact unavailable"}</p>{contact?.company ? <p className="text-[10px] text-muted-foreground">{contact.company}</p> : null}</div>
                     </div>
                     <div className="grid gap-3 border-y py-3 sm:grid-cols-2">
-                      <div className="sm:col-span-2"><p className="mb-1.5 text-[11px] font-semibold text-foreground/70">Assigned crew</p><CrewPicker employees={data.employees} value={draft.assignedCrewIds} onChange={(ids) => patchAssignment(job.id, { assignedCrewIds: ids })} /></div>
-                      <div><p className="mb-1.5 text-[11px] font-semibold text-foreground/70">Scheduled date</p><Input type="date" className="h-10 text-xs shadow-xs focus-visible:border-emerald-500 focus-visible:ring-emerald-500/15" value={draft.scheduledDate || ""} onChange={(event) => patchAssignment(job.id, { scheduledDate: event.target.value || null })} /></div>
-                      <div><p className="mb-1.5 text-[11px] font-semibold text-foreground/70">Priority</p><NativeSelect value={draft.priority} onChange={(event) => patchAssignment(job.id, { priority: event.target.value as JobPriority })}>{JOB_PRIORITIES.map((item) => <option key={item}>{item}</option>)}</NativeSelect></div>
-                      <div className="sm:col-span-2"><p className="mb-1.5 text-[11px] font-semibold text-foreground/70">Job type</p><NativeSelect value={draft.jobType} onChange={(event) => patchAssignment(job.id, { jobType: event.target.value as JobType })}>{JOB_TYPES.map((item) => <option key={item}>{item}</option>)}</NativeSelect></div>
+                      <div className="sm:col-span-2"><p className="mb-1.5 text-[11px] font-semibold text-foreground/70">Assigned crew</p><CrewPicker employees={data.employees} value={draft.assignedCrewIds} onChange={(ids) => patchAssignment(job.id, { assignedCrewIds: ids })} disabled={rowBusy} /></div>
+                      <div><p className="mb-1.5 text-[11px] font-semibold text-foreground/70">Scheduled date</p><Input type="date" className="h-10 text-xs shadow-xs focus-visible:border-emerald-500 focus-visible:ring-emerald-500/15" value={draft.scheduledDate || ""} onChange={(event) => patchAssignment(job.id, { scheduledDate: event.target.value || null })} disabled={rowBusy} /></div>
+                      <div><p className="mb-1.5 text-[11px] font-semibold text-foreground/70">Priority</p><NativeSelect value={draft.priority} onChange={(event) => patchAssignment(job.id, { priority: event.target.value as JobPriority })} disabled={rowBusy}>{JOB_PRIORITIES.map((item) => <option key={item}>{item}</option>)}</NativeSelect></div>
+                      <div className="sm:col-span-2"><p className="mb-1.5 text-[11px] font-semibold text-foreground/70">Job type</p><NativeSelect value={draft.jobType} onChange={(event) => patchAssignment(job.id, { jobType: event.target.value as JobType })} disabled={rowBusy}>{JOB_TYPES.map((item) => <option key={item}>{item}</option>)}</NativeSelect></div>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <Button className="h-10 flex-1 bg-emerald-700 font-semibold text-white hover:bg-emerald-800" disabled={savingJobId === job.id || cancellingJobId === job.id} onClick={() => void saveAssignment(job.id)}>{savingJobId === job.id ? <Loader2 className="size-3.5 animate-spin" /> : <Save className="size-3.5" />} Save assignment</Button>
-                      {cancelControl(job)}
+                    <div className="grid gap-2">
+                      <CompletionControl job={job} disabled={rowBusy} onComplete={completeSelectedJob} />
+                      <div className="flex items-center gap-2">
+                        <Button className="h-10 flex-1 bg-emerald-700 font-semibold text-white hover:bg-emerald-800" disabled={rowBusy} onClick={() => void saveAssignment(job.id)}>{savingJobId === job.id ? <Loader2 className="size-3.5 animate-spin" /> : <Save className="size-3.5" />} Save assignment</Button>
+                        {job.status === "Active" ? cancelControl(job) : null}
+                      </div>
                     </div>
                   </div>
                 );
               })}
             </div>
             <div className="hidden overflow-x-auto xl:block">
-            <table className="w-full min-w-[980px] text-xs">
-              <thead><tr className="border-b bg-muted/20 text-left text-[10px] uppercase text-muted-foreground"><th className="px-3 py-2 font-medium">Job</th><th className="px-3 py-2 font-medium">Contact</th><th className="px-3 py-2 font-medium">Assigned crew</th><th className="px-3 py-2 font-medium">Scheduled date</th><th className="px-3 py-2 font-medium">Priority</th><th className="px-3 py-2 font-medium">Job type</th><th className="px-3 py-2" /></tr></thead>
+            <table className="w-full min-w-[1040px] text-xs">
+              <thead><tr className="border-b bg-muted/20 text-left text-[10px] uppercase text-muted-foreground"><th className="px-3 py-2 font-medium">Job</th><th className="px-3 py-2 font-medium">Contact</th><th className="px-3 py-2 font-medium">Assigned crew</th><th className="px-3 py-2 font-medium">Scheduled date</th><th className="px-3 py-2 font-medium">Priority</th><th className="px-3 py-2 font-medium">Job type</th><th className="px-3 py-2 text-right font-medium">Actions</th></tr></thead>
               <tbody>
-                {activeJobs.map((job) => {
+                {operationalJobs.map((job) => {
                   const draft = assignments[job.id];
                   const contact = data.contacts.find((item) => item.id === job.contactId);
+                  const rowBusy = savingJobId === job.id || cancellingJobId === job.id || completingJobId === job.id;
                   if (!draft) return null;
                   return (
                     <tr key={job.id} className="border-b transition-colors last:border-0 hover:bg-emerald-50/40">
                       <td className="max-w-[230px] px-3 py-2"><p className="truncate font-medium">Job #{job.number || "-"} {job.name}</p><StatusBadge status={job.status} /></td>
                       <td className="max-w-[180px] px-3 py-2"><p className="truncate">{contact?.name || "Contact unavailable"}</p><p className="truncate text-[10px] text-muted-foreground">{contact?.company}</p></td>
-                      <td className="w-[230px] px-3 py-2"><CrewPicker employees={data.employees} value={draft.assignedCrewIds} onChange={(ids) => patchAssignment(job.id, { assignedCrewIds: ids })} /></td>
-                      <td className="w-[150px] px-3 py-2"><Input type="date" className="h-9 text-xs shadow-xs focus-visible:border-emerald-500 focus-visible:ring-emerald-500/15" value={draft.scheduledDate || ""} onChange={(event) => patchAssignment(job.id, { scheduledDate: event.target.value || null })} /></td>
-                      <td className="w-[120px] px-3 py-2"><NativeSelect value={draft.priority} onChange={(event) => patchAssignment(job.id, { priority: event.target.value as JobPriority })}>{JOB_PRIORITIES.map((item) => <option key={item}>{item}</option>)}</NativeSelect></td>
-                      <td className="w-[140px] px-3 py-2"><NativeSelect value={draft.jobType} onChange={(event) => patchAssignment(job.id, { jobType: event.target.value as JobType })}>{JOB_TYPES.map((item) => <option key={item}>{item}</option>)}</NativeSelect></td>
-                      <td className="px-3 py-2 text-right"><div className="flex items-center justify-end gap-1.5"><IconButton label="Save assignment" className="bg-emerald-50 text-emerald-700 hover:bg-emerald-100 hover:text-emerald-800" disabled={savingJobId === job.id || cancellingJobId === job.id} onClick={() => void saveAssignment(job.id)}>{savingJobId === job.id ? <Loader2 className="size-3.5 animate-spin" /> : <Save className="size-3.5" />}</IconButton>{cancelControl(job)}</div></td>
+                      <td className="w-[230px] px-3 py-2"><CrewPicker employees={data.employees} value={draft.assignedCrewIds} onChange={(ids) => patchAssignment(job.id, { assignedCrewIds: ids })} disabled={rowBusy} /></td>
+                      <td className="w-[150px] px-3 py-2"><Input type="date" className="h-9 text-xs shadow-xs focus-visible:border-emerald-500 focus-visible:ring-emerald-500/15" value={draft.scheduledDate || ""} onChange={(event) => patchAssignment(job.id, { scheduledDate: event.target.value || null })} disabled={rowBusy} /></td>
+                      <td className="w-[120px] px-3 py-2"><NativeSelect value={draft.priority} onChange={(event) => patchAssignment(job.id, { priority: event.target.value as JobPriority })} disabled={rowBusy}>{JOB_PRIORITIES.map((item) => <option key={item}>{item}</option>)}</NativeSelect></td>
+                      <td className="w-[140px] px-3 py-2"><NativeSelect value={draft.jobType} onChange={(event) => patchAssignment(job.id, { jobType: event.target.value as JobType })} disabled={rowBusy}>{JOB_TYPES.map((item) => <option key={item}>{item}</option>)}</NativeSelect></td>
+                      <td className="px-3 py-2 text-right"><div className="flex items-center justify-end gap-1.5"><CompletionControl job={job} compact disabled={rowBusy} onComplete={completeSelectedJob} /><IconButton label="Save assignment" className="bg-emerald-50 text-emerald-700 hover:bg-emerald-100 hover:text-emerald-800" disabled={rowBusy} onClick={() => void saveAssignment(job.id)}>{savingJobId === job.id ? <Loader2 className="size-3.5 animate-spin" /> : <Save className="size-3.5" />}</IconButton>{job.status === "Active" ? cancelControl(job) : null}</div></td>
                     </tr>
                   );
                 })}

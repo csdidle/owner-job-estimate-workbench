@@ -15,11 +15,13 @@ import {
   type RecordFields,
 } from "@/lib/teable";
 import {
+  BILLING_DISPOSITIONS,
   CONDITION_OPTIONS,
   ESTIMATE_QUEUE_STATUSES,
   FREQUENCIES,
   JOB_PRIORITIES,
   JOB_TYPES,
+  OPERATIONAL_JOB_STATUSES,
   PRICING_OUTCOMES,
   ROUTING_STATUSES,
   SEASONS,
@@ -139,12 +141,41 @@ const FIELDS = {
     scheduledDate: "fldZk6IuygPaD05sNVd",
     priority: "flddIJ21uKWGZkNSHCh",
     jobType: "fld1ujMxByfaN5LZcAK",
+    completedDate: "fldTRE91nXokn2dZWDk",
+    completionNotes: "fld0xgjzdSUcmi5FDKZ",
+    proposedInvoiceAmount: "fldoFSkpih4AqRtn3MH",
+    readyToInvoice: "fldG9K8m1ZKiPdFUn33",
+    billingStatus: "fldi8mOyAL6vk70TwJP",
+    billingHoldReason: "fldBxV81hzt3Ov65LrI",
   },
 } as const;
 
 const recordIdSchema = z.string().regex(/^rec[a-zA-Z0-9]+$/);
 const nullableNonNegative = z.number().finite().nonnegative().nullable();
 const nullableSelect = (values: readonly [string, ...string[]]) => z.enum(values).nullable();
+
+function isValidDateOnly(value: string): boolean {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) return false;
+  const date = new Date(`${value}T00:00:00.000Z`);
+  return !Number.isNaN(date.getTime()) && date.toISOString().slice(0, 10) === value;
+}
+
+const completionInputSchema = z.object({
+  jobId: recordIdSchema,
+  completedDate: z.string().refine(isValidDateOnly, "Completed Date must be a valid date"),
+  completionNotes: z.string().max(10000, "Completion Notes must be 10,000 characters or fewer"),
+  proposedInvoiceAmount: nullableNonNegative,
+  billingDisposition: z.enum(BILLING_DISPOSITIONS),
+  billingHoldReason: z.string().max(10000, "Billing Hold Reason must be 10,000 characters or fewer"),
+}).superRefine((input, context) => {
+  if (input.billingDisposition === "Billing Hold" && input.billingHoldReason.trim().length === 0) {
+    context.addIssue({
+      code: "custom",
+      path: ["billingHoldReason"],
+      message: "Billing Hold Reason is required when Billing Hold is selected",
+    });
+  }
+});
 
 const pricingInputSchema = z.object({
   name: z.string().trim().min(2).max(200),
@@ -491,7 +522,7 @@ async function loadWorkbenchData(): Promise<WorkbenchData> {
         "__fk_fldZvoJFTUWqDWH3pzM", "Assigned_Crew", "Scheduled_Date", "Priority",
         "Job_Type", "Release_to_Pipeline"
       FROM ${TABLES.jobs}
-      WHERE "Status" IN ('Waiting for Estimate', 'Active')
+      WHERE "Status" IN ('Waiting for Estimate', 'Active', 'Scheduled', 'In Progress')
       ORDER BY "Scheduled_Date" NULLS LAST, "__created_time" DESC
       LIMIT 100
     `),
@@ -1332,6 +1363,69 @@ export async function getReleaseResult(jobId: string) {
   };
 }
 
+export async function completeJobAndSendToBilling(rawInput: unknown): Promise<ActionResult> {
+  await requireOwner();
+  const parsed = completionInputSchema.safeParse(rawInput);
+  if (!parsed.success) {
+    return { ok: false, kind: "validation", message: parsed.error.issues[0]?.message || "Check completion fields" };
+  }
+  const input = parsed.data;
+
+  const { rows } = await sqlQuery(BASE_ID, `
+    SELECT "__id", "Job", "Status", "Ready_to_Invoice", "Billing_Status",
+      "Billing_Hold_Reason", "__fk_fldBcL6fyGKeea8dspO"
+    FROM ${TABLES.jobs}
+    WHERE "__id" = '${sqlString(input.jobId)}'
+    LIMIT 1
+  `);
+  const job = rows[0];
+  if (!job) return { ok: false, kind: "validation", message: "Job not found" };
+  if (stringValue(job.__fk_fldBcL6fyGKeea8dspO)) {
+    return { ok: false, kind: "validation", message: "This job is already linked to an invoice and cannot be released again" };
+  }
+
+  const status = stringValue(job.Status);
+  const billingStatus = stringValue(job.Billing_Status);
+  const isConsistentlyReleased = status === "Completed"
+    && booleanValue(job.Ready_to_Invoice)
+    && BILLING_DISPOSITIONS.includes(billingStatus as (typeof BILLING_DISPOSITIONS)[number])
+    && (billingStatus !== "Billing Hold" || Boolean(stringValue(job.Billing_Hold_Reason)?.trim()));
+  if (isConsistentlyReleased) {
+    return { ok: true, message: `Job #${numberValue(job.Job)} is already completed and released to billing` };
+  }
+  if (!OPERATIONAL_JOB_STATUSES.includes(status as (typeof OPERATIONAL_JOB_STATUSES)[number])) {
+    return {
+      ok: false,
+      kind: "validation",
+      message: status === "Completed"
+        ? "This completed job is not consistently released to billing. Review the Job List record before retrying."
+        : "Only Active, Scheduled, or In Progress jobs can be completed here",
+    };
+  }
+
+  const fields: RecordFields = {
+    [FIELDS.job.status]: "Completed",
+    [FIELDS.job.completedDate]: nullableDate(input.completedDate),
+    [FIELDS.job.completionNotes]: input.completionNotes.trim() || null,
+    [FIELDS.job.readyToInvoice]: true,
+    [FIELDS.job.billingStatus]: input.billingDisposition,
+    [FIELDS.job.billingHoldReason]: input.billingDisposition === "Billing Hold"
+      ? input.billingHoldReason.trim()
+      : null,
+  };
+  if (input.proposedInvoiceAmount !== null) {
+    fields[FIELDS.job.proposedInvoiceAmount] = input.proposedInvoiceAmount;
+  }
+
+  try {
+    await updateRecord(TABLE_IDS.jobs, input.jobId, fields);
+    updateTag(WORKBENCH_DATA_TAG);
+    return { ok: true, message: `Job #${numberValue(job.Job)} completed and sent to billing` };
+  } catch (error) {
+    return { ok: false, kind: "error", message: `Job could not be sent to billing: ${errorMessage(error)}` };
+  }
+}
+
 export async function updateActiveJob(rawInput: unknown): Promise<ActionResult> {
   await requireOwner();
   const schema = z.object({
@@ -1361,8 +1455,9 @@ export async function updateActiveJob(rawInput: unknown): Promise<ActionResult> 
         `)
       : Promise.resolve({ rows: [] as Record<string, unknown>[] }),
   ]);
-  if (!checks[0].rows[0] || checks[0].rows[0].Status !== "Active") {
-    return { ok: false, kind: "validation", message: "Job is no longer Active" };
+  const currentStatus = stringValue(checks[0].rows[0]?.Status);
+  if (!OPERATIONAL_JOB_STATUSES.includes(currentStatus as (typeof OPERATIONAL_JOB_STATUSES)[number])) {
+    return { ok: false, kind: "validation", message: "Job is no longer Active, Scheduled, or In Progress" };
   }
   if (checks[1].rows.length !== input.assignedCrewIds.length) {
     return { ok: false, kind: "validation", message: "One or more crew members are no longer active" };
@@ -1375,7 +1470,7 @@ export async function updateActiveJob(rawInput: unknown): Promise<ActionResult> 
       [FIELDS.job.priority]: input.priority,
       [FIELDS.job.jobType]: input.jobType,
     });
-    return { ok: true, message: "Active job assignment updated" };
+    return { ok: true, message: "Job assignment updated" };
   } catch (error) {
     return { ok: false, kind: "error", message: `Assignment update failed: ${errorMessage(error)}` };
   }

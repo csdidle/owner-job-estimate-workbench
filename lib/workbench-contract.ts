@@ -15,6 +15,8 @@ export const ROUTING_STATUSES = [
 export const PRICING_OUTCOMES = ["pricing-only", "create-job", "create-estimate"] as const;
 export const JOB_PRIORITIES = ["Low", "Normal", "High", "Urgent"] as const;
 export const JOB_TYPES = ["One-Time", "Recurring", "Maintenance", "Emergency"] as const;
+export const OPERATIONAL_JOB_STATUSES = ["Active", "Scheduled", "In Progress"] as const;
+export const BILLING_DISPOSITIONS = ["Ready for Review", "Billing Hold"] as const;
 export const ESTIMATE_QUEUE_STATUSES = ["Sent", "Viewed", "Declined", "Expired"] as const;
 export const FREQUENCIES = [
   "One-Time",
@@ -41,6 +43,8 @@ export type RoutingStatus = (typeof ROUTING_STATUSES)[number];
 export type PricingOutcome = (typeof PRICING_OUTCOMES)[number];
 export type JobPriority = (typeof JOB_PRIORITIES)[number];
 export type JobType = (typeof JOB_TYPES)[number];
+export type OperationalJobStatus = (typeof OPERATIONAL_JOB_STATUSES)[number];
+export type BillingDisposition = (typeof BILLING_DISPOSITIONS)[number];
 export type EstimateQueueStatus = (typeof ESTIMATE_QUEUE_STATUSES)[number];
 
 export type ContactOption = {
@@ -214,6 +218,15 @@ export type PricingPromotionInput = {
   scheduledDate: string | null;
   priority: JobPriority;
   jobType: JobType;
+};
+
+export type JobCompletionInput = {
+  jobId: string;
+  completedDate: string;
+  completionNotes: string;
+  proposedInvoiceAmount: number | null;
+  billingDisposition: BillingDisposition;
+  billingHoldReason: string;
 };
 
 export type EstimateSaveInput = {
